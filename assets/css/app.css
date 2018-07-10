@@ -1,0 +1,36 @@
+@import "~bootstrap/dist/css/bootstrap.css";
+
+.content
+{
+    margin-top: 10px;
+}
+
+.card
+{
+    margin-bottom: 10px;
+}
+
+.fa-info
+{
+    color: dodgerblue;
+}
+
+.fa-check
+{
+    color: green;
+}
+
+.fa-times
+{
+    color: red;
+}
+
+.fa-hourglass-half
+{
+    color: #fff60a;
+}
+
+.fa-edit
+{
+    color: #ff6a09;
+}

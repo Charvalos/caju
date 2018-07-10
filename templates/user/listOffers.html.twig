@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <button class="btn btn-primary">Je recherche un emploi</button>
+    <button class="btn btn-primary">J'offre un emploi</button>
+
+    <div class="alert alert-warning" role="alert" style="width: auto; float: right;">
+        Vous avez <a href="#" class="alert-link">4 annonces</a> qui doivent être renouvelées
+    </div>
+
+    <br><br><br>
+
+    <label>Lieu :</label>
+    <select>
+        <option>Tous</option>
+        <option>Communes</option>
+        <option>District</option>
+    </select>
+
+    <input id="datepicker" placeholder="Date">
+
+    <label>Catégorie :</label>
+    <select>
+        <option>Tous</option>
+        <option>Jardinage</option>
+        <option>Baby-sitting</option>
+    </select>
+
+    <div class="table-responsive">
+        <table class="table mx-auto table-hover text-center">
+            <thead>
+                <tr>
+                    <th>Titre</th>
+                    <th>Description</th>
+                    <th>Lieu</th>
+                    <th>Catégorie</th>
+                    <th>Publiée le</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for i in 0..9 %}
+                <tr>
+                    <td>Taille d'arbres</td>
+                    <td>Recherche personne pour tailler des arbres</td>
+                    <td>2800 Delémont</td>
+                    <td>Jardinage</td>
+                    <td>06.07.2018</td>
+                    <td><a href="#"><span class="fas fa-info"></span></a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div
+{% endblock %}

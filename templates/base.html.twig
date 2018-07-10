@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>
+            Bourse Emploi - Jura
+        </title>
+        {% block stylesheets %}
+            <link rel="stylesheet" href="{{ asset('build/css/app.css') }}" />
+            <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">"
+        {% endblock %}
+    </head>
+    <body>
+    <div class="container menu">
+        {% block menu %}
+            {%  include 'utils/menu/menuDefault.html.twig' %}
+            {# include 'utils/menu/menuConnected.html.twig' #}
+        {% endblock %}
+    </div>
+    <div class="container content">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    {% block javascripts %}
+        <script type="text/javascript" src="{{ asset('build/js/app.js') }}"></script>
+    {% endblock %}
+    </body>
+</html>

@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    {{ form_start(addOfferForm) }}
+
+    {{ form_row(addOfferForm.title)}}
+    <div class="form-group input-group">
+        <div class="input-group-prepend">
+            {{ form_label(addOfferForm.workAddress, 'Lieu de travail', {
+                'label_attr': {'class': 'input-group-text'}}) }}
+        </div>
+        {{ form_widget(addOfferForm.workAddress) }}
+    </div>
+    <div class="form-group input-group">
+        <div class="input-group-prepend">
+            {{ form_label(addOfferForm.category, 'Catégorie', {
+                'label_attr': {'class': 'input-group-text'}}) }}
+        </div>
+        {{ form_widget(addOfferForm.category) }}
+    </div>
+    {{ form_row(addOfferForm.documents) }}
+    {{ form_row(addOfferForm.description) }}
+
+    {{ form_end(addOfferForm) }}
+{% endblock %}

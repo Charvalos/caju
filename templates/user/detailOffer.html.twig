@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <div class="mx-auto w-50">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Détails</h5>
+                <div class="form-group"><input type="text" class="form-control" placeholder="Titre de l'annonce"></div>
+                <div class="form-group"><input type="text" class="form-control" placeholder="Catégorie"></div>
+                <div class="form-group"><input type="text" class="form-control" placeholder="Lieu"></div>
+                <div class="form-group"><textarea class="form-control" placeholder="Descriptionde l'annonce"></textarea></div>
+            </div>
+        </div>
+        <div class="d-flex flex-column align-items-center">
+            <button class="btn btn-primary w-50 m-1">Renouveler cette annonce</button>
+            <button class="btn btn-primary w-50 m-1">Clôturer l'annonce</button>
+            <button class="btn btn-primary w-50 m-1">Modifier</button>
+        </div>
+    </div>
+{% endblock %}

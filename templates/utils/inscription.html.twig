@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    {{ form_start(registerForm) }}
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Identifiants</h5>
+            {{ form_row(registerForm.pseudo) }}
+            {{ form_row(registerForm.password) }}
+            {{ form_row(registerForm.confirmPassword) }}
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Informations personnelles</h5>
+            {{ form_row(registerForm.lastName) }}
+            {{ form_row(registerForm.firstName) }}
+            <div class="form-group input-group">
+                <div class="input-group-prepend">
+                    {{ form_label(registerForm.birthDate, 'Date de naissance', {
+                        'label_attr': {'class': 'input-group-text'}}) }}
+                </div>
+                {{ form_widget(registerForm.birthDate) }}
+            </div>
+            {{ form_row(registerForm.email) }}
+            {{ form_row(registerForm.phoneN1) }}
+            {{ form_row(registerForm.phoneN2) }}
+            {{ form_row(registerForm.address) }}
+            <div class="form-group input-group">
+                <div class="input-group-prepend">
+                    {{ form_label(registerForm.locality, 'Localité', {
+                        'label_attr': {'class': 'input-group-text'}}) }}
+                </div>
+                {{ form_widget(registerForm.locality) }}
+            </div>
+            {{ form_row(registerForm.cguChecked) }}
+        </div>
+    </div>
+
+    {{ form_end(registerForm) }}
+{% endblock %}

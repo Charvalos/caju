@@ -1,0 +1,175 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Statistiques</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Offres d'emplois ouvertes :
+                            <span class="badge badge-info badge-pill">5</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Offres de services ouvertes :
+                            <span class="badge badge-info badge-pill">0</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Annonces à renouveler :
+                            <span class="badge badge-info badge-pill">2</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Offres d'emplois</h5>
+                    {{ form_start(selectOffer) }}
+                    <div class="form-group input-group">
+                        <div class="input-group-prepend">
+                            {{ form_label(selectOffer.offers, 'Annonce', {
+                                'label_attr': {'class': 'input-group-text'}}) }}
+                        </div>
+                        {{ form_widget(selectOffer.offers) }}
+                    </div>
+                    {{ form_end(selectOffer) }}
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex align-items-center">
+                            <div class="d-inline-flex w-75">xTerminAtor</div>
+                            <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-check"></span></div>
+                            <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-info"></span></div>
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <div class="d-inline-flex w-75">TontonFlingueur</div>
+                            <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-hourglass-half"></span></div>
+                            <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-info"></span></div>
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <div class="d-inline-flex w-75">HopSuisse</div>
+                            <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-times"></span></div>
+                            <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-info"></span></div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Offres de services</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex align-items-center">
+                            <div class="d-inline-flex w-75">Taille d'arbre</div>
+                            <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-check"></span></div>
+                            <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-info"></span></div>
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <div class="d-inline-flex w-75">Baby-sitting</div>
+                            <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-times"></span></div>
+                            <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-info"></span></div>
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <div class="d-inline-flex w-75">Déménagement</div>
+                            <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-hourglass-half"></span></div>
+                            <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-info"></span></div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="fas fa-check"></span>Répondu<span class="fas fa-hourglass-half"></span>En attente de réponse<span class="fas fa-times"></span>Refusé
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <label>Type :</label>
+    <select>
+        <option>Tous</option>
+        <option>Offres d'emplois</option>
+        <option>Offres de services</option>
+    </select>
+
+    <input id="datepicker" placeholder="Date">
+
+    <label>Catégorie :</label>
+    <select>
+        <option>Tous</option>
+        <option>Jardinage</option>
+        <option>Baby-sitting</option>
+    </select>
+
+    <label>Statut :</label>
+    <select>
+        <option>Tous</option>
+        <option>Non-publiée</option>
+        <option>À renouveler</option>
+        <option>Publier</option>
+    </select>
+
+    <div class="table-responsive">
+        <table class="table mx-auto table-hover text-center">
+            <thead>
+            <tr>
+                <th>Titre</th>
+                <th>Description</th>
+                <th>Lieu</th>
+                <th>Catégorie</th>
+                <th>Type</th>
+                <th>Statut</th>
+                <th>Publiée le</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for i in 0..2 %}
+                <tr>
+                    <td>Taille d'arbres</td>
+                    <td>Recherche personne pour tailler des arbres</td>
+                    <td>2800 Delémont</td>
+                    <td>Jardinage</td>
+                    <td>Offre d'emploi</td>
+                    <td>Clôturée</td>
+                    <td>06.07.2018</td>
+                    <td class="d-flex align-items-center justify-content-between"><a href="#"><span class="fas fa-info"></span></a><a href="#"><span class="fas fa-edit"></span></a></td>
+                </tr>
+            {% endfor %}
+                <tr class="table-warning">
+                    <td>Taille d'arbres</td>
+                    <td>Recherche personne pour tailler des arbres</td>
+                    <td>2800 Delémont</td>
+                    <td>Jardinage</td>
+                    <td>Offre d'emploi</td>
+                    <td>Clôturée</td>
+                    <td>06.07.2018</td>
+                    <td class="d-flex align-items-center justify-content-between"><a href="#"><span class="fas fa-info"></span></a><a href="#"><span class="fas fa-edit"></span></a></td>
+                </tr>
+                <tr class="table-danger">
+                    <td>Taille d'arbres</td>
+                    <td>Recherche personne pour tailler des arbres</td>
+                    <td>2800 Delémont</td>
+                    <td>Jardinage</td>
+                    <td>Offre d'emploi</td>
+                    <td>Clôturée</td>
+                    <td>06.07.2018</td>
+                    <td class="d-flex align-items-center justify-content-between"><a href="#"><span class="fas fa-info"></span></a><a href="#"><span class="fas fa-edit"></span></a></td>
+                </tr>
+                <tr class="table-success">
+                    <td>Taille d'arbres</td>
+                    <td>Recherche personne pour tailler des arbres</td>
+                    <td>2800 Delémont</td>
+                    <td>Jardinage</td>
+                    <td>Offre d'emploi</td>
+                    <td>Clôturée</td>
+                    <td>06.07.2018</td>
+                    <td class="d-flex align-items-center justify-content-center"><a href="#"><span class="fas fa-info"></span></a></td>
+                </tr>
+            </tbody>
+        </table>
+        <button class="btn btn-primary">Renouveler les annonces sélectionnées</button>
+    </div
+{% endblock %}
