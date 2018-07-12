@@ -1,55 +1,72 @@
 {% extends 'base.html.twig' %}
 
 {% block content %}
-    <button class="btn btn-primary">Je recherche un emploi</button>
-    <button class="btn btn-primary">J'offre un emploi</button>
-
-    <div class="alert alert-warning" role="alert" style="width: auto; float: right;">
-        Vous avez <a href="#" class="alert-link">4 annonces</a> qui doivent être renouvelées
+    {{ dump(app.session.get('user')) }}
+    <div class="btnChoices">
+        <button class="btn btn-primary" id="btnViewOffersJob">Je recherche un emploi</button>
+        <button class="btn btn-primary" id="btnViewOffersSearch">J'offre un emploi</button>
     </div>
 
-    <br><br><br>
+    <div class="visible" id="listOffers">
+        {{ form_start(filterForm) }}
 
-    <label>Lieu :</label>
-    <select>
-        <option>Tous</option>
-        <option>Communes</option>
-        <option>District</option>
-    </select>
+        <div class="form-group d-flex align-content-between">
+            <div class="input-group m-auto">
+                <div class="input-group-prepend">
+                    {{ form_label(filterForm.place, 'Lieu', {
+                        'label_attr': {'class': 'input-group-text'}}) }}
+                </div>
+                {{ form_widget(filterForm.place) }}
+            </div>
+            <div class="input-group m-auto px-5">
+                <div class="input-group-prepend">
+                    {{ form_label(filterForm.date, 'Date', {
+                        'label_attr': {'class': 'input-group-text'}}) }}
+                </div>
+                {{ form_widget(filterForm.date) }}
+            </div>
+            <div class="input-group m-auto pr-2">
+                <div class="input-group-prepend">
+                    {{ form_label(filterForm.category, 'Catégorie', {
+                        'label_attr': {'class': 'input-group-text'}}) }}
+                </div>
+                {{ form_widget(filterForm.category) }}
+            </div>
+            {{ form_widget(filterForm.filter) }}
+        </div>
 
-    <input id="datepicker" placeholder="Date">
+        {{ form_end(filterForm) }}
 
-    <label>Catégorie :</label>
-    <select>
-        <option>Tous</option>
-        <option>Jardinage</option>
-        <option>Baby-sitting</option>
-    </select>
-
-    <div class="table-responsive">
-        <table class="table mx-auto table-hover text-center">
-            <thead>
-                <tr>
-                    <th>Titre</th>
-                    <th>Description</th>
-                    <th>Lieu</th>
-                    <th>Catégorie</th>
-                    <th>Publiée le</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for i in 0..9 %}
-                <tr>
-                    <td>Taille d'arbres</td>
-                    <td>Recherche personne pour tailler des arbres</td>
-                    <td>2800 Delémont</td>
-                    <td>Jardinage</td>
-                    <td>06.07.2018</td>
-                    <td><a href="#"><span class="fas fa-info"></span></a></td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div
+        <div class="table-responsive">
+            <table class="table mx-auto table-hover text-center">
+                <thead>
+                    <tr>
+                        <th>Titre</th>
+                        <th>Description</th>
+                        <th>Lieu</th>
+                        <th>Catégorie</th>
+                        <th>Publiée le</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% if offers is empty %}
+                    <tr>
+                        <td colspan="6">
+                            Il y actuellement aucune offres en attente
+                        </td>
+                    </tr>
+                    <tr>
+                        <td data-title="Taille d'arbre" data-description="Recherche personne pour tailler des arbres" data-city="2800 Delémont" data-categpry="Jardinage" data-publicationDate="06.07.2018" id="offerTitle">Taille d'arbres</td>
+                        <td>Recherche personne pour tailler des arbres</td>
+                        <td>2800 Delémont</td>
+                        <td>Jardinage</td>
+                        <td>06.07.2018</td>
+                        <td id="showOfferDetails" data-toggle="modal" data-target="#detailsOffer"><a href="#"><span class="fas fa-info"></span></a></td>
+                    </tr>
+                {% endif %}
+                </tbody>
+            </table>
+        </div
+    </div>
 {% endblock %}

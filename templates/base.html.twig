@@ -11,15 +11,15 @@
         {% endblock %}
     </head>
     <body>
-    <div class="container menu">
+    <div class="container">
         {% block menu %}
             {%  include 'utils/menu/menuDefault.html.twig' %}
             {# include 'utils/menu/menuConnected.html.twig' #}
         {% endblock %}
-    </div>
-    <div class="container content">
-        {% block content %}
-        {% endblock %}
+        <div class="content">
+            {% block content %}
+            {% endblock %}
+        </div>
     </div>
 
     {% block javascripts %}

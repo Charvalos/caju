@@ -6,9 +6,8 @@
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">Identifiants</h5>
-            {{ form_row(registerForm.pseudo) }}
+            {{ form_row(registerForm.username) }}
             {{ form_row(registerForm.password) }}
-            {{ form_row(registerForm.confirmPassword) }}
         </div>
     </div>
     <div class="card">
@@ -18,10 +17,10 @@
             {{ form_row(registerForm.firstName) }}
             <div class="form-group input-group">
                 <div class="input-group-prepend">
-                    {{ form_label(registerForm.birthDate, 'Date de naissance', {
+                    {{ form_label(registerForm.birthdate, 'Date de naissance', {
                         'label_attr': {'class': 'input-group-text'}}) }}
                 </div>
-                {{ form_widget(registerForm.birthDate) }}
+                {{ form_widget(registerForm.birthdate) }}
             </div>
             {{ form_row(registerForm.email) }}
             {{ form_row(registerForm.phoneN1) }}
@@ -29,14 +28,14 @@
             {{ form_row(registerForm.address) }}
             <div class="form-group input-group">
                 <div class="input-group-prepend">
-                    {{ form_label(registerForm.locality, 'Localité', {
+                    {{ form_label(registerForm.city, 'Localité', {
                         'label_attr': {'class': 'input-group-text'}}) }}
                 </div>
-                {{ form_widget(registerForm.locality) }}
+                {{ form_widget(registerForm.city) }}
             </div>
-            {{ form_row(registerForm.cguChecked) }}
+            {{ form_row(registerForm.cgu) }}
         </div>
     </div>
 
-    {{ form_end(registerForm) }}
+{{ form_end(registerForm) }}
 {% endblock %}

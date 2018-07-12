@@ -8,13 +8,13 @@ return new class extends DefaultDeployer
     {
         return $this->getConfigBuilder()
             // SSH connection string to connect to the remote server (format: user@host-or-IP:port-number)
-            ->server('pc0ke_admin@pc0ke.ftp.infomaniak.com')
+            ->server('uid98664@h2web117')
             // the absolute path of the remote server directory where the project is deployed
             ->deployDir('/dev')
             // the URL of the Git repository where the project code is hosted
-            ->repositoryUrl('C:\xampp\htdocs\caju')
+            ->repositoryUrl('git@github.com:Charvalos/caju.git')
             // the repository branch to deploy
-            //->repositoryBranch('master')
+            ->repositoryBranch('master')
         ;
     }
 

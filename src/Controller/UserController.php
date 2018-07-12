@@ -2,7 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
+use App\Form\RegisterType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -12,6 +16,28 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class UserController extends AbstractController
 {
+    /**
+     * @Route("inscription", name="registration")
+     */
+    public function register(Request $request)
+    {
+        $user = new User();
+        $form = $this->createForm(RegisterType::class, $user);
+
+        //Gestion des données renvoyées
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid())
+        {
+
+            return $this->redirectToRoute('index');
+        }
+
+        return $this->render('utils/registration.html.twig', array(
+            'registerForm' => $form->createView(),
+        ));
+    }
+
     /**
      * @Route("ajouter-une-annonce", name="addOffer")
      */

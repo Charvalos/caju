@@ -2,14 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\JobOffer;
+use App\Form\FilterType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -21,7 +19,15 @@ class AppController extends AbstractController
      */
     public function index()
     {
-        return $this->render('user/listOffers.html.twig');
+        //Création du formulaire
+        $form = $this->createForm(FilterType::class);
+
+        $offers = $this->getDoctrine()->getRepository(JobOffer::class)->findAll();
+
+        return $this->render('user/listOffers.html.twig', array(
+            'filterForm' => $form->createView(),
+            'offers' => $offers
+        ));
     }
 
     /**
@@ -41,7 +47,7 @@ class AppController extends AbstractController
     }
 
     /**
-     * @Route("se-connecter", name="connection")
+     * @Route("se-connecter", name="login")
      */
     public function viewFormConnection()
     {
@@ -67,84 +73,6 @@ class AppController extends AbstractController
 
         return $this->render('utils/connection.html.twig', array(
             'connectionForm' => $form->createView()
-        ));
-    }
-
-    /**
-     * @Route("inscription", name="registration")
-     */
-    public function viewFormRegister()
-    {
-        $form = $this->createFormBuilder()
-            ->add('pseudo', TextType::class, array(
-                'label' => false,
-                'attr' => array('placeholder' => 'Pseudo'),
-                'required' => true
-            ))
-            ->add('password', PasswordType::class, array(
-                'label' => false,
-                'attr' => array('placeholder' => 'Mot de passe'),
-                'required' => true
-            ))
-            ->add('confirmPassword', PasswordType::class, array(
-                'label' => false,
-                'attr' => array('placeholder' => 'Confirmer le mot de passe'),
-                'required' => true
-            ))
-            ->add('lastName', TextType::class, array(
-                'label' => false,
-                'attr' => array('placeholder' => 'Nom'),
-                'required' => true
-            ))
-            ->add('firstName', TextType::class, array(
-                'label' => false,
-                'attr' => array('placeholder' => 'Prénom'),
-                'required' => true
-            ))
-            ->add('birthDate', DateType::class, array(
-                'label' => false,
-                'label_attr' => array('class' => 'input-group-text'),
-                'required' => true,
-                'format' => 'dd MMMM yyyy',
-            ))
-            ->add('email', EmailType::class, array(
-                'label' => false,
-                'attr' => array('placeholder' => 'Email'),
-                'required' => true
-            ))
-            ->add('phoneN1', TelType::class, array(
-                'label' => false,
-                'attr' => array('placeholder' => 'Téléphone fixe'),
-            ))
-            ->add('phoneN2', TelType::class, array(
-                'label' => false,
-                'attr' => array('placeholder' => 'Téléphone mobile')
-            ))
-            ->add('address', TextType::class, array(
-                'label' => false,
-                'attr' => array('placeholder' => 'Rue'),
-                'required' => true
-            ))
-            ->add('locality', ChoiceType::class, array(
-                'choices' => array(
-                    '2800 Delémont' => 'delemont',
-                    '2854 Bassecourt' => 'bassecourt',
-                    '2900 Porrentruy' => 'porrentruy'
-                ),
-                'label' => false
-            ))
-            ->add('cguChecked', CheckboxType::class, array(
-                'label' => 'J\'ai lu et j\'accepte les CGU',
-                'required' => true
-            ))
-            ->add('register', SubmitType::class, array(
-                'label' => 'S\'inscrire',
-                'attr' => array('class' => 'btn btn-primary')
-            ))
-            ->getForm();
-
-        return $this->render('utils/inscription.html.twig', array(
-            'registerForm' => $form->createView()
         ));
     }
 
