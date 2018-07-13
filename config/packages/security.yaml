@@ -20,6 +20,9 @@ security:
             form_login:
                 login_path: login
                 check_path: login
+            logout:
+                path: /logout
+                target: /
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/ajouter-une-annonce, roles: ROLE_USER }

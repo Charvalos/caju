@@ -1,0 +1,9 @@
+<h3>Inscription réussie</h3>
+
+<p>{{ firstName }}, </p>
+
+<p>Merci de votre inscription à la bourse d'emploi de Caritas Jura.</p>
+<p>Veuillez activer votre compte en cliquant sur le lien suivant afin de terminer votre inscription :
+<a href="{{ url('checkEmail', {'hash': hash, 'email': email}) }}">Activer mon compte</a>
+</p>
+

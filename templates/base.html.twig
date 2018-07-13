@@ -13,11 +13,18 @@
     <body>
     <div class="container">
         {% block menu %}
-            {%  include 'utils/menu/menuDefault.html.twig' %}
-            {# include 'utils/menu/menuConnected.html.twig' #}
+            {% if app.user is not null %}
+                {%  include 'utils/menu/menuConnected.html.twig' %}
+            {% else %}
+                {%  include 'utils/menu/menuDefault.html.twig' %}
+            {% endif %}
+
         {% endblock %}
         <div class="content">
             {% block content %}
+                {% if app.user is not null %}
+                    <a href="{{ path('logout') }}">Se déconnecter</a>
+                {% endif %}
             {% endblock %}
         </div>
     </div>

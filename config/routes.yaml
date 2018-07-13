@@ -1,3 +1,2 @@
-#index:
-#    path: /
-#    controller: App\Controller\AppController::index
+logout:
+    path: /logout

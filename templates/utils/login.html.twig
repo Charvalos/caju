@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    {% if error %}
+        <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+    {% endif %}
+
+    <form action="{{ path('login') }}" method="post">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="_username" value="{{ lastUsername }}" />
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="_password" />
+
+        <button type="submit">login</button>
+    </form>
+
+    {% include 'utils/newCredentials.html.twig' %}
+
+    <a href="#" data-toggle="modal" data-target="#credentialsForgotten">Identifiants oubliés ?</a>
+    <a href="{{ path('registration') }}">Pas encore inscrit ?</a>
+{% endblock %}

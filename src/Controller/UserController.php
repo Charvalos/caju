@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\LoginType;
 use App\Form\RegisterType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
@@ -14,16 +16,28 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
+/**
+ * Class UserController
+ * @package App\Controller
+ */
 class UserController extends AbstractController
 {
+
     /**
      * @Route("inscription", name="registration")
+     * @param Request $request
+     * @param UserPasswordEncoderInterface $encoder
+     * @param \Swift_Mailer $mailer
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @throws \Exception
+     * Description : S'occupe de l'inscription d'une personne
      */
-    public function register(Request $request, UserPasswordEncoderInterface $encoder)
+    public function register(Request $request, UserPasswordEncoderInterface $encoder, \Swift_Mailer $mailer)
     {
         $user = new User();
-        $form = $this->createForm(RegisterType::class, $user);
+        $form = $this->createForm(RegisterType::class);
 
         //Gestion des données renvoyées
         $form->handleRequest($request);
@@ -32,21 +46,104 @@ class UserController extends AbstractController
         {
             //Encodage du mot de passe
             $password = $encoder->encodePassword($user, $user->getPassword());
-            $user->setPassword($password);
-            $user->setIsActive(false);
-            //Random hash
+            $user->setPassword($password)
+                ->setIsActive(false);
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($user);
+
+            //Envoie d'une requête pour vérifier que le pseudo n'existe déjà pas
+            $checkUser = $this->getDoctrine()->getRepository(User::class)->findOneBy(array(
+                'username' => $user->getUsername()
+            ));
+
+            //Si la requête ne renvoie rien, cela indique que le pseudo est libre
+            if(!$checkUser)
+            {
+                //Génération du hash et de l'URL pour l'email de confirmation
+                $hash = sha1(random_int(1, 1000));
+                $user->setHash($hash);
+
+                $email = (new \Swift_Message('Email'))
+                    ->setSubject('Bourse Emploi - Caritas Jura')
+                    ->setFrom("info@bourse-emploi-jura.ch ")
+                    ->setTo($user->getEmail())
+                    ->setBody(
+                        $this->renderView(
+                            'emails/emailRegistration.html.twig',
+                            array(
+                                'firstName' => $user->getFirstName(),
+                                'hash' => $user->getHash(),
+                                'email' => $user->getEmail()
+                            )
+                        )
+                    )
+                    ->setContentType('text/html');
+
+                $entityManager->flush();
+
+                $this->addFlash('success', 'Inscription réussie avec succès ! Veuillez activer votre compte (vérifier vos spams)');
+                $mailer->send($email);
+
+                return $this->redirectToRoute('index');
+            }
+            else
+            {
+                $form->get('username')->addError(new FormError('Pseudo déjà existant'));
+            }
+        }
+
+        return $this->render('utils/registration.html.twig', array(
+            'registerForm' => $form->createView(),
+        ));
+    }
+
+    /**
+     * @Route("activation-compte-{hash}-{email}", name="checkEmail")
+     * @param $hash
+     * @param $email
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * Description : Active ou non compte
+     */
+    public function checkEmail($hash, $email)
+    {
+        //Vérification de l'email de confirmation avec le hash et l'email
+        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(array(
+            'email' => $email,
+            'hash' => $hash
+        ));
+
+        //Si l'utilisateur a bien été trouvé, activation du compte
+        if($user)
+        {
+            $user->setHash(null)
+                ->setIsActive(true);
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Inscription réussie avec succès !');
+            $this->addFlash('success', 'Votre compte a bien été activé.');
 
             return $this->redirectToRoute('index');
         }
+        else
+        {
+            throw $this->createNotFoundException('Une erreur est survenue durant l\'activation du compte');
+        }
+    }
 
-        return $this->render('utils/registration.html.twig', array(
-            'registerForm' => $form->createView(),
+    /**
+     * @Route("se-connecter", name="login")
+     */
+    public function connection(Request $request, AuthenticationUtils $authenticationUtils)
+    {
+        $error = $authenticationUtils->getLastAuthenticationError();
+        $lastUsername = $authenticationUtils->getLastUsername();
+
+        return $this->render('utils/login.html.twig', array(
+            'lastUsername' => $lastUsername,
+            'error' => $error
         ));
     }
 

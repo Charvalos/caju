@@ -19,14 +19,15 @@ class AppController extends AbstractController
      */
     public function index()
     {
-        //Création du formulaire
+        //Création du formulaire de filtrage
         $form = $this->createForm(FilterType::class);
 
         $offers = $this->getDoctrine()->getRepository(JobOffer::class)->findAll();
 
         return $this->render('user/listOffers.html.twig', array(
             'filterForm' => $form->createView(),
-            'offers' => $offers
+            'offers' => $offers,
+            'hash' => sha1(random_int(1, 1000))
         ));
     }
 
@@ -44,36 +45,6 @@ class AppController extends AbstractController
     public function viewConditions()
     {
         return $this->render('utils/conditions.html.twig');
-    }
-
-    /**
-     * @Route("se-connecter", name="login")
-     */
-    public function viewFormConnection()
-    {
-        $form = $this->createFormBuilder()
-            ->add('pseudo', TextType::class, array(
-                'label' => false,
-                'attr' => array('placeholder' => 'Pseudo'),
-                'required' => true
-            ))
-            ->add('password', PasswordType::class, array(
-                'label' => false,
-                'attr' => array('placeholder' => 'Mot de passe'),
-                'required' => true
-            ))
-            ->add('stayConnected', CheckboxType::class, array(
-                'label' => 'Se souvenir de moi'
-            ))
-            ->add('connect', SubmitType::class, array(
-                'label' => 'Se connecter',
-                'attr' => array('class' => 'btnSubmit btn-primary')
-            ))
-            ->getForm();
-
-        return $this->render('utils/connection.html.twig', array(
-            'connectionForm' => $form->createView()
-        ));
     }
 
     /**
