@@ -13,13 +13,14 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UserController extends AbstractController
 {
     /**
      * @Route("inscription", name="registration")
      */
-    public function register(Request $request)
+    public function register(Request $request, UserPasswordEncoderInterface $encoder)
     {
         $user = new User();
         $form = $this->createForm(RegisterType::class, $user);
@@ -29,6 +30,17 @@ class UserController extends AbstractController
 
         if($form->isSubmitted() && $form->isValid())
         {
+            //Encodage du mot de passe
+            $password = $encoder->encodePassword($user, $user->getPassword());
+            $user->setPassword($password);
+            $user->setIsActive(false);
+            //Random hash
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Inscription réussie avec succès !');
 
             return $this->redirectToRoute('index');
         }

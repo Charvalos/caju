@@ -1,10 +1,17 @@
 {% extends 'base.html.twig' %}
 
 {% block content %}
-    {{ dump(app.session.get('user')) }}
     <div class="btnChoices">
         <button class="btn btn-primary" id="btnViewOffersJob">Je recherche un emploi</button>
         <button class="btn btn-primary" id="btnViewOffersSearch">J'offre un emploi</button>
+
+        {% if app.flashes('success')|length > 0 %}
+        <div class="alert-success">
+            {% for message in app.flashes('succes') %}
+                {{ message }}
+            {% endfor %}
+        </div>
+        {% endif %}
     </div>
 
     <div class="visible" id="listOffers">
