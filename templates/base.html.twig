@@ -23,6 +23,11 @@
         <div class="content">
             {% block content %}
                 {% if app.user is not null %}
+                    {% if not app.user.isActive %}
+                        <div class="alert alert-warning">
+                            Votre compte n'a pas encore été activé. Vous n'aurez pas accès à toutes les fonctionnalités
+                        </div>
+                    {% endif %}
                     <a href="{{ path('logout') }}">Se déconnecter</a>
                 {% endif %}
             {% endblock %}

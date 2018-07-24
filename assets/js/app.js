@@ -2,6 +2,39 @@ const $ = require('jquery');
 
 require('bootstrap');
 
+//Traitement des données (email) pour la demande d'un nouveau mot de passe
+$('#newPassword').on('submit', function () {
+    var email = $('#new_credential_email').val();
+    $.ajax({
+        url: 'demande-nouveau-mot-de-passe',
+        method: 'post',
+        dataType: 'text',
+        data: email,
+        async: true,
+
+        success: function (response) {
+            console.log(response);
+
+            var data = $.parseJSON(response);
+            if(data.status === 'success')
+            {
+                $('#closeModal').click();
+                $(location).attr('href', data.url);
+            }
+            else
+                alert('Adresse email invalide ou non-existante');
+        }
+    });
+});
+
+//Lors du clic sur le bouton envoyé du formulaire qui permet de demander un nouveaut mot de passe, envoi des données
+$('#sendNewPassword').on('click', function () {
+    $('#newPassword').submit();
+});
+
+/*
+Affiche les offres
+ */
 function viewOffers($typeOffer)
 {
     $('#listOffers').removeClass('invisible').addClass('visible');

@@ -1,5 +1,7 @@
 var Encore = require('@symfony/webpack-encore');
 
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+
 Encore
     // the project directory where compiled assets will be stored
     .setOutputPath('public/build/')
@@ -19,6 +21,11 @@ Encore
 
     // uncomment for legacy applications that require $/jQuery as a global variable
     .autoProvidejQuery()
+
+    .addPlugin(new CopyWebpackPlugin([
+        // copies to {output}/static
+        { from: './assets/images', to: 'images' }
+    ]))
 ;
 
 module.exports = Encore.getWebpackConfig();

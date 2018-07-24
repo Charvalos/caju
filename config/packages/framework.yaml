@@ -8,6 +8,8 @@ framework:
     # Remove or comment this section to explicitly disable session support.
     session:
         handler_id: ~
+    validation:
+        email_validation_mode: html5
 
     #esi: true
     #fragments: true

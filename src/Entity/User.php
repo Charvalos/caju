@@ -47,12 +47,12 @@ class User implements UserInterface, \Serializable
     private $lastName;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string", length=11)
      */
     private $phoneN1;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="string", nullable=true, length=11)
      */
     private $phoneN2;
 
