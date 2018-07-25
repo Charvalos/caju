@@ -39,9 +39,15 @@ class City
      */
     private $users;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\JobOffer", mappedBy="city")
+     */
+    private $jobOffers;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        $this->jobOffers = new ArrayCollection();
     }
 
     public function getId()
@@ -115,6 +121,37 @@ class City
             // set the owning side to null (unless already changed)
             if ($user->getCity() === $this) {
                 $user->setCity(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|JobOffer[]
+     */
+    public function getJobOffers(): Collection
+    {
+        return $this->jobOffers;
+    }
+
+    public function addJobOffer(JobOffer $jobOffer): self
+    {
+        if (!$this->jobOffers->contains($jobOffer)) {
+            $this->jobOffers[] = $jobOffer;
+            $jobOffer->setCity($this);
+        }
+
+        return $this;
+    }
+
+    public function removeJobOffer(JobOffer $jobOffer): self
+    {
+        if ($this->jobOffers->contains($jobOffer)) {
+            $this->jobOffers->removeElement($jobOffer);
+            // set the owning side to null (unless already changed)
+            if ($jobOffer->getCity() === $this) {
+                $jobOffer->setCity(null);
             }
         }
 

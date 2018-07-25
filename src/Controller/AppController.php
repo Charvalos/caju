@@ -5,10 +5,7 @@ namespace App\Controller;
 use App\Entity\JobOffer;
 use App\Form\FilterType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class AppController extends AbstractController
@@ -17,8 +14,12 @@ class AppController extends AbstractController
      * @Route("/", name="index")
      * @Route("annonces", name="offers")
      */
-    public function index()
+    public function index(Request $request)
     {
+        //Si la page qui appelé la page d'index correspond à "mon-compte", cela veut dire que l'utilisateur a modifié son mot de passe et a été déconnecté
+        if(strpos($request->headers->get('referer'), 'mon-compte'))
+            $this->addFlash('warning', 'Vous avez modifié votre mot de passe. Veuillez vous reconnectez.');
+
         //Création du formulaire de filtrage
         $form = $this->createForm(FilterType::class);
 
@@ -27,7 +28,6 @@ class AppController extends AbstractController
         return $this->render('user/listOffers.html.twig', array(
             'filterForm' => $form->createView(),
             'offers' => $offers,
-            'hash' => sha1(random_int(1, 1000))
         ));
     }
 

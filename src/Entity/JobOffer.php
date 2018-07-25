@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\JobOfferRepository")
@@ -56,6 +57,11 @@ class JobOffer
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Document", mappedBy="jobOffers")
+     * @ORM\JoinColumn(nullable=true)
+     * @Assert\File(
+     *      mimeTypes={"application/pdf"},
+     *      mimeTypesMessage="Seul les documents au format PDF sont acceptés"
+     * )
      */
     private $documents;
 
@@ -78,6 +84,12 @@ class JobOffer
      * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="jobOffer")
      */
     private $category;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\City", inversedBy="jobOffers")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $city;
 
     public function __construct()
     {
@@ -282,6 +294,18 @@ class JobOffer
     public function setCategory(?Category $category): self
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    public function getCity(): ?City
+    {
+        return $this->city;
+    }
+
+    public function setCity(?City $city): self
+    {
+        $this->city = $city;
 
         return $this;
     }

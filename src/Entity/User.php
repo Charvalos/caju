@@ -22,6 +22,7 @@ class User implements UserInterface, \Serializable
 
     /**
      * @ORM\Column(type="string", length=50)
+     * @Assert\NotBlank(message="Pseudo incorrecte")
      */
     private $username;
 
@@ -38,11 +39,13 @@ class User implements UserInterface, \Serializable
 
     /**
      * @ORM\Column(type="string", length=50)
+     * @Assert\NotBlank(message="Prénom incorrect")
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=50)
+     * @Assert\NotBlank(message="Nom incorrect")
      */
     private $lastName;
 
@@ -58,6 +61,7 @@ class User implements UserInterface, \Serializable
 
     /**
      * @ORM\Column(type="string", length=50)
+     * @Assert\NotBlank(message="Adresse incorrecte")
      */
     private $address;
 

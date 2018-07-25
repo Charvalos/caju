@@ -1,12 +1,17 @@
 {% extends 'base.html.twig' %}
 
 {% block content %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+
+    {{ form_start(form) }}
     <div class="d-flex justify-content-between">
         <div class="card w-50">
             <div class="card-body">
                 <h5 class="card-title">Identifiants</h5>
-                <div class="form-group"><input type="text" class="form-control" placeholder="Pseudo"></div>
-                <div class="form-group"><input type="password" class="form-control" placeholder="Mot de passe"></div>
+                {{ form_row(form.username) }}
+                {{ form_row(form.password) }}
             </div>
         </div>
         <div class="card" style="width: 45%;">
@@ -22,17 +27,33 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Informations personnelles</h5>
-                <img class="card-img-top" src="" alt="Photo de profil">
-                <div class="form-group"><input type="text" class="form-control" placeholder="Nom"></div>
-                <div class="form-group"><input type="password" class="form-control" placeholder="Prénom"></div>
-                <div class="form-group"><input type="date" class="form-control" placeholder="Date de naissance"></div>
-                <div class="form-group"><input type="email" class="form-control" placeholder="Email"></div>
-                <div class="form-group"><input type="email" class="form-control" placeholder="Téléphone fixe"></div>
-                <div class="form-group"><input type="email" class="form-control" placeholder="Téléphone mobile"></div>
-                <div class="form-group"><input type="email" class="form-control" placeholder="Adresse"></div>
-                <div class="form-group"><input type="email" class="form-control" placeholder="Localité"></div>
+                {% if app.user.picture is null %}
+                    <p class="font-italic">Aucune photo de profil définie</p>
+                {% else %}
+                    <img class="card-img-top" src="" alt="Photo de profil">
+                {% endif %}
+                {{ form_row(form.lastName) }}
+                {{ form_row(form.firstName) }}
+                <div class="form-group input-group">
+                    <div class="input-group-prepend">
+                        {{ form_label(form.birthdate, 'Date de naissance', {
+                            'label_attr': {'class': 'input-group-text'}}) }}
+                    </div>
+                    {{ form_widget(form.birthdate) }}
+                </div>
+                {{ form_row(form.email) }}
+                {{ form_row(form.phoneN1) }}
+                {{ form_row(form.phoneN2) }}
+                {{ form_row(form.address) }}
+                <div class="form-group input-group">
+                    <div class="input-group-prepend">
+                        {{ form_label(form.city, 'Localité', {
+                            'label_attr': {'class': 'input-group-text'}}) }}
+                    </div>
+                    {{ form_widget(form.city) }}
+                </div>
             </div>
         </div>
-        <button class="btn-primary btn">Sauvegarder</button>
+        {{ form_end(form) }}
     </div>
 {% endblock %}

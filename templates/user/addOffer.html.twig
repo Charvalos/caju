@@ -6,10 +6,10 @@
     {{ form_row(addOfferForm.title)}}
     <div class="form-group input-group">
         <div class="input-group-prepend">
-            {{ form_label(addOfferForm.workAddress, 'Lieu de travail', {
+            {{ form_label(addOfferForm.city, 'Lieu de travail', {
                 'label_attr': {'class': 'input-group-text'}}) }}
         </div>
-        {{ form_widget(addOfferForm.workAddress) }}
+        {{ form_widget(addOfferForm.city) }}
     </div>
     <div class="form-group input-group">
         <div class="input-group-prepend">
@@ -20,6 +20,9 @@
     </div>
     {{ form_row(addOfferForm.documents) }}
     {{ form_row(addOfferForm.description) }}
-
+    <div class="row d-flex justify-content-between mx-0">
+        {{ form_row(addOfferForm.save) }}
+        {{ form_row(addOfferForm.publish) }}
+    </div>
     {{ form_end(addOfferForm) }}
 {% endblock %}

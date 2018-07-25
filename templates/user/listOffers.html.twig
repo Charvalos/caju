@@ -2,7 +2,6 @@
 
 {% block content %}
     {{ parent() }}
-    {#{{ dump(app.user) }}#}
     <div class="row mx-auto">
         <div class="col px-0">
             <button class="btn btn-primary" id="btnViewOffersJob">Je recherche un emploi</button>
@@ -10,8 +9,13 @@
         </div>
 
         {% for message in app.flashes('success') %}
-            <div class="col alert alert-success mb-auto">{{ message }}</div>
+            <div class="alert alert-success">{{ message }}</div>
         {% endfor %}
+
+        {% for message in app.flashes('warning') %}
+            <div class="alert alert-warning">{{ message }}</div>
+        {% endfor %}
+
     </div>
 
     <div class="visible" id="listOffers">
