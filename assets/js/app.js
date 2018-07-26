@@ -18,7 +18,9 @@ $('#newPassword').on('submit', function () {
             var data = $.parseJSON(response);
             if(data.status === 'success')
             {
+                //Fermeture de la fenêtre modal
                 $('#closeModal').click();
+                //Redirection vers la page de traitement d'un nouveau mot de passe
                 $(location).attr('href', data.url);
             }
             else
