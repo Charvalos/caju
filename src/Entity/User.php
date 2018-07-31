@@ -5,11 +5,14 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @UniqueEntity("email", message="L'adresse email {{ value }} est déjà utilisée")
+ * @UniqueEntity("username", message="Le pseudo {{ value }} est déjà utilisé")
  */
 class User implements UserInterface, \Serializable
 {
@@ -50,12 +53,15 @@ class User implements UserInterface, \Serializable
     private $lastName;
 
     /**
-     * @ORM\Column(type="string", length=11)
+     * @ORM\Column(type="string", length=10)
+     * @Assert\NotBlank(message="Veuillez entrer un numéro de téléphone correct")
+     * @Assert\Type(type="numeric", message="Veuillez entrer un numéro de téléphone correct")
      */
     private $phoneN1;
 
     /**
-     * @ORM\Column(type="string", nullable=true, length=11)
+     * @ORM\Column(type="string", nullable=true, length=10)
+     * @Assert\Type(type="numeric", message="Veuillez entrer un numéro de téléphone correct")
      */
     private $phoneN2;
 
@@ -67,6 +73,7 @@ class User implements UserInterface, \Serializable
 
     /**
      * @ORM\Column(type="date")
+     * @Assert\NotBlank(message="Date incorrecte")
      */
     private $birthdate;
 
@@ -110,6 +117,16 @@ class User implements UserInterface, \Serializable
      * @ORM\OneToMany(targetEntity="App\Entity\Document", mappedBy="user")
      */
     private $documents;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $registrationDate;
+
+    /**
+     * @ORM\Column(type="string", length=50)
+     */
+    private $roles;
 
     public function __construct()
     {
@@ -416,6 +433,30 @@ class User implements UserInterface, \Serializable
                 $document->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function setRoles(string $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    /*public function __toString() : string
+    {
+
+    }*/
+
+    public function getRegistrationDate(): ?\DateTimeInterface
+    {
+        return $this->registrationDate;
+    }
+
+    public function setRegistrationDate(\DateTimeInterface $registrationDate): self
+    {
+        $this->registrationDate = $registrationDate;
 
         return $this;
     }

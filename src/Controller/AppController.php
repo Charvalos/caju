@@ -16,10 +16,6 @@ class AppController extends AbstractController
      */
     public function index(Request $request)
     {
-        //Si la page qui appelé la page d'index correspond à "mon-compte", cela veut dire que l'utilisateur a modifié son mot de passe et a été déconnecté
-        if(strpos($request->headers->get('referer'), 'mon-compte'))
-            $this->addFlash('warning', 'Vous avez modifié votre mot de passe. Veuillez vous reconnectez.');
-
         //Création du formulaire de filtrage
         $form = $this->createForm(FilterType::class);
 

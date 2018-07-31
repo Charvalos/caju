@@ -44,6 +44,11 @@ class Document
      */
     private $postulations;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\JobOffer", inversedBy="document")
+     */
+    private $jobOffer;
+
     public function __construct()
     {
         $this->jobOffers = new ArrayCollection();
@@ -139,6 +144,18 @@ class Document
         if ($this->postulations->contains($postulation)) {
             $this->postulations->removeElement($postulation);
         }
+
+        return $this;
+    }
+
+    public function getJobOffer(): ?JobOffer
+    {
+        return $this->jobOffer;
+    }
+
+    public function setJobOffer(?JobOffer $jobOffer): self
+    {
+        $this->jobOffer = $jobOffer;
 
         return $this;
     }

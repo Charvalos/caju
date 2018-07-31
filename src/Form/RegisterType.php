@@ -57,16 +57,18 @@ class RegisterType extends AbstractType
             ->add('phoneN2', TelType::class, array(
                 'attr' => array(
                     'placeholder' => 'Téléphone mobile',
-                    'maxlength' => 10
+                    'maxlength' => 10,
                     ),
-                'label' => false
+                'label' => false,
+                'empty_data' => '0000000000',
+                'required' => false
             ))
             ->add('address', TextType::class, array(
                 'attr' => array('placeholder' => 'Rue'),
                 'label' => false
             ))
             ->add('birthdate', BirthdayType::class, array(
-                'widget' => 'single_text'
+                'widget' => 'single_text',
             ))
             ->add('city', EntityType::class, array(
                 'class' => City::class,

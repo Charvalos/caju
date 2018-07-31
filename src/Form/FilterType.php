@@ -5,10 +5,8 @@ namespace App\Form;
 use App\Entity\Category;
 use App\Entity\City;
 use Doctrine\ORM\EntityRepository;
-use function foo\func;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -26,7 +24,9 @@ class FilterType extends AbstractType
                         ->orderBy('cities.npa', 'ASC');
                 }
             ))
-            ->add('date', DateType::class)
+            ->add('date', DateType::class, array(
+                'format' => 'dd MM yyyy'
+            ))
             ->add('category', EntityType::class, array(
                 'class' => Category::class,
                 'query_builder' => function(EntityRepository $er) {

@@ -6,12 +6,15 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\JobOfferRepository")
  */
 class JobOffer
 {
+   //private const $duration
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -56,16 +59,6 @@ class JobOffer
     private $user;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Document", mappedBy="jobOffers")
-     * @ORM\JoinColumn(nullable=true)
-     * @Assert\File(
-     *      mimeTypes={"application/pdf"},
-     *      mimeTypesMessage="Seul les documents au format PDF sont acceptés"
-     * )
-     */
-    private $documents;
-
-    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Closing", inversedBy="jobOffer")
      */
     private $closing;
@@ -94,7 +87,6 @@ class JobOffer
     public function __construct()
     {
         $this->postulations = new ArrayCollection();
-        $this->documents = new ArrayCollection();
         $this->categories = new ArrayCollection();
     }
 
@@ -205,34 +197,7 @@ class JobOffer
 
         return $this;
     }
-
-    /**
-     * @return Collection|Document[]
-     */
-    public function getDocuments(): Collection
-    {
-        return $this->documents;
-    }
-
-    public function addDocument(Document $document): self
-    {
-        if (!$this->documents->contains($document)) {
-            $this->documents[] = $document;
-            $document->addJobOffer($this);
-        }
-
-        return $this;
-    }
-
-    public function removeDocument(Document $document): self
-    {
-        if ($this->documents->contains($document)) {
-            $this->documents->removeElement($document);
-            $document->removeJobOffer($this);
-        }
-
-        return $this;
-    }
+    
 
     public function getClosing(): ?Closing
     {

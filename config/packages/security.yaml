@@ -2,12 +2,21 @@ security:
     encoders:
         App\Entity\User:
             algorithm: bcrypt
+        App\Entity\UserAdmin:
+            algorithm: bcrypt
     providers:
         #in_memory: { memory: ~ }
+        chain_provider:
+            chain:
+                providers: [user_provider, admin_provider]
         user_provider:
             entity:
-              class: App\Entity\User
-              property: username
+                class: App\Entity\User
+                property: username
+        admin_provider:
+            entity:
+                class: App\Entity\UserAdmin
+                property: username
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -16,7 +25,7 @@ security:
             anonymous: true
             pattern: ^/
             http_basic: true
-            provider: user_provider
+            provider: chain_provider
             form_login:
                 login_path: login
                 check_path: login

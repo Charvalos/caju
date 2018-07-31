@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\JobOffer;
+use App\Entity\OfferType;
 use App\Entity\User;
 use App\Form\AddJobOfferType;
 use App\Form\EditMyAccountType;
@@ -11,15 +12,17 @@ use App\Form\NewCredentialType;
 use App\Form\NewPasswordType;
 use App\Form\RegisterType;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 /**
  * Class UserController
@@ -27,7 +30,6 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
  */
 class UserController extends AbstractController
 {
-
     /**
      * @Route("inscription", name="registration")
      * Description : S'occupe de la phase d'inscription de l'utilisateur
@@ -48,62 +50,41 @@ class UserController extends AbstractController
             //Encodage du mot de passe
             $password = $encoder->encodePassword($user, $user->getPassword());
             $user->setPassword($password)
-                ->setIsActive(false);
+                ->setIsActive(false)
+                ->setRegistrationDate(new \DateTime())
+                ->setRoles('ROLE_USER');
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
 
-            //Envoie d'une requête pour vérifier que le pseudo n'existe déjà pas
-            $checkUser = $this->getDoctrine()->getRepository(User::class)->findOneBy(array(
-                'username' => $user->getUsername()
-            ));
+            //Génération du hash et de l'URL pour l'email de confirmation
+            $hash = sha1(random_int(1, 1000));
+            $user->setHash($hash);
 
-            //Vérification également que l'email n'est déjà pas utilisé
-            $checkEmail = $this->getDoctrine()->getRepository(User::class)->findOneBy(array(
-                'email' => $user->getEmail()
-            ));
+            //Lien de confirmation qui sera envoyé à l'utilisateur
+            $slug = $user->getHash() . '&' . $user->getEmail();
 
-            //Si le pseudo et l'email ne sont pas utilisés
-            if(!$checkUser)
-            {
-                if(!$checkEmail)
-                {
-                    //Génération du hash et de l'URL pour l'email de confirmation
-                    $hash = sha1(random_int(1, 1000));
-                    $user->setHash($hash);
-
-                    //Lien de confirmation qui sera envoyé à l'utilisateur
-                    $slug = $user->getHash() . '&' . $user->getEmail();
-
-                    $email = (new \Swift_Message('Email'))
-                        ->setSubject('Bourse Emploi - Caritas Jura')
-                        ->setFrom("info@bourse-emploi-jura.ch ")
-                        ->setTo($user->getEmail())
-                        ->setBody(
-                            $this->renderView(
-                                'emails/emailRegistration.html.twig',
-                                array(
-                                    'firstName' => $user->getFirstName(),
-                                    'slug' => $slug
-                                )
-                            )
+            $email = (new \Swift_Message('Email'))
+                ->setSubject('Bourse Emploi - Caritas Jura')
+                ->setFrom("info@bourse-emploi-jura.ch ")
+                ->setTo($user->getEmail())
+                ->setBody(
+                    $this->renderView(
+                        'emails/emailRegistration.html.twig',
+                        array(
+                            'firstName' => $user->getFirstName(),
+                            'slug' => $slug
                         )
-                        ->setContentType('text/html');
+                    )
+                )
+                ->setContentType('text/html');
 
-                    $entityManager->flush();
+            $entityManager->flush();
 
-                    $this->addFlash('success', 'Inscription réussie avec succès ! Veuillez activer votre compte (vérifier vos spams)');
-                    $mailer->send($email);
+            $this->addFlash('success', 'Inscription réussie avec succès ! Veuillez activer votre compte (vérifiez vos spams)');
+            $mailer->send($email);
 
-                    return $this->redirectToRoute('index');
-                }
-                else
-                    $form->get('email')->addError(new FormError('L\'adresse email est déjà utilisée'));
-            }
-            else
-            {
-                $form->get('username')->addError(new FormError('Pseudo déjà existant'));
-            }
+            return $this->redirectToRoute('index');
         }
 
         return $this->render('utils/registration.html.twig', array(
@@ -138,6 +119,13 @@ class UserController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
+            //Création des répertoirs propres à l'utilisateur
+            $fileSystem = new Filesystem();
+            $profileImagesDir = $this->getParameter('kernel.project_dir') . '/public/profile_images/';
+            $profileDocumentsDir = $this->getParameter('kernel.project_dir') . '/public/documents/';
+            $fileSystem->mkdir($profileImagesDir . $user->getUsername());
+            $fileSystem->mkdir($profileDocumentsDir . $user->getUsername());
+
             $this->addFlash('success', 'Votre compte a bien été activé.');
 
             return $this->redirectToRoute('index');
@@ -163,6 +151,8 @@ class UserController extends AbstractController
         ]);
 
         $formNewCredential = $this->createForm(NewCredentialType::class);
+
+        $this->addFlash('success', 'Vous êtes maintenant connecté');
 
         return $this->render('utils/login.html.twig', array(
             'error' => $error,
@@ -260,7 +250,7 @@ class UserController extends AbstractController
     /**
      * @Route("ajouter-une-annonce", name="addOffer")
      */
-    public function addOffer(Request $request)
+    public function addOffer(Request $request, EntityManagerInterface $entity)
     {
         $jobOffer = new JobOffer();
 
@@ -271,8 +261,26 @@ class UserController extends AbstractController
         if($form->isSubmitted() && $form->isValid())
         {
             $jobOffer = $form->getData();
+            $user = $this->getUser();
 
-            dump($jobOffer);
+            //Ajout de la date de publication et de la date d'expiration
+            $jobOffer->setPublicationDate(new \DateTime());
+            $renewalDate = new \DateTime();
+            $jobOffer->setRenewalDate($renewalDate->add(new \DateInterval('P2M')));
+
+            $jobOffer->setIsActive(true);
+            $jobOffer->setUser($user);
+
+            $offerType = $this->getDoctrine()->getRepository(OfferType::class)->findOneBy(array(
+                'name' => $form->get('type')->getData()
+            ));
+            $jobOffer->setOfferType($offerType);
+
+            $entity->persist($jobOffer);
+            $entity->flush();
+
+            $this->addFlash('success', 'Votre annonce a été ajoutée avec succès');
+            return $this->redirect($this->generateUrl('index'));
         }
 
         return $this->render('user/addOffer.html.twig', array(
@@ -312,7 +320,7 @@ class UserController extends AbstractController
      * @Route("mon-compte", name="myAccount")
      * Description : Permet de modifier les informations de son compte
      */
-    public function account(Request $request, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder)
+    public function updateAccount(Request $request, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder)
     {
         //Récupération de l'utilisateur
         $user = $this->getUser();
@@ -324,15 +332,12 @@ class UserController extends AbstractController
         {
             $entityManager->persist($user);
 
-            //Si l'utilisateur à indiquà un nouveau mot de passe, encodage du mot de passe et affiliation à l'entié User
+            //Si l'utilisateur à indiqué un nouveau mot de passe, encodage du mot de passe et affiliation à l'entié User
             if(!empty($form->get('password')->getData()))
             {
                 $user->setPassword($encoder->encodePassword($user, $form->get('password')->getData()));
 
                 $entityManager->flush();
-
-                //Déconnexion de l'utilisateur
-                return $this->redirectToRoute('logout');
             }
 
             $entityManager->flush();

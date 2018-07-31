@@ -1,0 +1,72 @@
+easy_admin:
+    site_name: 'Administration'
+    formats:
+        datetime: 'd F Y - H:i'
+    list:
+        actions:
+            - '-show'
+            - { name: 'edit', icon: 'pencil', label: '' }
+            - { name: 'delete', icon: 'times', label: '' }
+    edit:
+        actions: [ '-delete' ]
+    show:
+        actions: [ '-delete', '-edit' ]
+    entities:
+        Category:
+            class: App\Entity\Category
+            label: Catégories
+            list:
+                title: Liste des catégories
+                fields:
+                    - { property: 'title', label: 'Titre' }
+                    - { property: 'description', label: 'Description' }
+                sort: ['title', 'ASC']
+                actions:
+                    - { name: 'new', label: 'Ajouter une catégorie' }
+            edit:
+                title: 'Modifier la catégorie'
+            new:
+                title: 'Ajouter une nouvelle catégorie'
+            form:
+                fields:
+                    - { property: 'title', label: 'Titre' }
+                    - { property: 'description', label: 'Description' }
+        User:
+            class: App\Entity\User
+            label: Utilisateurs
+            list:
+                title: Liste des utilisateurs
+                fields:
+                    - { property: 'username', label: 'Compte' }
+                    - { property: 'lastLogin', label: 'Dernière connexion' }
+                    - { property: 'registrationDate', label: 'Inscrit depuis le' }
+                    - { property: 'isActive', label: 'Actif', type: 'boolean' }
+            disabled_actions:
+                - 'new'
+                - 'edit'
+        JobOffer:
+            class: App\Entity\JobOffer
+            label: Offres
+            list:
+                title: Liste des offres
+        City:
+            class: App\Entity\City
+            label: Localités
+            list:
+                title: Liste des localités
+                fields:
+                    - { property: 'npa', label: 'NPA', type: 'string' }
+                    - { property: 'name', label: 'Localité' }
+                    - { property: 'district', label: 'District' }
+                sort: ['npa', 'ASC']
+                actions:
+                    - { name: 'new', label: 'Ajouter une localité' }
+            edit:
+                title: 'Modifier la localité'
+            new:
+                title: 'Ajouter une localité'
+            form:
+                fields:
+                    - { property: 'npa', label: 'NPA' }
+                    - { property: 'name', label: 'Localité' }
+                    - { property: 'district', label: 'District' }

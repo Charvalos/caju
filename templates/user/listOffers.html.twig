@@ -4,8 +4,8 @@
     {{ parent() }}
     <div class="row mx-auto">
         <div class="col px-0">
-            <button class="btn btn-primary" id="btnViewOffersJob">Je recherche un emploi</button>
-            <button class="btn btn-primary" id="btnViewOffersSearch">J'offre un emploi</button>
+            <button class="btn btn-primary" name="btnSelect" id="btnViewOffersJob">Je recherche un emploi</button>
+            <button class="btn btn-primary" name="btnSelect" id="btnViewOffersSearch">J'offre un emploi</button>
         </div>
 
         {% for message in app.flashes('success') %}
@@ -18,25 +18,25 @@
 
     </div>
 
-    <div class="visible" id="listOffers">
+    <div class="invisible" id="listOffers">
         {{ form_start(filterForm) }}
 
-        <div class="form-group d-flex align-content-between">
-            <div class="input-group m-auto">
+        <div class="form-group d-flex">
+            <div class="input-group">
                 <div class="input-group-prepend">
                     {{ form_label(filterForm.place, 'Lieu', {
                         'label_attr': {'class': 'input-group-text'}}) }}
                 </div>
                 {{ form_widget(filterForm.place) }}
             </div>
-            <div class="input-group m-auto px-5">
+            <div class="input-group">
                 <div class="input-group-prepend">
                     {{ form_label(filterForm.date, 'Date', {
                         'label_attr': {'class': 'input-group-text'}}) }}
                 </div>
                 {{ form_widget(filterForm.date) }}
             </div>
-            <div class="input-group m-auto pr-2">
+            <div class="input-group">
                 <div class="input-group-prepend">
                     {{ form_label(filterForm.category, 'Catégorie', {
                         'label_attr': {'class': 'input-group-text'}}) }}
@@ -61,19 +61,22 @@
                     </tr>
                 </thead>
                 <tbody>
-                {% if offers is empty %}
+                {% if offers is not empty %}
+                    {% for offer in offers %}
+                    <tr>
+                        <td data-title="{{ offer.title }}" data-description="{{ offer.description }}" data-city="{{ offer.city }}" data-category="{{ offer.category }}" data-publicationDate="{{ offer.publicationDate|date('d.m.Y') }}" id="offerTitle">{{ offer.title }}</td>
+                        <td>{{ offer.description[:55] }} ...</td>
+                        <td>{{ offer.city }}</td>
+                        <td>{{ offer.category }}</td>
+                        <td>{{ offer.publicationDate|date('d.m.Y') }}</td>
+                        <td id="showOfferDetails" data-toggle="modal" data-target="#detailsOffer"><a href="#"><span class="fas fa-info"></span></a></td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
                     <tr>
                         <td colspan="6">
                             Il y actuellement aucune offres en attente
                         </td>
-                    </tr>
-                    <tr>
-                        <td data-title="Taille d'arbre" data-description="Recherche personne pour tailler des arbres" data-city="2800 Delémont" data-categpry="Jardinage" data-publicationDate="06.07.2018" id="offerTitle">Taille d'arbres</td>
-                        <td>Recherche personne pour tailler des arbres</td>
-                        <td>2800 Delémont</td>
-                        <td>Jardinage</td>
-                        <td>06.07.2018</td>
-                        <td id="showOfferDetails" data-toggle="modal" data-target="#detailsOffer"><a href="#"><span class="fas fa-info"></span></a></td>
                     </tr>
                 {% endif %}
                 </tbody>
