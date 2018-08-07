@@ -19,20 +19,20 @@ class Closing
     private $id;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="datetime")
      */
-    private $closingDate;
-
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\JobOffer", mappedBy="closing")
-     */
-    private $jobOffer;
+    private $date;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\ClosingType", inversedBy="closings")
      * @ORM\JoinColumn(nullable=false)
      */
     private $closingType;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\JobOffer", mappedBy="closing")
+     */
+    private $jobOffer;
 
     public function __construct()
     {
@@ -44,24 +44,40 @@ class Closing
         return $this->id;
     }
 
-    public function getClosingDate(): ?\DateTimeInterface
+    public function getDate(): ?\DateTimeInterface
     {
-        return $this->closingDate;
+        return $this->date;
     }
 
-    public function setClosingDate(\DateTimeInterface $closingDate): self
+    public function setDate(\DateTimeInterface $date): self
     {
-        $this->closingDate = $closingDate;
+        $this->date = $date;
 
         return $this;
     }
 
-    /**
-     * @return Collection|JobOffer[]
-     */
-    public function getJobOffer(): Collection
+    public function getJobOffer(): ?JobOffer
     {
         return $this->jobOffer;
+    }
+
+    public function setJobOffer(?JobOffer $jobOffer): self
+    {
+        $this->jobOffer = $jobOffer;
+
+        return $this;
+    }
+
+    public function getClosingType(): ?ClosingType
+    {
+        return $this->closingType;
+    }
+
+    public function setClosingType(?ClosingType $closingType): self
+    {
+        $this->closingType = $closingType;
+
+        return $this;
     }
 
     public function addJobOffer(JobOffer $jobOffer): self
@@ -83,18 +99,6 @@ class Closing
                 $jobOffer->setClosing(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getClosingType(): ?ClosingType
-    {
-        return $this->closingType;
-    }
-
-    public function setClosingType(?ClosingType $closingType): self
-    {
-        $this->closingType = $closingType;
 
         return $this;
     }

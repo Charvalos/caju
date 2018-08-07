@@ -2,6 +2,7 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: 'fr'
+    profile_image_directory: '%kernel.project_dir%/public/profile_images/'
 
 services:
     # default configuration for services in *this* file
@@ -28,6 +29,12 @@ services:
         class: Twig_Extensions_Extension_Intl
         tags:
             - { name: twig.extension }
+    twig.extension.date:
+        class: Twig_Extensions_Extension_Date
+        tags:
+            - { name: twig.extension }
+        arguments:
+            - '@translator'
 
     App\EventListener\LoginListener:
         tags:

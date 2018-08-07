@@ -4,8 +4,8 @@
     {{ parent() }}
     <div class="row mx-auto">
         <div class="col px-0">
-            <button class="btn btn-primary" name="btnSelect" id="btnViewOffersJob">Je recherche un emploi</button>
-            <button class="btn btn-primary" name="btnSelect" id="btnViewOffersSearch">J'offre un emploi</button>
+            <button class="btn btn-primary btnSelect" name="btnSelect" id="btnViewOffersJob" data="offerJob">Offres d'emploi</button>
+            <button class="btn btn-primary btnSelect" name="btnSelect" id="btnViewOffersSearch" data="searchJob">Personnes</button>
         </div>
 
         {% for message in app.flashes('success') %}
@@ -18,7 +18,8 @@
 
     </div>
 
-    <div class="invisible" id="listOffers">
+    <div class="visible" id="listOffers">
+        {% if filterForm is defined %}
         {{ form_start(filterForm) }}
 
         <div class="form-group d-flex">
@@ -47,7 +48,9 @@
         </div>
 
         {{ form_end(filterForm) }}
+        {% endif %}
 
+        {% if offers is defined %}
         <div class="table-responsive">
             <table class="table mx-auto table-hover text-center">
                 <thead>
@@ -63,14 +66,14 @@
                 <tbody>
                 {% if offers is not empty %}
                     {% for offer in offers %}
-                    <tr>
-                        <td data-title="{{ offer.title }}" data-description="{{ offer.description }}" data-city="{{ offer.city }}" data-category="{{ offer.category }}" data-publicationDate="{{ offer.publicationDate|date('d.m.Y') }}" id="offerTitle">{{ offer.title }}</td>
-                        <td>{{ offer.description[:55] }} ...</td>
-                        <td>{{ offer.city }}</td>
-                        <td>{{ offer.category }}</td>
-                        <td>{{ offer.publicationDate|date('d.m.Y') }}</td>
-                        <td id="showOfferDetails" data-toggle="modal" data-target="#detailsOffer"><a href="#"><span class="fas fa-info"></span></a></td>
-                    </tr>
+                        <tr data-id="{{ offer.id }}" data-page="listOffers" data-title="{{ offer.title }}" data-description="{{ offer.description }}" data-city="{{ offer.city }}" data-category="{{ offer.category }}" data-publicationDate="{{ offer.publicationDate|date('d.m.Y') }}"">
+                            <td>{{ offer.title[:20] }}</td>
+                            <td>{{ offer.description[:55] }} ...</td>
+                            <td>{{ offer.city }}</td>
+                            <td>{{ offer.category }}</td>
+                            <td>{{ offer.publicationDate|date('d.m.Y') }}</td>
+                            <td><a href="#" data-toggle="modal" data-target="#detailsOffer"><span class="fas fa-info" id="showDetailsOffer"></span></a></td>
+                        </tr>
                     {% endfor %}
                 {% else %}
                     <tr>
@@ -81,6 +84,9 @@
                 {% endif %}
                 </tbody>
             </table>
-        </div
+        </div>
+        {% endif %}
     </div>
+
+    {% include 'modal/detailsOffer.html.twig' %}
 {% endblock %}

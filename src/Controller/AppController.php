@@ -3,8 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\JobOffer;
+use App\Entity\OfferType;
+use App\Entity\Postulation;
 use App\Form\FilterType;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -14,16 +19,37 @@ class AppController extends AbstractController
      * @Route("/", name="index")
      * @Route("annonces", name="offers")
      */
-    public function index(Request $request)
+    public function index(Request $request, EntityManagerInterface $entity)
     {
-        //Création du formulaire de filtrage
-        $form = $this->createForm(FilterType::class);
+        /*if($request->isXmlHttpRequest())
+        {
+            //Création du formulaire de filtrage
+            $form = $this->createForm(FilterType::class);
 
-        $offers = $this->getDoctrine()->getRepository(JobOffer::class)->findAll();
+            $offers = $this->getDoctrine()->getRepository(JobOffer::class)->findBy(array(
+                'closing' => null,
+                'offerType' => $entity->getRepository(OfferType::class)->findOneBy(array(
+                    'name' => $request->getContent()
+                ))
+            ));
+
+            return $this->render('user/listOffers.html.twig', array(
+                'filterForm' => $form->createView(),
+                'offers' => $offers,
+            ));
+        }*/
+
+        $offers = $entity->getRepository(JobOffer::class)->findBy(array(
+            'closing' => null,
+        ));
+
+        $postulations = $entity->getRepository(Postulation::class)->findBy(array(
+            'user' => $this->getUser()
+        ));
 
         return $this->render('user/listOffers.html.twig', array(
-            'filterForm' => $form->createView(),
             'offers' => $offers,
+            'postulations' => $postulations
         ));
     }
 
@@ -48,6 +74,6 @@ class AppController extends AbstractController
      */
     public function viewDetailOffer()
     {
-        return $this->render('user/detailOffer.html.twig');
+        return $this->render('editlOffer.html.twig');
     }
 }

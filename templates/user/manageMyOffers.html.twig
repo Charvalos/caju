@@ -1,6 +1,9 @@
 {% extends 'base.html.twig' %}
 
 {% block content %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
     <div class="row">
         <div class="col">
             <div class="card">
@@ -9,15 +12,15 @@
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             Offres d'emplois ouvertes :
-                            <span class="badge badge-info badge-pill">5</span>
+                            <span class="badge badge-info badge-pill">{{ offerJob }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             Offres de services ouvertes :
-                            <span class="badge badge-info badge-pill">0</span>
+                            <span class="badge badge-info badge-pill">{{ searchJob }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             Annonces à renouveler :
-                            <span class="badge badge-info badge-pill">2</span>
+                            <span class="badge badge-info badge-pill">{{ toRenew }}</span>
                         </li>
                     </ul>
                 </div>
@@ -26,7 +29,8 @@
         <div class="col">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Offres d'emplois</h5>
+                    <h5 class="card-title">Offres</h5>
+                    {% if selectOffer is defined %}
                     {{ form_start(selectOffer) }}
                     <div class="form-group input-group">
                         <div class="input-group-prepend">
@@ -36,47 +40,53 @@
                         {{ form_widget(selectOffer.offers) }}
                     </div>
                     {{ form_end(selectOffer) }}
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item d-flex align-items-center">
-                            <div class="d-inline-flex w-75">xTerminAtor</div>
-                            <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-check"></span></div>
-                            <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-info"></span></div>
-                        </li>
-                        <li class="list-group-item d-flex align-items-center">
-                            <div class="d-inline-flex w-75">TontonFlingueur</div>
-                            <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-hourglass-half"></span></div>
-                            <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-info"></span></div>
-                        </li>
-                        <li class="list-group-item d-flex align-items-center">
-                            <div class="d-inline-flex w-75">HopSuisse</div>
-                            <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-times"></span></div>
-                            <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-info"></span></div>
-                        </li>
-                    </ul>
+                        {% if offerPostulations is defined %}
+                            {% for postulation in offerPostulations %}
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item d-flex align-items-center">
+                                        <div class="d-inline-flex w-75">{{ postulation.user }}</div>
+                                        {% if not postulation.status and postulation.responseDate is null %}
+                                            <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-hourglass-half"></span></div>
+                                        {% elseif not postulation.status and postulation.responseDate is not null %}
+                                            <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-times"></span></div>
+                                        {% else %}
+                                            <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-check"></span></div>
+                                        {% endif %}
+                                        <div class="d-inline-flex w-25 justify-content-center"><a href="{{ path('userDetail', {'username': postulation.user.username}) }}"><span class="fas fa-info"></span></a></div>
+                                        {{ app.session.set('id', postulation.id) }}
+                                    </li>
+                                </ul>
+                            {% endfor %}
+                        {% endif %}
+                    {% else %}
+                        <p><i>Vous avez actuellement aucune offre d'emplois en cours</i></p>
+                    {% endif %}
                 </div>
             </div>
         </div>
         <div class="col">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Offres de services</h5>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item d-flex align-items-center">
-                            <div class="d-inline-flex w-75">Taille d'arbre</div>
-                            <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-check"></span></div>
-                            <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-info"></span></div>
-                        </li>
-                        <li class="list-group-item d-flex align-items-center">
-                            <div class="d-inline-flex w-75">Baby-sitting</div>
-                            <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-times"></span></div>
-                            <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-info"></span></div>
-                        </li>
-                        <li class="list-group-item d-flex align-items-center">
-                            <div class="d-inline-flex w-75">Déménagement</div>
-                            <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-hourglass-half"></span></div>
-                            <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-info"></span></div>
-                        </li>
-                    </ul>
+                    <h5 class="card-title">Postulations</h5>
+                    {% if app.user.postulations|length > 0 %}
+                        {% for postulation in app.user.postulations %}
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex align-items-center">
+                                    <div class="d-inline-flex w-75">{{ postulation.jobOffer }}</div>
+                                    {% if not postulation.status and postulation.responseDate is null %}
+                                        <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-hourglass-half"></span></div>
+                                    {% elseif not postulation.status and postulation.responseDate is not null %}
+                                        <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-times"></span></div>
+                                    {% else %}
+                                        <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-check"></span></div>
+                                    {% endif %}
+                                    <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-info"></span></div>
+                                </li>
+                            </ul>
+                        {% endfor %}
+                    {% else %}
+                    <p><i>Vous avez actuellement aucune postulation en cours</i></p>
+                    {% endif %}
                 </div>
             </div>
             <div class="d-flex justify-content-between align-items-center">
@@ -111,65 +121,67 @@
         <option>Publier</option>
     </select>
 
-    <div class="table-responsive">
+    <div class="table-responsive" id="listOffers">
         <table class="table mx-auto table-hover text-center">
             <thead>
             <tr>
+                <th></th>
                 <th>Titre</th>
                 <th>Description</th>
                 <th>Lieu</th>
                 <th>Catégorie</th>
                 <th>Type</th>
                 <th>Statut</th>
-                <th>Publiée le</th>
                 <th></th>
             </tr>
             </thead>
             <tbody>
-            {% for i in 0..2 %}
+            {% if jobOffers %}
+                {% for jobOffer in jobOffers %}
+                    {# {{ dump(jobOffer.renewalDate) }}
+                    {{ dump(jobOffer.renewalDate|time_diff) }} #}
+                    {% if jobOffer.isActive and jobOffer.closing is null %}
+                        <tr data-id="{{ jobOffer.id }}" data-title="{{ jobOffer.title }}" data-description="{{ jobOffer.description }}" data-city="{{ jobOffer.city }}" data-category="{{ jobOffer.category }}" data-publicationDate="{{ jobOffer.publicationDate|date('d.m.Y') }}">
+                    {% elseif not jobOffer.isActive and jobOffer.closing is null %}
+                        <tr class="table-warning" data-id="{{ jobOffer.id }}" data-title="{{ jobOffer.title }}" data-description="{{ jobOffer.description }}" data-city="{{ jobOffer.city }}" data-category="{{ jobOffer.category }}" data-publicationDate="{{ jobOffer.publicationDate|date('d.m.Y') }}">
+                    {% else %}
+                        <tr class="table-success" data-id="{{ jobOffer.id }}" data-title="{{ jobOffer.title }}" data-description="{{ jobOffer.description }}" data-city="{{ jobOffer.city }}" data-category="{{ jobOffer.category }}" data-publicationDate="{{ jobOffer.publicationDate|date('d.m.Y') }}">
+                    {% endif %}
+                    {% if jobOffer.closing is null and jobOffer.isActive %}
+                        <td><input class="form-check-input mx-auto" type="checkbox" value="{{ jobOffer.id }}" id="defaultCheck1"></td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                        <td id="offerTitle">{{ jobOffer.title }}</td>
+                        <td>{{ jobOffer.description[:15] }}...</td>
+                        <td>{{ jobOffer.city }}</td>
+                        <td>{{ jobOffer.category }}</td>
+                        {% if jobOffer.offerType == 'offerJob' %}
+                        <td>Offre d'emploi</td>
+                        {% else %}
+                        <td>Recherche d'emploi</td>
+                        {% endif %}
+                        {% if jobOffer.isActive and jobOffer.closing is null %}
+                        <td>Publiée</td>
+                        {% elseif not jobOffer.isActive and jobOffer.closing is null %}
+                        <td>À publier</td>
+                        {% else %}
+                        <td>Clôturée</td>
+                        {% endif %}
+                        <td class="d-flex align-items-center justify-content-between"><a href="#"><span class="fas fa-info" data-toggle="modal" data-target="#detailsOffer"></span></a><a href="#"><span class="fas fa-edit"></span></a></td>
+                    </tr>
+                {% endfor %}
+            {% else %}
                 <tr>
-                    <td>Taille d'arbres</td>
-                    <td>Recherche personne pour tailler des arbres</td>
-                    <td>2800 Delémont</td>
-                    <td>Jardinage</td>
-                    <td>Offre d'emploi</td>
-                    <td>Clôturée</td>
-                    <td>06.07.2018</td>
-                    <td class="d-flex align-items-center justify-content-between"><a href="#"><span class="fas fa-info"></span></a><a href="#"><span class="fas fa-edit"></span></a></td>
+                    <td colspan="7">Aucune offre trouvée</td>
                 </tr>
-            {% endfor %}
-                <tr class="table-warning">
-                    <td>Taille d'arbres</td>
-                    <td>Recherche personne pour tailler des arbres</td>
-                    <td>2800 Delémont</td>
-                    <td>Jardinage</td>
-                    <td>Offre d'emploi</td>
-                    <td>Clôturée</td>
-                    <td>06.07.2018</td>
-                    <td class="d-flex align-items-center justify-content-between"><a href="#"><span class="fas fa-info"></span></a><a href="#"><span class="fas fa-edit"></span></a></td>
-                </tr>
-                <tr class="table-danger">
-                    <td>Taille d'arbres</td>
-                    <td>Recherche personne pour tailler des arbres</td>
-                    <td>2800 Delémont</td>
-                    <td>Jardinage</td>
-                    <td>Offre d'emploi</td>
-                    <td>Clôturée</td>
-                    <td>06.07.2018</td>
-                    <td class="d-flex align-items-center justify-content-between"><a href="#"><span class="fas fa-info"></span></a><a href="#"><span class="fas fa-edit"></span></a></td>
-                </tr>
-                <tr class="table-success">
-                    <td>Taille d'arbres</td>
-                    <td>Recherche personne pour tailler des arbres</td>
-                    <td>2800 Delémont</td>
-                    <td>Jardinage</td>
-                    <td>Offre d'emploi</td>
-                    <td>Clôturée</td>
-                    <td>06.07.2018</td>
-                    <td class="d-flex align-items-center justify-content-center"><a href="#"><span class="fas fa-info"></span></a></td>
-                </tr>
+            {% endif %}
             </tbody>
         </table>
-        <button class="btn btn-primary">Renouveler les annonces sélectionnées</button>
-    </div
+        {% if jobOffers %}
+        <button class="btn btn-primary" id="renewSelected">Renouveler les annonces sélectionnées</button>
+        {% endif %}
+    </div>
+
+    {% include 'modal/detailsOffer.html.twig' %}
 {% endblock %}

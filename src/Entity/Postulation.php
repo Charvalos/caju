@@ -60,12 +60,12 @@ class Postulation
         return $this->id;
     }
 
-    public function getPostulationDate(): ?\DateTimeInterface
+    public function getPostulationDate(): ?\DateTime
     {
         return $this->postulationDate;
     }
 
-    public function setPostulationDate(\DateTimeInterface $postulationDate): self
+    public function setPostulationDate(\DateTime $postulationDate): self
     {
         $this->postulationDate = $postulationDate;
 
@@ -89,7 +89,7 @@ class Postulation
         return $this->responseDate;
     }
 
-    public function setResponseDate(?\DateTimeInterface $responseDate): self
+    public function setResponseDate(?\DateTime $responseDate): self
     {
         $this->responseDate = $responseDate;
 

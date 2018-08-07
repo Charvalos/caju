@@ -84,6 +84,11 @@ class User implements UserInterface, \Serializable
 
     /**
      * @ORM\Column(type="string", length=10, nullable=true)
+     * @Assert\Image(
+     *     maxHeight="150",
+     *     maxWidth="150",
+     *     mimeTypes={"image/jpeg"},
+     *     mimeTypesMessage="Seul les images au format PDF sont acceptées")
      */
     private $picture;
 
@@ -444,10 +449,10 @@ class User implements UserInterface, \Serializable
         return $this;
     }
 
-    /*public function __toString() : string
+    public function __toString() : string
     {
-
-    }*/
+        return $this->username;
+    }
 
     public function getRegistrationDate(): ?\DateTimeInterface
     {

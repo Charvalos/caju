@@ -12,13 +12,15 @@
     </head>
     <body>
     <div class="container">
+        {% if app.user %}
+            <a href="{{ path('logout') }}">Se déconnecter </a><span class="fas fa-sign-out-alt"></span>
+        {% endif %}
         {% block menu %}
             {% if app.user is not null %}
                 {%  include 'utils/menu/menuConnected.html.twig' %}
             {% else %}
                 {%  include 'utils/menu/menuDefault.html.twig' %}
             {% endif %}
-
         {% endblock %}
         <div class="content">
             {% block content %}
@@ -28,7 +30,6 @@
                             Votre compte n'a pas encore été activé. Vous n'aurez pas accès à toutes les fonctionnalités
                         </div>
                     {% endif %}
-                    <a href="{{ path('logout') }}">Se déconnecter</a>
                 {% endif %}
             {% endblock %}
         </div>

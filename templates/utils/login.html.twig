@@ -11,7 +11,7 @@
     {{ form_widget(loginForm) }}
     {{ form_end(loginForm) }}
 
-    {% include 'utils/newCredentials.html.twig' %}
+    {% include 'modal/newCredentials.html.twig' %}
 
     <a href="#" data-toggle="modal" data-target="#newPassword">Identifiants oubliés ?</a>
     <a href="{{ path('registration') }}">Pas encore inscrit ?</a>

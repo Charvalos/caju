@@ -59,11 +59,6 @@ class JobOffer
     private $user;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Closing", inversedBy="jobOffer")
-     */
-    private $closing;
-
-    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\OfferType", inversedBy="jobOffers")
      */
     private $offerType;
@@ -83,6 +78,12 @@ class JobOffer
      * @ORM\JoinColumn(nullable=false)
      */
     private $city;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Closing", inversedBy="jobOffer")
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $closing;
 
     public function __construct()
     {
@@ -273,5 +274,10 @@ class JobOffer
         $this->city = $city;
 
         return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->title;
     }
 }

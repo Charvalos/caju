@@ -26,11 +26,12 @@
     <div class="mx-auto w-50">
         <div class="card">
             <div class="card-body">
+                {{ dump(app.user) }}
                 <h5 class="card-title">Informations personnelles</h5>
                 {% if app.user.picture is null %}
                     <p class="font-italic">Aucune photo de profil définie</p>
                 {% else %}
-                    <img class="card-img-top" src="" alt="Photo de profil">
+                    <img class="card-img-top" src="{{ asset('public/profile_images/#app.user.username/#app.user.picture') }}" alt="Photo de profil">
                 {% endif %}
                 {{ form_row(form.lastName) }}
                 {{ form_row(form.firstName) }}
