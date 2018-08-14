@@ -17,6 +17,7 @@
     },
     "dependencies": {
         "node-sass": "^4.9.0",
+        "npm": "^6.3.0",
         "sass-loader": "^7.0.3"
     }
 }

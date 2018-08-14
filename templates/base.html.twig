@@ -7,14 +7,11 @@
         </title>
         {% block stylesheets %}
             <link rel="stylesheet" href="{{ asset('build/css/app.css') }}" />
-            <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">"
+            <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
         {% endblock %}
     </head>
     <body>
     <div class="container">
-        {% if app.user %}
-            <a href="{{ path('logout') }}">Se déconnecter </a><span class="fas fa-sign-out-alt"></span>
-        {% endif %}
         {% block menu %}
             {% if app.user is not null %}
                 {%  include 'utils/menu/menuConnected.html.twig' %}

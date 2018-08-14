@@ -7,6 +7,7 @@ use App\Entity\City;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -17,26 +18,35 @@ class FilterType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('place', EntityType::class, array(
+            ->add('city', EntityType::class, array(
                 'class' => City::class,
-                'query_builder' => function(EntityRepository $er){
-                    return $er->createQueryBuilder('cities')
-                        ->orderBy('cities.npa', 'ASC');
-                }
+                'query_builder' => function(EntityRepository $entityRepository){
+                    return $entityRepository->createQueryBuilder('listCities')
+                        ->orderBy('listCities.npa', 'ASC');
+                },
+                'label' => false,
+                'placeholder' => 'Localité',
+                'required' => false,
             ))
             ->add('date', DateType::class, array(
-                'format' => 'dd MM yyyy'
+                'widget' => 'single_text',
+                'required' => false
             ))
             ->add('category', EntityType::class, array(
                 'class' => Category::class,
-                'query_builder' => function(EntityRepository $er) {
-                    return $er->createQueryBuilder('categories')
-                        ->orderBy('categories.title', 'ASC');
-                }
+                'query_builder' => function(EntityRepository $entityRepository){
+                    return $entityRepository->createQueryBuilder('listCategories')
+                        ->orderBy('listCategories.title', 'ASC');
+                },
+                'label' => false,
+                'placeholder' => 'Catégorie',
+                'required' => false
             ))
-            ->add('filter', SubmitType::class, array(
+            ->add('filter', ButtonType::class, array(
                 'label' => 'Filtrer',
-                'attr' => array('class' => 'btn btn-primary')
+                'attr' => array(
+                    'class' => 'btn btn-primary'
+                )
             ))
         ;
     }
@@ -44,7 +54,11 @@ class FilterType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            // Configure your form options here
         ]);
+    }
+
+    public function getBlockPrefix()
+    {
+        return null;
     }
 }

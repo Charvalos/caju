@@ -2,16 +2,13 @@
 
 namespace App\Controller;
 
-use App\Entity\JobOffer;
-use App\Entity\OfferType;
-use App\Entity\Postulation;
 use App\Form\FilterType;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class AppController extends AbstractController
 {
@@ -19,37 +16,46 @@ class AppController extends AbstractController
      * @Route("/", name="index")
      * @Route("annonces", name="offers")
      */
-    public function index(Request $request, EntityManagerInterface $entity)
+    public function index(Request $request, EntityManagerInterface $entity, SerializerInterface $serializer)
     {
-        /*if($request->isXmlHttpRequest())
+        $form = $this->createForm(FilterType::class);
+
+        if($request->isXmlHttpRequest())
         {
-            //Création du formulaire de filtrage
-            $form = $this->createForm(FilterType::class);
+            if(!is_null($this->getUser()))
+                $userID = $this->getUser()->getId();
+            else
+                $userID = '*';
 
-            $offers = $this->getDoctrine()->getRepository(JobOffer::class)->findBy(array(
-                'closing' => null,
-                'offerType' => $entity->getRepository(OfferType::class)->findOneBy(array(
-                    'name' => $request->getContent()
-                ))
+            //Récupération des offres de la catégories demandées et qui ne sont pas liées à l'utilisateur actuelle
+            $queryOffers = $entity->createQueryBuilder();
+            $queryOffers->select('offers')
+                ->from('App:JobOffer', 'offers')
+                ->join('offers.offerType', 'type')
+                ->join('offers.city', 'city')
+                ->join('offers.category', 'category')
+                ->join('offers.offerType', 'offerType')
+                ->join('offers.user', 'user')
+                ->addSelect('city.name AS cityName')
+                ->addSelect('city.npa AS cityNPA')
+                ->addSelect('category.title AS categoryTitle')
+                ->addSelect('offerType.name AS typeOffer')
+                ->where('type.name = :type')
+                ->andWhere('offers.isActive = true')
+                //->andWhere('offers.user != :user')
+                ->orderBy('offers.publicationDate', 'DESC')
+                ->setParameters(array(
+                    'type' => $request->query->get('typeOffer'),
+                    //'user' => $userID
+                ));
+
+            return new JsonResponse(array(
+                'offers' => $queryOffers->getQuery()->getArrayResult(),
             ));
-
-            return $this->render('user/listOffers.html.twig', array(
-                'filterForm' => $form->createView(),
-                'offers' => $offers,
-            ));
-        }*/
-
-        $offers = $entity->getRepository(JobOffer::class)->findBy(array(
-            'closing' => null,
-        ));
-
-        $postulations = $entity->getRepository(Postulation::class)->findBy(array(
-            'user' => $this->getUser()
-        ));
+        }
 
         return $this->render('user/listOffers.html.twig', array(
-            'offers' => $offers,
-            'postulations' => $postulations
+            'filterForm' => $form->createView()
         ));
     }
 
@@ -75,5 +81,54 @@ class AppController extends AbstractController
     public function viewDetailOffer()
     {
         return $this->render('editlOffer.html.twig');
+    }
+
+    /**
+     * @Route("filtrer", name="filterList")
+     */
+    public function filterList(Request $request, EntityManagerInterface $entity)
+    {
+        if($request->isXmlHttpRequest())
+        {
+            $jobOffers = $entity->createQueryBuilder();
+            $jobOffers->select('jobOffers')
+                ->from('App:JobOffer', 'jobOffers');
+
+            /*
+             * Ajout des paramètres en fonction des choix du filtre
+             */
+            if($request->get('idCity') !== "")
+            {
+                $jobOffers->andWhere('jobOffers.city = :idCity')
+                    ->setParameter('idCity', $request->get('idCity'));
+            }
+
+            if($request->get('idCategory') !== "")
+            {
+                $jobOffers->andWhere('jobOffers.category = :idCategory')
+                    ->setParameter('idCategory', $request->get('idCategory'));
+            }
+
+            if($request->get('date') !== "")
+            {
+                $jobOffers->andWhere('jobOffers.publicationDate >= :date')
+                    ->setParameter('date', $request->get('date'));
+            }
+
+            $jobOffers->join('jobOffers.offerType', 'typeOffer')
+                ->join('jobOffers.city', 'offerCity')
+                ->join('jobOffers.category', 'offerCategory')
+                ->addSelect('offerCity.name AS cityName')
+                ->addSelect('offerCity.npa AS cityNPA')
+                ->addSelect('offerCategory.title as category')
+                ->andWhere('typeOffer.name = :typeOffer')
+                ->andWhere('jobOffers.isActive = TRUE')
+                ->setParameter('typeOffer', $request->get('typeOffer'))
+                ->orderBy('jobOffers.publicationDate', 'DESC');
+
+            return new JsonResponse(array(
+                'data' => $jobOffers->getQuery()->getArrayResult()
+            ));
+        }
     }
 }

@@ -39,3 +39,15 @@
 {
     color: #ff6a09;
 }
+
+.fa-power-off
+{
+    color: #bd2130;
+}
+
+.card-img-top
+{
+    height: 120px;
+    width: 120px;
+    margin-bottom: 15px;
+}

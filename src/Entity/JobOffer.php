@@ -120,24 +120,24 @@ class JobOffer
         return $this;
     }
 
-    public function getPublicationDate(): ?\DateTimeInterface
+    public function getPublicationDate(): ?\DateTime
     {
         return $this->publicationDate;
     }
 
-    public function setPublicationDate(?\DateTimeInterface $publicationDate): self
+    public function setPublicationDate(?\DateTime $publicationDate): self
     {
         $this->publicationDate = $publicationDate;
 
         return $this;
     }
 
-    public function getRenewalDate(): ?\DateTimeInterface
+    public function getRenewalDate(): ?\DateTime
     {
         return $this->renewalDate;
     }
 
-    public function setRenewalDate(?\DateTimeInterface $renewalDate): self
+    public function setRenewalDate(?\DateTime $renewalDate): self
     {
         $this->renewalDate = $renewalDate;
 

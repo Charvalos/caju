@@ -18,39 +18,26 @@
 
     </div>
 
-    <div class="visible" id="listOffers">
-        {% if filterForm is defined %}
-        {{ form_start(filterForm) }}
-
-        <div class="form-group d-flex">
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    {{ form_label(filterForm.place, 'Lieu', {
-                        'label_attr': {'class': 'input-group-text'}}) }}
-                </div>
-                {{ form_widget(filterForm.place) }}
+    <div class="invisible" id="listOffers">
+            {{ form_start(filterForm, {'attr': {'class': 'form-inline justify-content-between mb-2'} } ) }}
+            <div class="form-group">
+                {{ form_widget(filterForm.city) }}
             </div>
-            <div class="input-group">
+            <div class="form-group input-group">
                 <div class="input-group-prepend">
                     {{ form_label(filterForm.date, 'Date', {
                         'label_attr': {'class': 'input-group-text'}}) }}
                 </div>
                 {{ form_widget(filterForm.date) }}
             </div>
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    {{ form_label(filterForm.category, 'Catégorie', {
-                        'label_attr': {'class': 'input-group-text'}}) }}
-                </div>
+            <div class="form-group">
                 {{ form_widget(filterForm.category) }}
             </div>
-            {{ form_widget(filterForm.filter) }}
-        </div>
-
-        {{ form_end(filterForm) }}
-        {% endif %}
-
-        {% if offers is defined %}
+            <div class="form-group">
+                {{ form_widget(filterForm.filter) }}
+            </div>
+            {{ form_end(filterForm) }}
+        <div class="row"></div>
         <div class="table-responsive">
             <table class="table mx-auto table-hover text-center">
                 <thead>
@@ -63,29 +50,10 @@
                         <th></th>
                     </tr>
                 </thead>
-                <tbody>
-                {% if offers is not empty %}
-                    {% for offer in offers %}
-                        <tr data-id="{{ offer.id }}" data-page="listOffers" data-title="{{ offer.title }}" data-description="{{ offer.description }}" data-city="{{ offer.city }}" data-category="{{ offer.category }}" data-publicationDate="{{ offer.publicationDate|date('d.m.Y') }}"">
-                            <td>{{ offer.title[:20] }}</td>
-                            <td>{{ offer.description[:55] }} ...</td>
-                            <td>{{ offer.city }}</td>
-                            <td>{{ offer.category }}</td>
-                            <td>{{ offer.publicationDate|date('d.m.Y') }}</td>
-                            <td><a href="#" data-toggle="modal" data-target="#detailsOffer"><span class="fas fa-info" id="showDetailsOffer"></span></a></td>
-                        </tr>
-                    {% endfor %}
-                {% else %}
-                    <tr>
-                        <td colspan="6">
-                            Il y actuellement aucune offres en attente
-                        </td>
-                    </tr>
-                {% endif %}
+                <tbody id="offerList">
                 </tbody>
             </table>
         </div>
-        {% endif %}
     </div>
 
     {% include 'modal/detailsOffer.html.twig' %}

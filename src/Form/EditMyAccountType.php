@@ -9,12 +9,14 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\BirthdayType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EditMyAccountType extends AbstractType
@@ -71,6 +73,12 @@ class EditMyAccountType extends AbstractType
                     return $er->createQueryBuilder('listCities')
                         ->orderBy('listCities.npa', 'ASC');
                 }
+            ))
+            ->add('picture', FileType::class, array(
+                'data_class' => null,
+                'required' => false,
+                'attr' => array('placeholder' => 'Télécharger une image de profil (120x120)'),
+                'label' => false
             ))
             ->add('update', SubmitType::class, array(
                 'attr' => array('class' => 'btn btn-primary'),

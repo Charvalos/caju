@@ -2,7 +2,10 @@ const $ = require('jquery');
 
 require('bootstrap');
 
-//Lors du clic sur le bouton envoyé du formulaire qui permet de demander un nouveaut mot de passe, envoi des données
+
+/**
+ * Lors du clic sur le bouton envoyé du formulaire qui permet de demander un nouveaut mot de passe, envoi des données
+ */
 $('#sendNewPassword').on('click', function () {
     $('#newPassword').submit();
 });
@@ -11,7 +14,9 @@ $('#btnUploadProfileImage').on('click', function () {
     $('#uploadProfileImage').submit();
 });
 
-//Traitement des données (email) pour la demande d'un nouveau mot de passe
+/**
+ * Traitement des données (email) pour la demande d'un nouveau mot de passe
+ */
 $('#newPassword').on('submit', function () {
     var email = $('#new_credential_email').val();
     $.ajax({
@@ -36,110 +41,245 @@ $('#newPassword').on('submit', function () {
     });
 });
 
-/*
-Affiche les "objets" nécessaires après le clic sur un bouton
+/**
+ * Affiche les "objets" nécessaires après le clic sur un bouton (liste des offres ou ajout d'une offre
  */
 $('.btnSelect').click(function () {
-    if($(this).attr('name') == 'btnSelect' )
+    if($(this).attr('name') === 'btnSelect' )
     {
-        console.log('Entrée !')
         var typeOffer = $(this).attr('data');
-        //Affichage de la liste ou du formulaire
-        $('.invisible').removeClass().addClass('visible');
 
         //Ajout d'un attribut caché au formulaire d'ajout d'annonce
         if($(this).data('page') === 'addOffer')
+        {
+            //Suppression des boutons
+            $(this).parent().parent().remove();
+            //Affichage de la liste ou du formulaire
+            $('.invisible').removeClass().addClass('visible');
             $('#type').attr('value', typeOffer);
+        }
         else
         {
-            console.log('Avant AJAX');
             $.ajax({
                 url: 'annonces',
-                method: 'post',
-                data: typeOffer,
+                data: 'typeOffer=' + typeOffer,
                 dataType: 'text',
                 async: true,
 
                 success: function (response) {
-                    console.log('SUCCES');
+                    var offers = $.parseJSON(response);
+                    var dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+                    var container = $('#offerList');
+
+                    offers = offers.offers;
+
+                    //Suppression des données de la table
+                    container.empty();
+
+                    if(offers.length > 0)
+                    {
+                        for(var i = 0; i < offers.length; i++)
+                        {
+                            //Création de l'objet Date en JS afin de pouvoir utiliser les méthodes associées
+                            var date = new Date(offers[i]["0"].publicationDate['date']);
+
+                            var tr = '<tr>';
+
+                            var tdTitle = '<td>' + offers[i]["0"].title.slice(0,20) + '...</td>';
+                            var tdDescription = '<td>' + offers[i]["0"].description.slice(0,55) + '...</td>';
+                            var tdCity = '<td>' + offers[i].cityNPA + ' ' + offers[i].cityName + '</td>';
+                            var tdCategory = '<td>' + offers[i].categoryTitle + '</td>';
+                            var tdPublicationDate = '<td>' + date.toLocaleDateString('fr-FR', dateOptions) + '</td>';
+                            var tdOpenModal = '<td><a href="#" data-toggle="modal" data-target="#detailsOffer" id="showDetailOffer" data-id="' + offers[i]["0"].id + '" data-page="listOffers" data-title="' + offers[i]["0"].title + '" data-description="' + offers[i]["0"].description + '" ' +
+                                'data-city="' + offers[i].cityNPA + ' ' + offers[i].cityName + '" data-category="' + offers[i].categoryTitle + '" data-publicationDate="' + date.toLocaleDateString('fr-FR', dateOptions) + '"' +
+                                'data-type="' + offers[i].typeOffer + '""><span class="fas fa-info"></span></a></td>';
+
+                            var content = tr + tdTitle + tdDescription + tdCity + tdCategory + tdPublicationDate + tdOpenModal + '</tr>';
+
+                            container.append(content);
+                        }
+                    }
+                    else
+                    {
+                        var content = '<tr><td colspan="6"> Il y actuellement aucune offres en attente</td></tr>';
+                        container.append(content);
+                    }
+
+                    //Affichage de la liste
+                    $('.invisible').removeClass().addClass('visible');
+
+                    $('#listOffers').attr('name', typeOffer);
+                },
+                error: function () {
+                    $('#offerList').empty();
+
+                    container.append('<tr><td colspan="6"> Une erreur inconnue est suzvenue</td></tr>');
                 }
             })
         }
-
-        //Suppression des boutons
-        $(this).parent().parent().remove();
     }
 });
 
-
 /**
- * Fonction qui permet d'afficher les détails d'une offre au sein d'une fenêtre modale
+ * Ajout dynamique des informations d'une offre dans la fenêtre modal
  */
-$('.fa-info').click(function (){
-    //Récupération des données contenues dans la ligne de la table (data-XXXX)
-    var tr = $(this).parent().parent().parent()
-    var title = tr.data('title');
-    var description = tr.data('description');
-    var city = tr.data('city');
-    var category = tr.data('category');
-    var publicationDate = tr.data('publicationdate');
-    var id = tr.data('id');
+$('#detailsOffer').on('show.bs.modal', function (event) {
+    var modalTitle = $('.modal-title');
+    var modalBody = $('.modal-body');
+    var modalFooter = $('.modal-footer');
 
-    var content =  '<p><b>Description : </b>' + description + '</p>' +
-        '<p><b>Catégorie : </b>' + category + '</p>' +
-        '<p><b>Lieu : </b>' + city + '</p>' +
-        '<p><b>Publiée le : </b>' + publicationDate + '</p>' +
-        '<input type="hidden" name="idJobOffer" value="' + id + '">';
+    modalTitle.empty();
+    modalBody.empty();
+    modalFooter.empty();
 
-    if(tr.data('page') === 'listOffers')
-        var buttons = '<button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeModal">Fermer</button>\n' +
-        '<button type="button" class="btn btn-primary" id="btnInterest">Je suis intéressé(e)</button>'
-    else
-        var buttons = '<button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeModal">Renouveler l\'annonce</button>\n' +
-            '<button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeModal">Clôturer l\'annonce</button>\n' +
-            '<button type="button" class="btn btn-primary" id="sendNewPassword">Modifier</button>'
+    switch (event.relatedTarget.id) {
+        case 'showDetailOffer':
+            var datas = $(event.relatedTarget);;
 
-    //Insertion de la fenêtre
-    $('.modal-title').append(title);
-    $('.modal-body').append(content);
-    $('.modal-footer').append(buttons);
-});
+            //Récupération des données contenues dans les attributs "data-xxx"
+            var title = datas.data('title');
+            var description = datas.data('description');
+            var city = datas.data('city');
+            var category = datas.data('category');
+            var publicationDate = datas.data('publicationdate');
+            var id = datas.data('id');
+            var userID = datas.data('userid');
 
-//Suppression du contenu quand la fenêtre de détails des annonces se ferme
-$('#detailsOffer').on('hide.bs.modal', function () {
-    $('.modal-title').empty();
-    $('.modal-body').empty();
-    $('.modal-footer').empty();
+            var content =  '<p><b>Description : </b>' + description + '</p>' +
+                '<p><b>Catégorie : </b>' + category + '</p>' +
+                '<p><b>Lieu : </b>' + city + '</p>' +
+                '<p><b>Publiée le : </b>' + publicationDate + '</p>' +
+                '<input type="hidden" id="idJobOffer" value="' + id + '">';
+
+            if(datas.data('page') === 'listOffers')
+                var buttons = '<button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeModal">Fermer</button>\n' +
+                    '<button type="button" class="btn btn-primary" id="btnInterest">Je suis intéressé(e)</button>'
+            else
+                var buttons = '<button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeModal">Renouveler l\'annonce</button>\n' +
+                    '<button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeModal">Clôturer l\'annonce</button>\n' +
+                    '<button type="button" class="btn btn-primary" id="sendNewPassword">Modifier</button>'
+
+            //Insertion de la fenêtre
+            modalTitle.append(title);
+            modalBody.append(content);
+            modalFooter.append(buttons);
+
+            break;
+        case 'showDetailOfferFromMyOffers':
+            var dataId = $(event.relatedTarget).data('id');
+
+            $.ajax({
+                url: 'details-offre',
+                data: 'id='+dataId,
+                dataType: 'text',
+                async: true,
+                
+                success: function (response) {
+                    var datas = $.parseJSON(response);
+                    var dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+
+                    console.log(datas);
+
+                    //Récupération des données contenues dans les attributs "data-xxx"
+                    var title = datas.title;
+                    var description = datas.description;
+                    var city = datas.city;
+                    var category = datas.category;
+                    var publicationDate = new Date(datas.publicationDate['date']);
+
+                    var content =  '<p><b>Description : </b>' + description + '</p>' +
+                        '<p><b>Catégorie : </b>' + category + '</p>' +
+                        '<p><b>Lieu : </b>' + city + '</p>' +
+                        '<p><b>Publiée le : </b>' + publicationDate.toLocaleDateString('fr-FR', dateOptions) + '</p>';
+
+                    //Insertion de la fenêtre
+                    modalTitle.append(title);
+                    modalBody.append(content);
+                    modalFooter.append('<button type="button" class="btn btn-primary" data-dismiss="modal" id="closeModal">Fermer</button>');
+                }
+            })
+    }
 });
 
 /**
- * Lorsque qu'une personne clic sur le bouton "Je suis intéressé(e)"
+ * Lorsque qu'une personne clic sur le bouton "Je suis intéressé(e)" dans le fenêtre modal qui affichent les détails d'une offre
  */
 $('#detailsOffer').on('click', '#btnInterest', function () {
     //Récupération de l'ID de l'offre
-    var id = $('.modal-body input').val();
+    var offerID = $('#idJobOffer').val();
 
     $.ajax({
         url: 'candidature',
-        data: id,
-        dataType: 'text',
+        data: offerID,
         method: 'POST',
+        dataType: 'text',
         async: true,
         
         success: function (response) {
             var data = $.parseJSON(response);
-            if(data.status === 'success')
+            if(data.status === 'success'){}
                 $(location).attr('href', data.url);
         }
     });
 });
 
 /**
- * Permet d'afficher les postulations pour les offres d'emplois
+ * Permet d'afficher les postulations pour les offres d'emplois dans la fenêtre de gestion de ses offres
  */
 $('#form_offers').on('change', function () {
-    console.log($('select option:selected').val());
     var id = $('select option:selected').val()
+
+    $.ajax({
+        url: 'gerer-mes-annonces',
+        data: 'idOffer=' + id,
+        dataType: 'text',
+        async: true,
+
+        success: function(response) {
+            var data = $.parseJSON(response);
+            var container = $('#listPostulations');
+            var text;
+
+            container.empty();
+
+            if(data.postulations.length > 0)
+            {
+                for(var i = 0; i < data.postulations.length; i++)
+                {
+                    var postulation = data.postulations[i];
+                    var icon;
+
+                    var username = '<li class="list-group-item d-flex align-items-center">' +
+                        '<div class="d-inline-flex w-75">' + postulation.username + '</div>';
+
+                    //Même conditions que dans la page "manageMyOffers.html.twig" pour afficher la bonne icône
+                    if(!postulation["0"].status && postulation["0"].responseDate === null)
+                        icon = '<div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-hourglass-half"></span></div>';
+                    else if(!postulation["0"].status && postulation["0"].responseDate !== null)
+                        icon = '<div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-times"></span></div>';
+                    else
+                        icon = '<div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-check"></span></div>';
+
+                    text = username + icon + '<div class="d-inline-flex w-25 justify-content-center"><a href="/details/' + postulation.offerTitle + '/' + postulation.username + '"><span class="fas fa-info"></span></a></div></li>';
+
+                    container.append(text);
+                }
+            }
+            else
+            {
+                text = '<i>Aucune demande reçue pour cette offre</i>';
+                container.append(text);
+            }
+        },
+        error: function () {
+            var container = $('#listPostulations');
+            container.empty();
+
+            var error = 'Une erreur est survenue. Veuillez recharger la page';
+
+            containe.append(error);
+        }
+    })
 });
 
 /**
@@ -169,6 +309,9 @@ $('#rejectPostulation').on('click', function () {
     });
 });
 
+/**
+ * S'occupe de gérer le fait qu'une personne accepte une postulation
+ */
 $('#acceptPostulation').on('click', function(){
     var values = $('#postulationValues').val().split('/');
 
@@ -194,14 +337,102 @@ $('#acceptPostulation').on('click', function(){
 });
 
 /**
- * Renouvellement des annonces sélectionnées sur la page des gestions des annonces
+ * Permet de télécharger le document de Chèque-Emploi avant d'accepter la postulation
  */
-$('#renewSelected').click(function () {
-
+$('#downloadChequeEmploi').on('click', function () {
+        $(location).attr('href', 'https://www.caritas-jura.ch/dms/file/MTM2Mg%3D%3D/Adhsion-Chque-emploi.pdf');
+        $('#acceptPostulation').click();
 });
 
 /**
- * Dû un bug de Bootstrap, ce petit bout de code ci-dessous est nécessaire pour afficher le document sélectionner dans
+ * Renouvellement des annonces sélectionnées sur la page des gestions des annonces
+ */
+$('#renewSelected').click(function () {
+    var jobOffersId = new Array();
+
+    //Ajout des valeurs (en l'occurence, les ID des offres) des cases à cocher cochées
+    $.each($('input:checked'), function (key, value) {
+       jobOffersId.push($(value).val());
+    });
+
+    $.ajax({
+        url: 'renouveler-offre',
+        data: 'data=' + jobOffersId,
+        dataType: 'text',
+        async: true,
+        
+        success: function (response) {
+            var data = $.parseJSON(response);
+            $(location).attr('href', data.url);
+        },
+        
+        error: function (response) {
+            console.log(response)
+        }
+    });
+
+    console.log(jobOffersId);
+});
+
+/**
+ * Permet de filtrer l'affichage des offres
+ */
+$('#filter').on('click', function () {
+    var idCity = $('#city option:selected').val();
+    var idCategory = $('#category option:selected').val();
+    var date = $('#date').val();
+    var container = $('#offerList');
+
+    $.ajax({
+        url: 'filtrer',
+        method: 'POST',
+        data: {
+            'idCity': idCity,
+            'idCategory': idCategory,
+            'date': date,
+            'typeOffer': $('#listOffers').attr('name')
+        },
+        async: true,
+
+       success: function(response){
+            var data = response.data;
+            var dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+
+            console.log(data);
+
+            container.empty();
+
+            if(data.length > 0)
+            {
+                for(var i = 0; i < data.length; i++)
+                {
+                    //Création de l'objet Date en JS afin de pouvoir utiliser les méthodes associées
+                    var date = new Date(data[i]["0"].publicationDate['date']);
+
+                    var tr = '<tr>';
+
+                    var tdTitle = '<td>' + data[i]["0"].title.slice(0,20) + '...</td>';
+                    var tdDescription = '<td>' + data[i]["0"].description.slice(0,55) + '...</td>';
+                    var tdCity = '<td>' + data[i].cityNPA + ' ' + data[i].cityName + '</td>';
+                    var tdCategory = '<td>' + data[i].category + '</td>';
+                    var tdPublicationDate = '<td>' + date.toLocaleDateString('fr-FR', dateOptions) + '</td>';
+                    var tdOpenModal = '<td><a href="#" data-toggle="modal" data-target="#detailsOffer" id="showDetailOffer" data-id="' + data[i]["0"].id + '" data-page="listOffers" data-title="' + data[i]["0"].title + '" data-description="' + data[i]["0"].description + '" ' +
+                        'data-city="' + data[i].cityNPA + ' ' + data[i].cityName + '" data-category="' + data[i].categoryTitle + '" data-publicationDate="' + date.toLocaleDateString('fr-FR', dateOptions) + '"' +
+                        'data-type="' + data[i].typeOffer + '""><span class="fas fa-info"></span></a></td>';
+
+                    var content = tr + tdTitle + tdDescription + tdCity + tdCategory + tdPublicationDate + tdOpenModal + '</tr>';
+
+                    container.append(content);
+                }
+            }
+            else
+                container.append('<tr><td colspan="6">Aucune offre ne correspond aux critères de recherche</td></tr>');
+       }
+    });
+});
+
+/**
+ * Dû un bug de Bootstrap, ce petit bout de code ci-dessous est nécessaire pour afficher le document sélectionné dans
  * les champs d'upload
  */
 $(document).on('change', '.custom-file-input', function () {

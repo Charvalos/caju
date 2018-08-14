@@ -83,12 +83,15 @@ class User implements UserInterface, \Serializable
     private $lastLogin;
 
     /**
-     * @ORM\Column(type="string", length=10, nullable=true)
+     * @ORM\Column(type="string", nullable=true)
      * @Assert\Image(
-     *     maxHeight="150",
-     *     maxWidth="150",
-     *     mimeTypes={"image/jpeg"},
-     *     mimeTypesMessage="Seul les images au format PDF sont acceptées")
+     *     mimeTypes={ "image/jpeg" },
+     *     mimeTypesMessage="Veuillez télécharger une image au format JPG",
+     *     maxWidth="120",
+     *     maxHeight="120",
+     *     maxWidthMessage="La largeur de l'image ne doit pas dépasser {{ max_width }} pixels",
+     *     maxHeightMessage="La hauteur de l'image ne doit pas dépasser {{ max_height }} pixels"
+     * )
      */
     private $picture;
 
@@ -119,11 +122,6 @@ class User implements UserInterface, \Serializable
     private $jobOffers;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Document", mappedBy="user")
-     */
-    private $documents;
-
-    /**
      * @ORM\Column(type="datetime")
      */
     private $registrationDate;
@@ -137,7 +135,6 @@ class User implements UserInterface, \Serializable
     {
         $this->postulations = new ArrayCollection();
         $this->jobOffers = new ArrayCollection();
-        $this->documents = new ArrayCollection();
     }
 
     public function getId()
@@ -405,37 +402,6 @@ class User implements UserInterface, \Serializable
             // set the owning side to null (unless already changed)
             if ($jobOffer->getUser() === $this) {
                 $jobOffer->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Document[]
-     */
-    public function getDocuments(): Collection
-    {
-        return $this->documents;
-    }
-
-    public function addDocument(Document $document): self
-    {
-        if (!$this->documents->contains($document)) {
-            $this->documents[] = $document;
-            $document->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeDocument(Document $document): self
-    {
-        if ($this->documents->contains($document)) {
-            $this->documents->removeElement($document);
-            // set the owning side to null (unless already changed)
-            if ($document->getUser() === $this) {
-                $document->setUser(null);
             }
         }
 

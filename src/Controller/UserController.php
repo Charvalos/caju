@@ -8,30 +8,21 @@ use App\Entity\Postulation;
 use App\Entity\User;
 use App\Form\AddJobOfferType;
 use App\Form\EditMyAccountType;
-use App\Form\EditOfferType;
 use App\Form\LoginType;
 use App\Form\NewCredentialType;
 use App\Form\NewPasswordType;
 use App\Form\RegisterType;
-use App\Form\UploadProfileImageType;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
-use Doctrine\ORM\QueryBuilder;
-use phpDocumentor\Reflection\Types\Array_;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DomCrawler\Field\InputFormField;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use Symfony\Component\Validator\Constraints\DateTime;
 
 /**
  * Class UserController
@@ -51,8 +42,7 @@ class UserController extends AbstractController
         //Gestion des données renvoyées
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid())
-        {
+        if ($form->isSubmitted() && $form->isValid()) {
             //Récupération des données envoyées par le formulaire
             $user = $form->getData();
 
@@ -119,8 +109,7 @@ class UserController extends AbstractController
         ));
 
         //Si l'utilisateur a bien été trouvé, activation du compte
-        if($user)
-        {
+        if ($user) {
             $user->setHash(null)
                 ->setIsActive(true);
 
@@ -138,9 +127,7 @@ class UserController extends AbstractController
             $this->addFlash('success', 'Votre compte a bien été activé.');
 
             return $this->redirectToRoute('index');
-        }
-        else
-        {
+        } else {
             throw $this->createNotFoundException('Une erreur est survenue durant l\'activation du compte');
         }
     }
@@ -176,15 +163,13 @@ class UserController extends AbstractController
      */
     public function requestPasswordReset(Request $request, \Swift_Mailer $mailer, EntityManagerInterface $entityManager)
     {
-        if($request->isXmlHttpRequest())
-        {
+        if ($request->isXmlHttpRequest()) {
             $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(array(
-               'email' => $request->getContent()
+                'email' => $request->getContent()
             ));
 
             //Vérification qu'il y a bien un utilisateur liée à l'adresse email envoyée
-            if($user)
-            {
+            if ($user) {
 
                 $temporaryPassword = sha1(rand(1, 1000));
 
@@ -197,9 +182,8 @@ class UserController extends AbstractController
                             'emails/emailNewPassword.html.twig',
                             array('password' => $temporaryPassword)
                         ),
-            'text/html'
-                    )
-                ;
+                        'text/html'
+                    );
 
                 $mailer->send($email);
 
@@ -213,8 +197,7 @@ class UserController extends AbstractController
                     'status' => 'success',
                     'url' => $this->generateUrl('newPassword')
                 ));
-            }
-            else
+            } else
                 return new JsonResponse(array(
                     'status' => 'error'
                 ));
@@ -231,24 +214,21 @@ class UserController extends AbstractController
 
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid())
-        {
+        if ($form->isSubmitted() && $form->isValid()) {
             //Vérification que l'utilisateur est bien le bon et qu'il le mot de passe correspond à celui de l'email
             $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(array(
                 'username' => $form->get('username')->getData(),
                 'password' => $form->get('oldPassword')->getData()
             ));
 
-            if($user)
-            {
+            if ($user) {
                 $user->setPassword($encoder->encodePassword($user, $form['password']->getData()));
 
                 $entityManager->persist($user);
                 $entityManager->flush();
 
                 $this->addFlash('success', 'Le mot de passe a été changé avec succès !');
-            }
-            else
+            } else
                 $form->addError(new FormError('Identifiants invalides. Vérifiez que le pseudo soit correcte et que l\'ancien mot de passe corressponde à celui qui vous été envoyé'));
         }
 
@@ -267,8 +247,7 @@ class UserController extends AbstractController
 
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid())
-        {
+        if ($form->isSubmitted() && $form->isValid()) {
             $jobOffer = $form->getData();
             $user = $this->getUser();
 
@@ -279,16 +258,14 @@ class UserController extends AbstractController
             $jobOffer->setUser($user);
 
             //Soit l'annonce est directement publiée, soit l'utilisateur l'a sauvegardée pour la publier plus tard
-            if($form->get('publish')->isClicked())
-            {
+            if ($form->get('publish')->isClicked()) {
                 //Ajout de la date de publication et de la date d'expiration
                 $jobOffer->setPublicationDate(new \DateTime());
                 $renewalDate = new \DateTime();
-                $jobOffer->setRenewalDate($renewalDate->add(new \DateInterval('P2M')));
+                $jobOffer->setRenewalDate($renewalDate->add(new \DateInterval($this->getParameter('datetime_interval'))));
 
                 $jobOffer->setIsActive(true);
-            }
-            else
+            } else
                 $jobOffer->setIsActive(false);
 
             $entity->persist($jobOffer);
@@ -316,8 +293,7 @@ class UserController extends AbstractController
             'user' => $user
         ));
 
-        if($jobOffer)
-        {
+        if ($jobOffer) {
             //Comptage des différentes offres de type "Offre d'emplois" ou "Recherche d'emploi"
             $searchJob = $entity->getRepository(JobOffer::class)->count(array(
                 'offerType' => $entity->getRepository(OfferType::class)->findOneBy(array(
@@ -327,7 +303,7 @@ class UserController extends AbstractController
             ));
 
             $offerJob = $entity->getRepository(JobOffer::class)->count(array(
-                'offerType' =>$entity->getRepository(OfferType::class)->findOneBy(array(
+                'offerType' => $entity->getRepository(OfferType::class)->findOneBy(array(
                     'name' => 'offerJob'
                 )),
                 'isActive' => true
@@ -336,33 +312,26 @@ class UserController extends AbstractController
             $offerToRenew = 0;
 
             //Calcul du nombre d'offres qui doivent être renouvelées
-            foreach ($jobOffer as $offer)
-            {
-                if($offer->getRenewalDate() && $offer->getRenewalDate()->diff($offer->getPublicationDate())->d <= 14 && $offer->getRenewalDate()->diff($offer->getPublicationDate())->m === 0)
+            foreach ($jobOffer as $offer) {
+                if ($offer->getRenewalDate() && $offer->getRenewalDate()->diff($offer->getPublicationDate())->d <= 14 && $offer->getRenewalDate()->diff($offer->getPublicationDate())->m === 0)
                     $offerToRenew++;
             }
-        }
-        else
-        {
+        } else {
             $searchJob = 0;
             $offerJob = 0;
             $offerToRenew = 0;
         }
 
-        //Requête qui permet d'afficher toutes les offres d'emplois liées à l'utilisateur qui sont des offres d'emplois actives
+        //Requête qui permet d'afficher toutes les offres d'emplois liées à l'utilisateur et qui sont des offres d'emplois actives
         $queryOfferJob = $entity->createQueryBuilder();
         $queryOfferJob->select('jobOffer')
             ->from('App:JobOffer', 'jobOffer')
             ->innerJoin('jobOffer.user', 'user', Expr\Join::WITH, $queryOfferJob->expr()->eq('jobOffer.user', $user->getId()))
-            /*->innerJoin('jobOffer.offerType', 'type', Expr\Join::WITH, $queryOfferJob->expr()->eq('jobOffer.offerType', $entity->getRepository(OfferType::class)->findOneBy(array(
-                'name' => 'offerJob'
-            ))->getId()))*/
             ->where('jobOffer.closing IS NULL')
             ->andWhere('jobOffer.isActive = true');
 
         //Si la requête renvoie bien quelque chose, affichage des offres en cours
-        if(!empty($queryOfferJob->getQuery()->getResult()))
-        {
+        if (!empty($queryOfferJob->getQuery()->getResult())) {
             $formOfferJob = $this->createFormBuilder()
                 ->add('offers', EntityType::class, array(
                     'class' => JobOffer::class,
@@ -370,16 +339,33 @@ class UserController extends AbstractController
                 ))
                 ->getForm();
 
-            //Recherche des éventuelles postulations par rapport aux offres
-            $queryPostulations = $entity->createQueryBuilder();
-            $queryPostulations->select('postulation')
-                ->from('App:Postulation', 'postulation')
-                ->where('postulation.jobOffer IN (:jobOffer)')
-                ->setParameter('jobOffer', $jobOffer);
+            if ($request->isXmlHttpRequest()) {
+                //Recherche des éventuelles postulations par rapport à l'offre sélectionnée
+                $queryPostulations = $entity->createQueryBuilder();
+                $queryPostulations->select('postulation')
+                    ->from('App:Postulation', 'postulation')
+                    ->join('postulation.user', 'user')
+                    ->join('postulation.jobOffer', 'offer')
+                    ->addSelect('user.username')
+                    ->addSelect('offer.title AS offerTitle')
+                    ->where('postulation.jobOffer = :offerId')
+                    ->setParameter('offerId', $request->get('idOffer'));
+
+                return new JsonResponse(array(
+                    'postulations' => $queryPostulations->getQuery()->getArrayResult()
+                ));
+            } else {
+                //Recherche des éventuelles postulations par rapport à la première offre qui sera affichée dans la liste déroulante
+                $queryPostulations = $entity->createQueryBuilder();
+                $queryPostulations->select('postulation')
+                    ->from('App:Postulation', 'postulation')
+                    ->where('postulation.jobOffer = :jobOffer')
+                    ->setParameter('jobOffer', $jobOffer[0]->getId());
+            }
 
             $postulations = $queryPostulations->getQuery()->getResult();
 
-            if(!empty($postulations))
+            if (!empty($postulations))
                 return $this->render('user/manageMyOffers.html.twig', array(
                     'selectOffer' => $formOfferJob->createView(),
                     'postulations' => $user->getPostulations(),
@@ -410,34 +396,41 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("details/{username}", name="userDetail")
+     * @Route("details/{jobOfferTitle}/{username}", name="userDetail")
      */
-    function showDetailsUser($username, EntityManagerInterface $entity)
+    function showDetailsUser($username, $jobOfferTitle, EntityManagerInterface $entity)
     {
         //Récupération de l'utilisateur pour afficher ses détails
         $user = $entity->getRepository(User::class)->findOneBy(array(
             'username' => $username
         ));
 
-        //Récupération de l'ID de la postulation
-        $postulationId = $this->get('session')->get('id');
+        //Récupération de la postulation liée à l'utilisateur
+        $queryPostulation = $entity->createQueryBuilder();
+        $queryPostulation->select('postulation')
+            ->from('App:Postulation', 'postulation')
+            ->join('postulation.jobOffer', 'offer')
+            ->where('offer.title = :offerTitle')
+            ->andWhere('postulation.jobOffer = offer.id')
+            ->andWhere('postulation.user = :user')
+            ->setParameters(array(
+                'offerTitle' => $jobOfferTitle,
+                'user' => $user->getId()
+            ));
 
-        dump($postulationId);
+        $postulation = $queryPostulation->getQuery()->getSingleResult();
 
-        $postulation = $entity->getRepository(Postulation::class)->findOneBy(array(
-           'id' => $postulationId
-        ));
-
-        if(!is_null($postulation->getResponseDate()))
+        //Si la postulation a une date de réponse, cela veut dire que la personne a déjà répondu et qu'il ne faudra pas afficher les boutons "Accepter" ou "Rejeter" la candidature
+        if (!is_null($postulation->getResponseDate()))
             return $this->render('user/userDetails.html.twig', array(
                 'user' => $user,
-                'postulationID' => $postulationId,
+                'postulationID' => $postulation->getId(),
                 'alreadyResponded' => true
             ));
         else
             return $this->render('user/userDetails.html.twig', array(
                 'user' => $user,
-                'postulationID' => $postulationId,
+                'postulationID' => $postulation->getId(),
                 'alreadyResponded' => false
             ));
     }
@@ -454,24 +447,32 @@ class UserController extends AbstractController
         $form = $this->createForm(EditMyAccountType::class, $user);
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid())
-        {
+        if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($user);
 
             //Si l'utilisateur à indiqué un nouveau mot de passe, encodage du mot de passe et affiliation à l'entié User
-            if(!empty($form->get('password')->getData()))
-            {
+            if (!empty($form->get('password')->getData())) {
                 $user->setPassword($encoder->encodePassword($user, $form->get('password')->getData()));
 
                 $entityManager->flush();
             }
+            /** @var Symfony\Component\HttpFoundation\File\UploadedFile $image */
+            $image = $form->get('picture')->getData();
+            $profileImageName = $user->getUsername() . '.' . $image->guessExtension();
+
+            $image->move($this->getParameter('profile_image_directory') . $user->getUsername(), $profileImageName);
+
+            $user->setPicture($profileImageName);
 
             $entityManager->flush();
             $this->addFlash('success', 'Informations modifiées avec succès');
         }
 
+        dump($user);
+
         return $this->render('user/myAccount.html.twig', array(
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'image' => $user->getUsername() . '/' . $user->getPicture()
         ));
     }
 
@@ -481,15 +482,16 @@ class UserController extends AbstractController
      */
     public function apply(Request $request, EntityManagerInterface $entity)
     {
-        if($request->isXmlHttpRequest())
+        if ($request->isXmlHttpRequest())
         {
+            $jobOffer = $entity->getRepository(JobOffer::class)->findOneBy(array(
+                'id' => $request->getContent()
+            ));
+
             //Création d'une nouvelle postulation
             $postulation = new Postulation();
 
             $user = $this->getUser();
-            $jobOffer = $entity->getRepository(JobOffer::class)->findOneBy(array(
-                'id' => $request->getContent()
-            ));
 
             $entity->persist($postulation);
 
@@ -515,8 +517,7 @@ class UserController extends AbstractController
      */
     public function rejectCandidate(Request $request, EntityManagerInterface $entity, \Swift_Mailer $mailer)
     {
-        if($request->isXmlHttpRequest())
-        {
+        if ($request->isXmlHttpRequest()) {
             $postulation = $entity->getRepository(Postulation::class)->findOneBy(array(
                 'id' => $request->get('postulationID'),
                 'user' => $request->get('userID')
@@ -552,8 +553,7 @@ class UserController extends AbstractController
                         )
                     ),
                     'text/html'
-                )
-            ;
+                );
 
             $mailer->send($email);
 
@@ -574,12 +574,13 @@ class UserController extends AbstractController
      */
     public function acceptCandidate(Request $request, EntityManagerInterface $entity, \Swift_Mailer $mailer)
     {
-        if($request->isXmlHttpRequest())
-        {
+        if ($request->isXmlHttpRequest()) {
             $postulation = $entity->getRepository(Postulation::class)->findOneBy(array(
                 'id' => $request->get('postulationID'),
                 'user' => $request->get('userID')
             ));
+
+            dump($postulation);
 
             $entity->persist($postulation);
 
@@ -595,7 +596,7 @@ class UserController extends AbstractController
 
             //Récupération également des informations concernant l'offre concernée
             $jobOffer = $entity->getRepository(JobOffer::class)->findOneBy(array(
-               'id' => $postulation->getJobOffer()->getId()
+                'id' => $postulation->getJobOffer()->getId()
             ));
 
             $user = $this->getUser();
@@ -617,8 +618,7 @@ class UserController extends AbstractController
                         )
                     ),
                     'text/html'
-                )
-            ;
+                );
 
             $mailer->send($email);
 
@@ -633,6 +633,91 @@ class UserController extends AbstractController
         return new JsonResponse(array(
             'status' => 'success',
             'url' => $this->generateUrl('manageOffers')
+        ));
+    }
+
+    /**
+     * @Route("details-offre", name="getOfferDetails")
+     * Description : va chercher les informations d'une offre pour l'affichage de ses détails
+     */
+    public function getOfferDetails(Request $request, EntityManagerInterface $entity)
+    {
+        if($request->isXmlHttpRequest())
+        {
+            $jobOffer = $entity->getRepository(JobOffer::class)->findOneBy(array(
+               'id' => $request->get('id')
+            ));
+
+            return new JsonResponse(array(
+                'title' => $jobOffer->getTitle(),
+                'description' => $jobOffer->getDescription(),
+                'category' => $jobOffer->getCategory()->getTitle(),
+                'city' => $jobOffer->getCity()->getNpa() . ' ' . $jobOffer->getCity()->getName(),
+                'publicationDate' => $jobOffer->getPublicationDate()
+            ));
+        }
+    }
+
+    /**
+     * @Route("renouveler-offre", name="renewOffer")
+     * Description : S'occupe de renouveler les offres d'emplois sélectionnées dans la gestion de ses propres offres
+     */
+    public function renewOffer(Request $request, EntityManagerInterface $entity)
+    {
+        if($request->isXmlHttpRequest())
+        {
+            $id = explode(',', $request->get('data'));
+
+            for($i = 0; $i < count($id); $i++)
+            {
+                $jobOffer = $entity->getRepository(JobOffer::class)->findOneBy(array(
+                    'id' => $id[$i]
+                ));
+
+                $renewalDate = $jobOffer->getRenewalDate();
+
+                $cloneRenewalDate = clone $renewalDate;
+                $cloneRenewalDate->add(new \DateInterval($this->getParameter('datetime_interval')));
+
+                $jobOffer->setRenewalDate($cloneRenewalDate);
+
+                $entity->flush();
+            }
+
+            $this->addFlash('success', 'Toutes les annonces sélectionnées ont été renouvelées');
+
+            return new JsonResponse(array(
+               'url' => $this->generateUrl('manageOffers')
+            ));
+        }
+    }
+
+    /**
+     * @Route("editer-une-offre/offre-num-{id}", name="editOffer")
+     * Description : S'occupe de gérer la modification d'une offre
+     */
+    public function editOffer(Request $request, EntityManagerInterface $entity, $id)
+    {
+        $jobOffer = $entity->getRepository(JobOffer::class)->findOneBy(array(
+            'id' => $id
+        ));
+
+        $form = $this->createForm(AddJobOfferType::class, $jobOffer);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid())
+        {
+            $entity->persist($jobOffer);
+
+            $entity->flush();
+
+            $this->addFlash('success', 'Annonce modifiée avec succès');
+
+            return $this->redirectToRoute('manageOffers');
+        }
+
+        return $this->render('user/editlOffer.html.twig', array(
+            'editFormOffer' => $form->createView()
         ));
     }
 }

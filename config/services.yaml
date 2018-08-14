@@ -2,7 +2,9 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: 'fr'
-    profile_image_directory: '%kernel.project_dir%/public/profile_images/'
+    profile_image_directory: '%kernel.project_dir%/public/build/profile_images/'
+    # P2M correspond à la manière d'écrire
+    datetime_interval: 'P2M'
 
 services:
     # default configuration for services in *this* file

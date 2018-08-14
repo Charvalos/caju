@@ -40,26 +40,28 @@
                         {{ form_widget(selectOffer.offers) }}
                     </div>
                     {{ form_end(selectOffer) }}
-                        {% if offerPostulations is defined %}
-                            {% for postulation in offerPostulations %}
-                                <ul class="list-group list-group-flush">
-                                    <li class="list-group-item d-flex align-items-center">
-                                        <div class="d-inline-flex w-75">{{ postulation.user }}</div>
-                                        {% if not postulation.status and postulation.responseDate is null %}
-                                            <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-hourglass-half"></span></div>
-                                        {% elseif not postulation.status and postulation.responseDate is not null %}
-                                            <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-times"></span></div>
-                                        {% else %}
-                                            <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-check"></span></div>
-                                        {% endif %}
-                                        <div class="d-inline-flex w-25 justify-content-center"><a href="{{ path('userDetail', {'username': postulation.user.username}) }}"><span class="fas fa-info"></span></a></div>
-                                        {{ app.session.set('id', postulation.id) }}
-                                    </li>
-                                </ul>
-                            {% endfor %}
-                        {% endif %}
+                    {% endif %}
+
+                    {% if offerPostulations is defined %}
+                        <ul class="list-group list-group-flush" id="listPostulations">
+                        {% for postulation in offerPostulations %}
+                                <li class="list-group-item d-flex align-items-center">
+                                    {% if postulation.user is not null %}
+                                    <div class="d-inline-flex w-75">{{ postulation.user }}</div>
+                                    {% endif %}
+                                    {% if not postulation.status and postulation.responseDate is null %}
+                                        <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-hourglass-half"></span></div>
+                                    {% elseif not postulation.status and postulation.responseDate is not null %}
+                                        <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-times"></span></div>
+                                    {% else %}
+                                        <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-check"></span></div>
+                                    {% endif %}
+                                    <div class="d-inline-flex w-25 justify-content-center"><a href="{{ path('userDetail', {'username': postulation.user.username, 'jobOfferTitle': postulation.jobOffer.title}) }}"><span class="fas fa-info"></span></a></div>
+                                </li>
+                        {% endfor %}
+                        </ul>
                     {% else %}
-                        <p><i>Vous avez actuellement aucune offre d'emplois en cours</i></p>
+                        <p><i>Vous avez actuellement aucune postulation pour l'offre sélectionnée</i></p>
                     {% endif %}
                 </div>
             </div>
@@ -80,7 +82,7 @@
                                     {% else %}
                                         <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-check"></span></div>
                                     {% endif %}
-                                    <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-info"></span></div>
+                                    <div class="d-inline-flex w-25 justify-content-center"><a href="#" data-toggle="modal" data-target="#detailsOffer" data-id="{{ postulation.jobOffer.id }}" id="showDetailOfferFromMyOffers"><span class="fas fa-info"></span></a></div>
                                 </li>
                             </ul>
                         {% endfor %}
@@ -96,30 +98,6 @@
     </div>
 
     <hr>
-
-    <label>Type :</label>
-    <select>
-        <option>Tous</option>
-        <option>Offres d'emplois</option>
-        <option>Offres de services</option>
-    </select>
-
-    <input id="datepicker" placeholder="Date">
-
-    <label>Catégorie :</label>
-    <select>
-        <option>Tous</option>
-        <option>Jardinage</option>
-        <option>Baby-sitting</option>
-    </select>
-
-    <label>Statut :</label>
-    <select>
-        <option>Tous</option>
-        <option>Non-publiée</option>
-        <option>À renouveler</option>
-        <option>Publier</option>
-    </select>
 
     <div class="table-responsive" id="listOffers">
         <table class="table mx-auto table-hover text-center">
@@ -148,7 +126,7 @@
                         <tr class="table-success" data-id="{{ jobOffer.id }}" data-title="{{ jobOffer.title }}" data-description="{{ jobOffer.description }}" data-city="{{ jobOffer.city }}" data-category="{{ jobOffer.category }}" data-publicationDate="{{ jobOffer.publicationDate|date('d.m.Y') }}">
                     {% endif %}
                     {% if jobOffer.closing is null and jobOffer.isActive %}
-                        <td><input class="form-check-input mx-auto" type="checkbox" value="{{ jobOffer.id }}" id="defaultCheck1"></td>
+                        <td><input class="form-check-input mx-auto" type="checkbox" value="{{ jobOffer.id }}" id="checkBoxRenewal"></td>
                     {% else %}
                         <td></td>
                     {% endif %}
@@ -168,7 +146,9 @@
                         {% else %}
                         <td>Clôturée</td>
                         {% endif %}
-                        <td class="d-flex align-items-center justify-content-between"><a href="#"><span class="fas fa-info" data-toggle="modal" data-target="#detailsOffer"></span></a><a href="#"><span class="fas fa-edit"></span></a></td>
+                        <td class="d-flex align-items-center justify-content-between">
+                            <a href="#" data-toggle="modal" data-target="#detailsOffer" id="showDetailOfferFromMyOffers" data-id="{{ jobOffer.id }}"><span class="fas fa-info"></span></a>
+                            <a href="{{ path('editOffer', {'id': jobOffer.id } ) }}"><span class="fas fa-edit"></span></a></td>
                     </tr>
                 {% endfor %}
             {% else %}
