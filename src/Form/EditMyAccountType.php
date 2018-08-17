@@ -17,7 +17,9 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class EditMyAccountType extends AbstractType
 {
@@ -74,11 +76,12 @@ class EditMyAccountType extends AbstractType
                         ->orderBy('listCities.npa', 'ASC');
                 }
             ))
-            ->add('picture', FileType::class, array(
+            ->add('pictureFile', VichImageType::class, array(
                 'data_class' => null,
                 'required' => false,
                 'attr' => array('placeholder' => 'Télécharger une image de profil (120x120)'),
-                'label' => false
+                'label' => false,
+                'mapped' => false
             ))
             ->add('update', SubmitType::class, array(
                 'attr' => array('class' => 'btn btn-primary'),

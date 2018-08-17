@@ -1,0 +1,9 @@
+<h3>Une de vos candidature a été clôturée</h3>
+
+<p>{{ firstName }}, </p>
+
+<p>L'offre suivante a été clôturée :</p>
+<p><b>Titre : </b>{{ jobOfferTitle }}</p>
+<p><b>Description : </b>{{ jobOfferDescription }}</p>
+<p><b>Date de publication : </b>{{ jobOfferPublicationDate|localizeddate('long', 'none') }}</p>
+<p><b>Raison : </b>{{ closingType }}</p>

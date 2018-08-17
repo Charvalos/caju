@@ -7,8 +7,12 @@ use App\Entity\City;
 use App\Entity\JobOffer;
 use Doctrine\ORM\EntityRepository;
 use function foo\func;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ButtonType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -30,15 +34,17 @@ class AddJobOfferType extends AbstractType
                 'label' => false,
                 'attr' => array('placeholder' => 'Description de l\'annonce')
             ))
-            /*->add('documents', DocumentType::class, array(
-                'label' => false
-            ))*/
+            //->add('documents', DocumentType::class)
             ->add('category', EntityType::class, array(
                 'class' => Category::class,
                 'query_builder' => function(EntityRepository $entityRepository){
                     return $entityRepository->createQueryBuilder('listCategories')
                         ->orderBy('listCategories.title', 'ASC');
                 }
+            ))
+            ->add('categories', CollectionType::class, array(
+                'allow_add' => true,
+                'entry_type' => CategoryType::class
             ))
             ->add('city', EntityType::class, array(
                 'class' => City::class,

@@ -7,6 +7,7 @@ use App\Entity\OfferType;
 use App\Entity\Postulation;
 use App\Entity\User;
 use App\Form\AddJobOfferType;
+use App\Form\ClosingType;
 use App\Form\EditMyAccountType;
 use App\Form\LoginType;
 use App\Form\NewCredentialType;
@@ -294,26 +295,34 @@ class UserController extends AbstractController
         ));
 
         if ($jobOffer) {
-            //Comptage des différentes offres de type "Offre d'emplois" ou "Recherche d'emploi"
-            $searchJob = $entity->getRepository(JobOffer::class)->count(array(
-                'offerType' => $entity->getRepository(OfferType::class)->findOneBy(array(
-                    'name' => 'searchJob'
-                )),
-                'isActive' => true
-            ));
+            $queryCountSearchJobOffer = $entity->createQueryBuilder();
 
-            $offerJob = $entity->getRepository(JobOffer::class)->count(array(
-                'offerType' => $entity->getRepository(OfferType::class)->findOneBy(array(
-                    'name' => 'offerJob'
-                )),
-                'isActive' => true
-            ));
+            $queryCountSearchJobOffer->select('jobOffer')
+                ->from('App:JobOffer', 'jobOffer')
+                ->join('jobOffer.offerType', 'typeOffer')
+                ->where('typeOffer.name = :name')
+                ->andWhere('jobOffer.isActive = true')
+                ->andWhere('jobOffer.closing IS NULL')
+                ->setParameter('name', 'searchJob');
+
+            $searchJob = $queryCountSearchJobOffer->getQuery()->getResult();
+
+            $queryCountOfferJob = $entity->createQueryBuilder();
+            $queryCountOfferJob->select('jobOffer')
+                ->from('App:JobOffer', 'jobOffer')
+                ->join('jobOffer.offerType', 'typeOffer')
+                ->where('typeOffer.name = :name')
+                ->andWhere('jobOffer.isActive = true')
+                ->andWhere('jobOffer.closing IS NULL')
+                ->setParameter('name', 'offerJob');
+
+            $offerJob = $queryCountOfferJob->getQuery()->getResult();
 
             $offerToRenew = 0;
 
             //Calcul du nombre d'offres qui doivent être renouvelées
             foreach ($jobOffer as $offer) {
-                if ($offer->getRenewalDate() && $offer->getRenewalDate()->diff($offer->getPublicationDate())->d <= 14 && $offer->getRenewalDate()->diff($offer->getPublicationDate())->m === 0)
+                if ($offer->getRenewalDate() && $offer->getRenewalDate()->diff($offer->getPublicationDate())->d <= $this->getParameter('days_limit') && $offer->getRenewalDate()->diff($offer->getPublicationDate())->m === 0)
                     $offerToRenew++;
             }
         } else {
@@ -451,24 +460,12 @@ class UserController extends AbstractController
             $entityManager->persist($user);
 
             //Si l'utilisateur à indiqué un nouveau mot de passe, encodage du mot de passe et affiliation à l'entié User
-            if (!empty($form->get('password')->getData())) {
+            if (!empty($form->get('password')->getData()))
                 $user->setPassword($encoder->encodePassword($user, $form->get('password')->getData()));
-
-                $entityManager->flush();
-            }
-            /** @var Symfony\Component\HttpFoundation\File\UploadedFile $image */
-            $image = $form->get('picture')->getData();
-            $profileImageName = $user->getUsername() . '.' . $image->guessExtension();
-
-            $image->move($this->getParameter('profile_image_directory') . $user->getUsername(), $profileImageName);
-
-            $user->setPicture($profileImageName);
 
             $entityManager->flush();
             $this->addFlash('success', 'Informations modifiées avec succès');
         }
-
-        dump($user);
 
         return $this->render('user/myAccount.html.twig', array(
             'form' => $form->createView(),
@@ -653,7 +650,10 @@ class UserController extends AbstractController
                 'description' => $jobOffer->getDescription(),
                 'category' => $jobOffer->getCategory()->getTitle(),
                 'city' => $jobOffer->getCity()->getNpa() . ' ' . $jobOffer->getCity()->getName(),
-                'publicationDate' => $jobOffer->getPublicationDate()
+                'publicationDate' => $jobOffer->getPublicationDate(),
+                'isActive' => $jobOffer->getIsActive(),
+                'isClosed' => $jobOffer->getClosing(),
+                'id' => $jobOffer->getId()
             ));
         }
     }
@@ -718,6 +718,66 @@ class UserController extends AbstractController
 
         return $this->render('user/editlOffer.html.twig', array(
             'editFormOffer' => $form->createView()
+        ));
+    }
+
+    /**
+     * @Route("cloturer-une-offre/offre-num-{id}", name="closeOffer")
+     * Description : S'occupe de gérer les clôtures d'annonces
+     */
+    public function closeOffer(EntityManagerInterface $entity, Request $request, \Swift_Mailer $mailer, $id)
+    {
+        $form = $this->createForm(ClosingType::class);
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid())
+        {
+            //Récupérations des informations
+            $closing = $form->getData();
+            $entity->persist($closing);
+
+            //Récupération de l'offre en cours de fermeture
+            $jobOffer = $entity->getRepository(JobOffer::class)->findOneBy(array(
+               'id' => $id
+            ));
+
+            $closing->setDate(new \DateTime('now'));
+
+            //Fermeture de l'offre
+            $jobOffer->setClosing($closing);
+            $jobOffer->setIsActive(false);
+
+            $entity->flush();
+
+            //Création de l'email
+            $email = (new \Swift_Message('Une candidature a été acceptée'))
+                ->setSubject('Bourse Emploi - Caritas Jura')
+                ->setFrom('info@bourse-emploi-jura.ch')
+                ->setTo($this->getUser()->getEmail())
+                ->setBody(
+                    $this->renderView(
+                        'emails/emailClosedOffer.html.twig',
+                        array(
+                            'jobOfferTitle' => $jobOffer->getTitle(),
+                            'jobOfferDescription' => $jobOffer->getDescription(),
+                            'jobOfferPublicationDate' => $jobOffer->getPublicationDate(),
+                            'closingType' => $closing->getClosingType(),
+                            'firstName' => $this->getUser()->getFirstName()
+                        )
+                    ),
+                    'text/html'
+                );
+
+            $mailer->send($email);
+
+            $this->addFlash('success', 'L\'annonce a été clôturée avec succès');
+
+            return $this->redirectToRoute('manageOffers');
+        }
+
+        return $this->render('user/closeOffer.html.twig', array(
+            'form' => $form->createView()
         ));
     }
 }

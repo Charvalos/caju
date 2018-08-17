@@ -7,12 +7,15 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @UniqueEntity("email", message="L'adresse email {{ value }} est déjà utilisée")
  * @UniqueEntity("username", message="Le pseudo {{ value }} est déjà utilisé")
+ * @Vich\Uploadable
  */
 class User implements UserInterface, \Serializable
 {
@@ -84,16 +87,16 @@ class User implements UserInterface, \Serializable
 
     /**
      * @ORM\Column(type="string", nullable=true)
-     * @Assert\Image(
-     *     mimeTypes={ "image/jpeg" },
-     *     mimeTypesMessage="Veuillez télécharger une image au format JPG",
-     *     maxWidth="120",
-     *     maxHeight="120",
-     *     maxWidthMessage="La largeur de l'image ne doit pas dépasser {{ max_width }} pixels",
-     *     maxHeightMessage="La hauteur de l'image ne doit pas dépasser {{ max_height }} pixels"
-     * )
+
      */
     private $picture;
+
+    /**
+     * @Vich\UploadableField(mapping="image_profile", fileNameProperty="picture")
+     *
+     * @var File
+     */
+    private $pictureFile;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -131,10 +134,16 @@ class User implements UserInterface, \Serializable
      */
     private $roles;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Document", mappedBy="user")
+     */
+    private $documents;
+
     public function __construct()
     {
         $this->postulations = new ArrayCollection();
         $this->jobOffers = new ArrayCollection();
+        $this->documents = new ArrayCollection();
     }
 
     public function getId()
@@ -430,5 +439,52 @@ class User implements UserInterface, \Serializable
         $this->registrationDate = $registrationDate;
 
         return $this;
+    }
+
+    /**
+     * @return Collection|Document[]
+     */
+    public function getDocuments(): Collection
+    {
+        return $this->documents;
+    }
+
+    public function addDocument(Document $document): self
+    {
+        if (!$this->documents->contains($document)) {
+            $this->documents[] = $document;
+            $document->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDocument(Document $document): self
+    {
+        if ($this->documents->contains($document)) {
+            $this->documents->removeElement($document);
+            // set the owning side to null (unless already changed)
+            if ($document->getUser() === $this) {
+                $document->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPictureFile()
+    {
+        return $this->pictureFile;
+    }
+
+    /**
+     * @param mixed $pictureFile
+     */
+    public function setPictureFile($pictureFile): void
+    {
+        $this->pictureFile = $pictureFile;
     }
 }

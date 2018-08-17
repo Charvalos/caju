@@ -13,19 +13,25 @@
     <body>
     <div class="container">
         {% block menu %}
-            {% if app.user is not null %}
-                {%  include 'utils/menu/menuConnected.html.twig' %}
+            {% if not is_granted('ROLE_ADMIN') %}
+                {% if app.user is not null %}
+                    {%  include 'utils/menu/menuConnected.html.twig' %}
+                {% else %}
+                    {%  include 'utils/menu/menuDefault.html.twig' %}
+                {% endif %}
             {% else %}
-                {%  include 'utils/menu/menuDefault.html.twig' %}
+                {% include 'utils/menu/menuAdmin.html.twig' %}
             {% endif %}
         {% endblock %}
         <div class="content">
             {% block content %}
-                {% if app.user is not null %}
-                    {% if not app.user.isActive %}
-                        <div class="alert alert-warning">
-                            Votre compte n'a pas encore été activé. Vous n'aurez pas accès à toutes les fonctionnalités
-                        </div>
+                {% if not is_granted('ROLE_ADMIN') %}
+                    {% if app.user is not null %}
+                        {% if not app.user.isActive %}
+                            <div class="alert alert-warning">
+                                Votre compte n'a pas encore été activé. Vous n'aurez pas accès à toutes les fonctionnalités
+                            </div>
+                        {% endif %}
                     {% endif %}
                 {% endif %}
             {% endblock %}

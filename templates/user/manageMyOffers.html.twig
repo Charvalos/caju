@@ -12,11 +12,11 @@
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             Offres d'emplois ouvertes :
-                            <span class="badge badge-info badge-pill">{{ offerJob }}</span>
+                            <span class="badge badge-info badge-pill">{{ offerJob|length }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             Offres de services ouvertes :
-                            <span class="badge badge-info badge-pill">{{ searchJob }}</span>
+                            <span class="badge badge-info badge-pill">{{ searchJob|length }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             Annonces à renouveler :
@@ -99,6 +99,13 @@
 
     <hr>
 
+    <div class="row justify-content-center">
+        <span class="border border-dark col-2 text-center rounded mx-auto"><em>Publiée</em></span>
+        <span class="table-info col-2 text-center rounded mx-auto"><em>Clôturée</em></span>
+        <span class="table-warning col-2 text-center rounded mx-auto"><em>Non-publiée</em></span>
+        <span class="table-danger col-2 text-center rounded mx-auto"><em>Fermeture proche</em></span>
+    </div>
+
     <div class="table-responsive" id="listOffers">
         <table class="table mx-auto table-hover text-center">
             <thead>
@@ -116,17 +123,17 @@
             <tbody>
             {% if jobOffers %}
                 {% for jobOffer in jobOffers %}
-                    {# {{ dump(jobOffer.renewalDate) }}
-                    {{ dump(jobOffer.renewalDate|time_diff) }} #}
-                    {% if jobOffer.isActive and jobOffer.closing is null %}
+                    {% if jobOffer.isActive and jobOffer.closing is null and jobOffer.renewalDate.diff(jobOffer.publicationDate).days > 14 %}
                         <tr data-id="{{ jobOffer.id }}" data-title="{{ jobOffer.title }}" data-description="{{ jobOffer.description }}" data-city="{{ jobOffer.city }}" data-category="{{ jobOffer.category }}" data-publicationDate="{{ jobOffer.publicationDate|date('d.m.Y') }}">
+                    {% elseif jobOffer.isActive and jobOffer.closing is null and jobOffer.renewalDate.diff(jobOffer.publicationDate).days <= 14 %}
+                        <tr class="table-danger" data-id="{{ jobOffer.id }}" data-title="{{ jobOffer.title }}" data-description="{{ jobOffer.description }}" data-city="{{ jobOffer.city }}" data-category="{{ jobOffer.category }}" data-publicationDate="{{ jobOffer.publicationDate|date('d.m.Y') }}">
                     {% elseif not jobOffer.isActive and jobOffer.closing is null %}
                         <tr class="table-warning" data-id="{{ jobOffer.id }}" data-title="{{ jobOffer.title }}" data-description="{{ jobOffer.description }}" data-city="{{ jobOffer.city }}" data-category="{{ jobOffer.category }}" data-publicationDate="{{ jobOffer.publicationDate|date('d.m.Y') }}">
                     {% else %}
-                        <tr class="table-success" data-id="{{ jobOffer.id }}" data-title="{{ jobOffer.title }}" data-description="{{ jobOffer.description }}" data-city="{{ jobOffer.city }}" data-category="{{ jobOffer.category }}" data-publicationDate="{{ jobOffer.publicationDate|date('d.m.Y') }}">
+                        <tr class="table-info" data-id="{{ jobOffer.id }}" data-title="{{ jobOffer.title }}" data-description="{{ jobOffer.description }}" data-city="{{ jobOffer.city }}" data-category="{{ jobOffer.category }}" data-publicationDate="{{ jobOffer.publicationDate|date('d.m.Y') }}">
                     {% endif %}
                     {% if jobOffer.closing is null and jobOffer.isActive %}
-                        <td><input class="form-check-input mx-auto" type="checkbox" value="{{ jobOffer.id }}" id="checkBoxRenewal"></td>
+                        <td class=""><input class="form-check-input mx-auto" type="checkbox" value="{{ jobOffer.id }}" id="checkBoxRenewal"></td>
                     {% else %}
                         <td></td>
                     {% endif %}

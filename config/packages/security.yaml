@@ -2,20 +2,21 @@ security:
     encoders:
         App\Entity\User:
             algorithm: bcrypt
-        App\Entity\UserAdmin:
+        Symfony\Component\Security\Core\User\User:
             algorithm: bcrypt
     providers:
-        #in_memory: { memory: ~ }
         chain_provider:
             chain:
-                providers: [user_provider, admin_provider]
+                providers: [in_memory, user_provider]
+        in_memory:
+            memory:
+                users:
+                    admin:
+                        password: $2y$13$00ps6qsY6vnUpAYD8kajv.fEgsyS67jrjDhs1qhseUk8yYP13RnU6
+                        roles: 'ROLE_ADMIN'
         user_provider:
             entity:
                 class: App\Entity\User
-                property: username
-        admin_provider:
-            entity:
-                class: App\Entity\UserAdmin
                 property: username
     firewalls:
         dev:
@@ -34,6 +35,14 @@ security:
             logout:
                 path: /logout
                 target: /
+        admin:
+            provider: chain_provider
+            form_login:
+                login_path: login
+                check_path: login
+                username_parameter: username
+                password_parameter: password
+                default_target_path: /admin
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/ajouter-une-annonce, roles: ROLE_USER }

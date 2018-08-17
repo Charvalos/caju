@@ -177,6 +177,7 @@ $('#detailsOffer').on('show.bs.modal', function (event) {
                 success: function (response) {
                     var datas = $.parseJSON(response);
                     var dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+                    var buttons;
 
                     console.log(datas);
 
@@ -192,13 +193,25 @@ $('#detailsOffer').on('show.bs.modal', function (event) {
                         '<p><b>Lieu : </b>' + city + '</p>' +
                         '<p><b>Publiée le : </b>' + publicationDate.toLocaleDateString('fr-FR', dateOptions) + '</p>';
 
+                    if(datas.isActive && datas.isClosed === null)
+                        buttons = '<button type="button" class="btn" data-dismiss="modal" id="closeModal">Fermer</button>' +
+                            '<button type="button" class="btn btn-primary" id="closeOffer" data-id="' + datas.id + '">Clôturer l\'annonce</button>';
+                    else
+                        buttons = '<button type="button" class="btn btn-primary" data-dismiss="modal" id="closeModal">Fermer</button>';
+
                     //Insertion de la fenêtre
                     modalTitle.append(title);
                     modalBody.append(content);
-                    modalFooter.append('<button type="button" class="btn btn-primary" data-dismiss="modal" id="closeModal">Fermer</button>');
+                    modalFooter.append(buttons);
                 }
             })
     }
+});
+
+$('#detailsOffer').on('click', '#closeOffer', function () {
+    var idJobOffer = $(this).data('id');
+
+    $(location).attr('href', 'cloturer-une-offre/offre-num-' + idJobOffer);
 });
 
 /**
@@ -429,6 +442,24 @@ $('#filter').on('click', function () {
                 container.append('<tr><td colspan="6">Aucune offre ne correspond aux critères de recherche</td></tr>');
        }
     });
+});
+
+$('#addCategory').on('click', function (e) {
+    e.preventDefault();
+
+    var div = $('#formAddOffer');
+
+    var prototype = div.data('prototype');
+    var index = div.data('index');
+
+    console.log(prototype);
+
+    var newForm = prototype.replace(/__name__/g, index);
+
+    div.data('index', index + 1);
+
+    $('#inputCategory').after(newForm);
+    //var prototype = $(this).data()
 });
 
 /**

@@ -1,5 +1,12 @@
 easy_admin:
     site_name: 'Administration'
+    design:
+        menu:
+            - { entity: 'User', tagert: '_blank' }
+            - { entity: 'Category', tagert: '_blank' }
+            - { entity: 'JobOffer', tagert: '_blank' }
+            - { entity: 'City', tagert: '_blank' }
+            - { label: 'Retour vers le site',  url: 'http://localhost:8000', rel: 'index' }
     formats:
         datetime: 'd F Y - H:i'
     list:

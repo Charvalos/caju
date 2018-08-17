@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Form\FilterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,17 +17,12 @@ class AppController extends AbstractController
      * @Route("/", name="index")
      * @Route("annonces", name="offers")
      */
-    public function index(Request $request, EntityManagerInterface $entity, SerializerInterface $serializer)
+    public function index(Request $request, EntityManagerInterface $entity)
     {
         $form = $this->createForm(FilterType::class);
 
         if($request->isXmlHttpRequest())
         {
-            if(!is_null($this->getUser()))
-                $userID = $this->getUser()->getId();
-            else
-                $userID = '*';
-
             //Récupération des offres de la catégories demandées et qui ne sont pas liées à l'utilisateur actuelle
             $queryOffers = $entity->createQueryBuilder();
             $queryOffers->select('offers')
@@ -42,11 +38,9 @@ class AppController extends AbstractController
                 ->addSelect('offerType.name AS typeOffer')
                 ->where('type.name = :type')
                 ->andWhere('offers.isActive = true')
-                //->andWhere('offers.user != :user')
                 ->orderBy('offers.publicationDate', 'DESC')
                 ->setParameters(array(
                     'type' => $request->query->get('typeOffer'),
-                    //'user' => $userID
                 ));
 
             return new JsonResponse(array(

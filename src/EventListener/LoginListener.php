@@ -9,6 +9,7 @@
 namespace App\EventListener;
 
 
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
@@ -26,11 +27,15 @@ class LoginListener
         //Récupération de l'utilisateur qui vient de se connecter
         $user = $event->getAuthenticationToken()->getUser();
 
-        //Actualisation de la date et heure de connexion
-        $user->setLastLogin(new \DateTime());
+        //L'application ne va pas stocker les informations de dernière connexion si l'utilisateur est un utilisateur Admin
+        if($user instanceof User)
+        {
+            //Actualisation de la date et heure de connexion
+            $user->setLastLogin(new \DateTime());
 
-        //Modification dans la BDD
-        $this->em->persist($user);
-        $this->em->flush();
+            //Modification dans la BDD
+            $this->em->persist($user);
+            $this->em->flush();
+        }
     }
 }
