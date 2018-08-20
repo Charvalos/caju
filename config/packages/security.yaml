@@ -35,14 +35,18 @@ security:
             logout:
                 path: /logout
                 target: /
+            remember_me:
+                secret: '%kernel.secret%'
+                path: ^/
+                secure: true
         admin:
             provider: chain_provider
+            pattern: ^/admin
             form_login:
                 login_path: login
                 check_path: login
                 username_parameter: username
                 password_parameter: password
-                default_target_path: /admin
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/ajouter-une-annonce, roles: ROLE_USER }

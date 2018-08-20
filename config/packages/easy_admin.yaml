@@ -2,11 +2,11 @@ easy_admin:
     site_name: 'Administration'
     design:
         menu:
-            - { entity: 'User', tagert: '_blank' }
+            - { entity: 'User', tagert: '_blank', default: true }
             - { entity: 'Category', tagert: '_blank' }
             - { entity: 'JobOffer', tagert: '_blank' }
             - { entity: 'City', tagert: '_blank' }
-            - { label: 'Retour vers le site',  url: 'http://localhost:8000', rel: 'index' }
+            - { label: 'Retour vers le site',  route: 'index' , rel: 'index' }
     formats:
         datetime: 'd F Y - H:i'
     list:
@@ -48,6 +48,8 @@ easy_admin:
                     - { property: 'lastLogin', label: 'Dernière connexion' }
                     - { property: 'registrationDate', label: 'Inscrit depuis le' }
                     - { property: 'isActive', label: 'Actif', type: 'boolean' }
+            sort:
+                - 'username'
             disabled_actions:
                 - 'new'
                 - 'edit'

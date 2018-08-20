@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -31,6 +32,11 @@ class LoginType extends AbstractType
                     'class' => 'btn btn-primary'
                 ),
                 'label' => 'Se connecter'
+            ))
+            ->add('remember_me', CheckboxType::class, array(
+                'attr' => array('name' => 'remember_me'),
+                'label' => 'Se souvenir de moi',
+                'required' => false
             ))
         ;
     }

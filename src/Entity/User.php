@@ -115,12 +115,12 @@ class User implements UserInterface, \Serializable
     private $city;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Postulation", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="App\Entity\Postulation", mappedBy="user", cascade={"remove"})
      */
     private $postulations;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\JobOffer", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="App\Entity\JobOffer", mappedBy="user", cascade={"remove"})
      */
     private $jobOffers;
 
@@ -135,7 +135,7 @@ class User implements UserInterface, \Serializable
     private $roles;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Document", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="App\Entity\Document", mappedBy="user", cascade={"remove"})
      */
     private $documents;
 

@@ -8,11 +8,25 @@
     {% endif %}
 
     {{ form_start(loginForm) }}
-    {{ form_widget(loginForm) }}
+    {{ form_row(loginForm.username) }}
+    {{ form_row(loginForm.password) }}
+
+    <div class="row align-items-center">
+        <div class="col-6">
+            {{ form_row(loginForm.remember_me) }}
+        </div>
+        <div class="col-6 text-right">
+            {{ form_row(loginForm.login) }}
+        </div>
+    </div><div class="row align-items-center">
+        <div class="col-6">
+            <a href="{{ path('registration') }}">Pas encore inscrit ?</a>
+        </div>
+        <div class="col-6 text-right">
+            <a href="#" data-toggle="modal" data-target="#newPassword">Identifiants oubliés ?</a>
+        </div>
+    </div>
     {{ form_end(loginForm) }}
 
     {% include 'modal/newCredentials.html.twig' %}
-
-    <a href="#" data-toggle="modal" data-target="#newPassword">Identifiants oubliés ?</a>
-    <a href="{{ path('registration') }}">Pas encore inscrit ?</a>
 {% endblock %}
