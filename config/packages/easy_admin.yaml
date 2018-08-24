@@ -11,7 +11,7 @@ easy_admin:
         datetime: 'd F Y - H:i'
     list:
         actions:
-            - '-show'
+            - 'show'
             - { name: 'edit', icon: 'pencil', label: '' }
             - { name: 'delete', icon: 'times', label: '' }
     edit:
@@ -58,6 +58,9 @@ easy_admin:
             label: Offres
             list:
                 title: Liste des offres
+            disabled_actions:
+            - 'new'
+            - 'edit'
         City:
             class: App\Entity\City
             label: Localités

@@ -102,4 +102,9 @@ class Closing
 
         return $this;
     }
+
+    public function __toString()
+    {
+        return $this->getClosingType()->getName();
+    }
 }

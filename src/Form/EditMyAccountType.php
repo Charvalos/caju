@@ -76,13 +76,13 @@ class EditMyAccountType extends AbstractType
                         ->orderBy('listCities.npa', 'ASC');
                 }
             ))
-            ->add('pictureFile', VichImageType::class, array(
+            /*->add('pictureFile', VichImageType::class, array(
                 'data_class' => null,
                 'required' => false,
                 'attr' => array('placeholder' => 'Télécharger une image de profil (120x120)'),
                 'label' => false,
                 'mapped' => false
-            ))
+            ))*/
             ->add('update', SubmitType::class, array(
                 'attr' => array('class' => 'btn btn-primary'),
                 'label' => 'Sauvegarder'

@@ -42,10 +42,10 @@ class AddJobOfferType extends AbstractType
                         ->orderBy('listCategories.title', 'ASC');
                 }
             ))
-            ->add('categories', CollectionType::class, array(
+            /*->add('categories', CollectionType::class, array(
                 'allow_add' => true,
                 'entry_type' => CategoryType::class
-            ))
+            ))*/
             ->add('city', EntityType::class, array(
                 'class' => City::class,
                 'query_builder' => function(EntityRepository $entityRepository){

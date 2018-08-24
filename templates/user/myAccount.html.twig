@@ -25,12 +25,12 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Informations personnelles</h5>
-                {% if app.user.picture is null %}
+                {#{% if app.user.picture is null %}
                     <p class="font-italic">Aucune photo de profil définie</p>
                 {% else %}
                 <img class="card-img-top" src="{{ asset('build/profile_images/'~image) }}" alt="Photo de profil">
                 {% endif %}
-                {{ form_row(form.pictureFile) }}
+                {{ form_row(form.pictureFile) }}#}
                 {{ form_row(form.lastName) }}
                 {{ form_row(form.firstName) }}
                 <div class="form-group input-group">

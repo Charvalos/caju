@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% macro printCategoryRow(form) %}
+{#{% macro printCategoryRow(form) %}
     {% block _categories_entry_widget %}
     <div class="form-group input-group" id="inputCategory">
         <div class="input-group-prepend">
@@ -10,7 +10,7 @@
         {{ form_widget(form) }}
     </div>
     {% endblock %}
-{% endmacro %}
+{% endmacro %}#}
 
 {% block content %}
     <div class="row">
@@ -23,8 +23,8 @@
     </div>
 
     {{ form_start(addOfferForm) }}
-    {% import _self as formMacro %}
-    <div class="invisible" id="formAddOffer" data-prototype="{{ formMacro.printCategoryRow(addOfferForm.categories.vars.prototype)|e('html_attr') }}" data-index="{{ addOfferForm.categories|length }}">
+    {#{% import _self as formMacro %}#}
+    <div class="invisible" id="formAddOffer"> {#data-prototype="{{ formMacro.printCategoryRow(addOfferForm.categories.vars.prototype)|e('html_attr') }}" data-index="{{ addOfferForm.categories|length }}#}
 
     {{ form_row(addOfferForm.title)}}
         <div class="form-group input-group">
@@ -34,16 +34,23 @@
             </div>
             {{ form_widget(addOfferForm.city) }}
         </div>
-        {{ formMacro.printCategoryRow(addOfferForm.category) }}
-        <a href="#" id="addCategory">
+        {#{{ formMacro.printCategoryRow(addOfferForm.category) }}#}
+        <div class="form-group input-group" id="inputCategory">
+            <div class="input-group-prepend">
+                {{ form_label(addOfferForm.category, 'Catégorie', {
+                    'label_attr': {'class': 'input-group-text'}}) }}
+            </div>
+            {{ form_widget(addOfferForm.category) }}
+        </div>
+        {#<a href="#" id="addCategory">
             <span class="fas fa-plus-circle"></span>Ajouter une catégorie
-        </a>
+        </a>#}
     {#  {{ form_row(addOfferForm.documents) }} #}
         {{ form_row(addOfferForm.description) }}
         <div class="row d-flex justify-content-between mx-0">
             {{ form_row(addOfferForm.save) }}
             {{ form_row(addOfferForm.publish) }}
         </div>
-        {{ form_end(addOfferForm, {'render_rest': false}) }}
+        {{ form_end(addOfferForm) }}
     </div>
 {% endblock %}
