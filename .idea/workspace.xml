@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2d60cfbb-6ab4-4a57-a30b-240f322f837c" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/caju.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caju.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/user/myAccount.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/user/myAccount.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -72,6 +70,7 @@
           <entry key="dummy" value="6" />
           <entry key="htaccess" value="210" />
           <entry key="js" value="14834" />
+          <entry key="json" value="1" />
           <entry key="php" value="28465" />
           <entry key="twig" value="9991" />
           <entry key="yaml" value="2194" />
@@ -81,6 +80,7 @@
         <counts>
           <entry key="CSS" value="101" />
           <entry key="HTML" value="16" />
+          <entry key="JSON" value="1" />
           <entry key="JavaScript" value="14818" />
           <entry key="PHP" value="28465" />
           <entry key="PLAIN_TEXT" value="6" />
@@ -110,12 +110,16 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/composer.json">
-          <provider selected="true" editor-type-id="text-editor" />
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="119">
+              <caret line="7" column="39" selection-start-line="7" selection-start-column="39" selection-end-line="7" selection-end-column="39" />
+            </state>
+          </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/templates/user/myAccount.html.twig">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="840">
@@ -205,7 +209,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/Form/EditOfferType.php" />
         <option value="$PROJECT_DIR$/templates/modal/uploadProfileImage.html.twig" />
         <option value="$PROJECT_DIR$/src/Form/UploadProfileImageType.php" />
         <option value="$PROJECT_DIR$/templates/modal/detailsOffer.html.twig" />
@@ -256,6 +259,7 @@
         <option value="$PROJECT_DIR$/templates/user/addOffer.html.twig" />
         <option value="$PROJECT_DIR$/public/.htaccess" />
         <option value="$PROJECT_DIR$/templates/user/myAccount.html.twig" />
+        <option value="$PROJECT_DIR$/composer.json" />
       </list>
     </option>
   </component>
@@ -664,12 +668,12 @@
       <workItem from="1534916307850" duration="2773000" />
       <workItem from="1535003008776" duration="59000" />
       <workItem from="1535003184093" duration="594000" />
-      <workItem from="1535089174899" duration="2721000" />
+      <workItem from="1535089174899" duration="3967000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="555937000" />
+    <option name="totallyTimeSpent" value="557183000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -993,13 +997,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/composer.json">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/templates/user/myAccount.html.twig">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="840">
           <caret line="55" column="24" selection-start-line="55" selection-start-column="24" selection-end-line="55" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/composer.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" column="39" selection-start-line="7" selection-start-column="39" selection-end-line="7" selection-end-column="39" />
         </state>
       </provider>
     </entry>
