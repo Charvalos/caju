@@ -20,6 +20,9 @@
         <div class="col">
             <button class="btn btn-primary btnSelect" name="btnSelect" data="offerJob" data-page="addOffer" id="btnAddJobOffer">J'offre un emploi</button>
         </div>
+        <div class="col-9">
+            {{ parent() }}
+        </div>
     </div>
 
     {{ form_start(addOfferForm) }}

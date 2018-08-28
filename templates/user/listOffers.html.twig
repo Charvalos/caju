@@ -7,15 +7,6 @@
             <button class="btn btn-primary btnSelect" name="btnSelect" id="btnViewOffersJob" data="offerJob">Offres d'emploi</button>
             <button class="btn btn-primary btnSelect" name="btnSelect" id="btnViewOffersSearch" data="searchJob">Personnes</button>
         </div>
-
-        {% for message in app.flashes('success') %}
-            <div class="alert alert-success">{{ message }}</div>
-        {% endfor %}
-
-        {% for message in app.flashes('warning') %}
-            <div class="alert alert-warning">{{ message }}</div>
-        {% endfor %}
-
     </div>
 
     <div class="invisible" id="listOffers">

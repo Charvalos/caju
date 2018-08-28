@@ -57,7 +57,6 @@ class User implements UserInterface, \Serializable
 
     /**
      * @ORM\Column(type="string", length=10)
-     * @Assert\NotBlank(message="Veuillez entrer un numéro de téléphone correct")
      * @Assert\Type(type="numeric", message="Veuillez entrer un numéro de téléphone correct")
      */
     private $phoneN1;

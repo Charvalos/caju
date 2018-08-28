@@ -40,7 +40,8 @@ class AddJobOfferType extends AbstractType
                 'query_builder' => function(EntityRepository $entityRepository){
                     return $entityRepository->createQueryBuilder('listCategories')
                         ->orderBy('listCategories.title', 'ASC');
-                }
+                },
+                'placeholder' => 'Choisir une catégorie'
             ))
             /*->add('categories', CollectionType::class, array(
                 'allow_add' => true,
@@ -51,7 +52,11 @@ class AddJobOfferType extends AbstractType
                 'query_builder' => function(EntityRepository $entityRepository){
                     return $entityRepository->createQueryBuilder('listCities')
                         ->orderBy('listCities.npa', 'ASC');
-                }
+                },
+                'group_by' => function(City $city){
+                    return $city->getDistrict()->getName();
+                },
+                'placeholder' => 'Choisir une localité'
             ))
             ->add('save', SubmitType::class, array(
                 'label' => 'Sauvegarder',

@@ -11,7 +11,7 @@ easy_admin:
         datetime: 'd F Y - H:i'
     list:
         actions:
-            - 'show'
+            - { name: 'show', icon: 'sticky-note', label: '' }
             - { name: 'edit', icon: 'pencil', label: '' }
             - { name: 'delete', icon: 'times', label: '' }
     edit:
@@ -30,6 +30,10 @@ easy_admin:
                 sort: ['title', 'ASC']
                 actions:
                     - { name: 'new', label: 'Ajouter une catégorie' }
+            show:
+                fields:
+                - { property: 'title', label: 'Titre' }
+                - { property: 'description', label: 'Description' }
             edit:
                 title: 'Modifier la catégorie'
             new:
@@ -38,29 +42,54 @@ easy_admin:
                 fields:
                     - { property: 'title', label: 'Titre' }
                     - { property: 'description', label: 'Description' }
+            search:
+                fields: ['title']
         User:
             class: App\Entity\User
             label: Utilisateurs
             list:
                 title: Liste des utilisateurs
+                sort: ['username', 'ASC']
                 fields:
                     - { property: 'username', label: 'Compte' }
                     - { property: 'lastLogin', label: 'Dernière connexion' }
                     - { property: 'registrationDate', label: 'Inscrit depuis le' }
-                    - { property: 'isActive', label: 'Actif', type: 'boolean' }
-            sort:
-                - 'username'
+                    - { property: 'isActive', label: 'Compte activé', type: 'boolean' }
+            show:
+                fields:
+                    - { property: 'username', label: 'Pseudo' }
             disabled_actions:
                 - 'new'
                 - 'edit'
+                - 'show'
         JobOffer:
             class: App\Entity\JobOffer
             label: Offres
             list:
                 title: Liste des offres
+                help: 'Seul les offres en cours de publication sont affichées'
+                dql_filter: 'entity.isActive = true'
+                fields:
+                    - { property: 'title', label: "Titre de l'annonce" }
+                    - { property: 'description', label: 'Description' }
+                    - { property: 'city', label: 'Lieu' }
+                    - { property: 'category', label: 'Catégorie' }
+                    - { property: 'offerType', label: 'Type' }
+                    - { property: 'publicationDate', label: 'Date de publication' }
+                sort: ['publicationDate', 'DESC']
+            show:
+                fields:
+                    - { property: 'title', label: "Titre de l'annonce" }
+                    - { property: 'description', label: 'Description' }
+                    - { property: 'city', label: 'Lieu' }
+                    - { property: 'category', label: 'Catégorie' }
+                    - { property: 'offerType', label: 'Type' }
+                    - { property: 'publicationDate', label: 'Date de publication' }
             disabled_actions:
-            - 'new'
-            - 'edit'
+                - 'new'
+                - 'edit'
+            search:
+                fields: ['title', 'city', 'offerType' ]
         City:
             class: App\Entity\City
             label: Localités

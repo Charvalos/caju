@@ -24,8 +24,11 @@ class FilterType extends AbstractType
                     return $entityRepository->createQueryBuilder('listCities')
                         ->orderBy('listCities.npa', 'ASC');
                 },
+                'group_by' => function(City $city){
+                    return $city->getDistrict()->getName();
+                },
                 'label' => false,
-                'placeholder' => 'Localité',
+                'placeholder' => 'Toutes les localités',
                 'required' => false,
             ))
             ->add('date', DateType::class, array(
@@ -39,7 +42,7 @@ class FilterType extends AbstractType
                         ->orderBy('listCategories.title', 'ASC');
                 },
                 'label' => false,
-                'placeholder' => 'Catégorie',
+                'placeholder' => 'Toutes les catégories',
                 'required' => false
             ))
             ->add('filter', ButtonType::class, array(

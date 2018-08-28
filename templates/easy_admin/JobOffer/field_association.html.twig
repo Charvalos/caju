@@ -1,0 +1,9 @@
+{% set is_accessible = false %}
+
+{% if value == 'offerJob' %}
+    Offre d'emploi
+{% elseif value == 'searchJob' %}
+    Recherche d'emploi
+{% else %}
+    {{ value }}
+{% endif %}

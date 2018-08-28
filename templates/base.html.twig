@@ -34,6 +34,14 @@
                         {% endif %}
                     {% endif %}
                 {% endif %}
+
+                {% for message in app.flashes('success') %}
+                    <div class="alert alert-success w-25 float-right">{{ message }}</div>
+                {% endfor %}
+
+                {% for message in app.flashes('warning') %}
+                    <div class="alert alert-warning w-25 float-right">{{ message }}</div>
+                {% endfor %}
             {% endblock %}
         </div>
     </div>

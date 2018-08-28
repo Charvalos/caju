@@ -41,14 +41,11 @@ security:
                 secure: true
         admin:
             provider: chain_provider
-            pattern: ^/admin
+            pattern: ^/easy_admin
             form_login:
                 login_path: login
                 check_path: login
                 username_parameter: username
                 password_parameter: password
     access_control:
-        - { path: ^/admin, roles: ROLE_ADMIN }
-        - { path: ^/ajouter-une-annonce, roles: ROLE_USER }
-        - { path: ^/gerer-mes-annonces, roles: ROLE_USER }
-        - { path: ^/mon-compte, roles: ROLE_USER }
+        - { path: ^/easy_admin, roles: ROLE_ADMIN }

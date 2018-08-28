@@ -24,6 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 /**
  * Class UserController
@@ -137,7 +138,7 @@ class UserController extends AbstractController
      * @Route("se-connecter", name="login")
      * Description : Fonction qui se charge de la connexion selon Symfony
      */
-    public function login(Request $request, AuthenticationUtils $authenticationUtils)
+    public function login(AuthenticationUtils $authenticationUtils)
     {
         //Récupération des éventuelles erreurs (p.ex : mauvais identifiants)
         $error = $authenticationUtils->getLastAuthenticationError();
@@ -148,8 +149,6 @@ class UserController extends AbstractController
         ]);
 
         $formNewCredential = $this->createForm(NewCredentialType::class);
-
-        $this->addFlash('success', 'Vous êtes maintenant connecté');
 
         return $this->render('utils/login.html.twig', array(
             'error' => $error,
@@ -239,6 +238,7 @@ class UserController extends AbstractController
 
     /**
      * @Route("ajouter-une-annonce", name="addOffer")
+     * @Security("has_role('ROLE_USER')")
      */
     public function addOffer(Request $request, EntityManagerInterface $entity)
     {
@@ -284,6 +284,7 @@ class UserController extends AbstractController
 
     /**
      * @Route("gerer-mes-annonces", name="manageOffers")
+     * @Security("has_role('ROLE_USER')")
      * Description : Affiche toutes les annonces de l'utilisateur
      */
     public function manageOffers(EntityManagerInterface $entity, Request $request)
@@ -406,6 +407,7 @@ class UserController extends AbstractController
 
     /**
      * @Route("details/{jobOfferTitle}/{username}", name="userDetail")
+     * @Security("has_role('ROLE_USER')")
      */
     function showDetailsUser($username, $jobOfferTitle, EntityManagerInterface $entity)
     {
@@ -446,6 +448,7 @@ class UserController extends AbstractController
 
     /**
      * @Route("mon-compte", name="myAccount")
+     * @Security("has_role('ROLE_USER')")
      * Description : Permet de modifier les informations de son compte
      */
     public function updateAccount(Request $request, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder)
@@ -475,6 +478,7 @@ class UserController extends AbstractController
 
     /**
      * @Route("candidature", name="apply")
+     * @Security("has_role('ROLE_USER')")
      * Description : Fonction qui se charge d'ajouter une postulation à une offre
      */
     public function apply(Request $request, EntityManagerInterface $entity)
@@ -510,6 +514,7 @@ class UserController extends AbstractController
 
     /**
      * @Route("rejeter", name="rejectCandidate")
+     * @Security("has_role('ROLE_USER')")
      * Description : Met à jour une postulation (dans ce cas : rejet de la candidature)
      */
     public function rejectCandidate(Request $request, EntityManagerInterface $entity, \Swift_Mailer $mailer)
@@ -567,6 +572,7 @@ class UserController extends AbstractController
 
     /**
      * @Route("accepter", name="acceptCandidate")
+     * @Security("has_role('ROLE_USER')")
      * Description : Met à jour une postulation (dans ce cas : accepte la candidature)
      */
     public function acceptCandidate(Request $request, EntityManagerInterface $entity, \Swift_Mailer $mailer)
@@ -660,6 +666,7 @@ class UserController extends AbstractController
 
     /**
      * @Route("renouveler-offre", name="renewOffer")
+     * @Security("has_role('ROLE_USER')")
      * Description : S'occupe de renouveler les offres d'emplois sélectionnées dans la gestion de ses propres offres
      */
     public function renewOffer(Request $request, EntityManagerInterface $entity)
@@ -694,6 +701,7 @@ class UserController extends AbstractController
 
     /**
      * @Route("editer-une-offre/offre-num-{id}", name="editOffer")
+     * @Security("has_role('ROLE_USER')")
      * Description : S'occupe de gérer la modification d'une offre
      */
     public function editOffer(Request $request, EntityManagerInterface $entity, $id)
@@ -723,6 +731,7 @@ class UserController extends AbstractController
 
     /**
      * @Route("cloturer-une-offre/offre-num-{id}", name="closeOffer")
+     * @Security("has_role('ROLE_USER')")
      * Description : S'occupe de gérer les clôtures d'annonces
      */
     public function closeOffer(EntityManagerInterface $entity, Request $request, \Swift_Mailer $mailer, $id)
