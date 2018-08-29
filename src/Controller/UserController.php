@@ -489,26 +489,41 @@ class UserController extends AbstractController
                 'id' => $request->getContent()
             ));
 
-            //Création d'une nouvelle postulation
-            $postulation = new Postulation();
-
             $user = $this->getUser();
 
-            $entity->persist($postulation);
-
-            $postulation->setUser($user);
-            $postulation->setJobOffer($jobOffer);
-            $postulation->setPostulationDate(new \DateTime());
-            $postulation->setStatus(false);
-
-            $entity->flush();
-
-            $this->addFlash('success', 'Votre postulation a été enregistré avec succès');
-
-            return new JsonResponse(array(
-                'status' => 'success',
-                'url' => $this->generateUrl('index')
+            $checkPostulation = $entity->getRepository(Postulation::class)->findOneBy(array(
+                'jobOffer' => $jobOffer,
+                'user' => $user
             ));
+
+            if(!$checkPostulation)
+            {
+                //Création d'une nouvelle postulation
+                $postulation = new Postulation();
+
+                $entity->persist($postulation);
+
+                $postulation->setUser($user);
+                $postulation->setJobOffer($jobOffer);
+                $postulation->setPostulationDate(new \DateTime());
+                $postulation->setStatus(false);
+
+                $entity->flush();
+
+                $this->addFlash('success', 'Votre postulation a été enregistré avec succès');
+
+                return new JsonResponse(array(
+                    'url' => $this->generateUrl('index')
+                ));
+            }
+            else
+            {
+                $this->addFlash('warning', 'Vous ne pouvez pas postuler plusieurs fois à la même annonce');
+
+                return new JsonResponse(array(
+                    'url' => $this->generateUrl('index')
+                ));
+            }
         }
     }
 

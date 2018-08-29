@@ -85,6 +85,7 @@ easy_admin:
                     - { property: 'category', label: 'Catégorie' }
                     - { property: 'offerType', label: 'Type' }
                     - { property: 'publicationDate', label: 'Date de publication' }
+                    - { property: 'user', label: 'Utilisateur' }
             disabled_actions:
                 - 'new'
                 - 'edit'

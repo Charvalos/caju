@@ -82,7 +82,7 @@
                                     {% else %}
                                         <div class="d-inline-flex w-25 justify-content-center"><span class="fas fa-check"></span></div>
                                     {% endif %}
-                                    <div class="d-inline-flex w-25 justify-content-center"><a href="#" data-toggle="modal" data-target="#detailsOffer" data-id="{{ postulation.jobOffer.id }}" id="showDetailOfferFromMyOffers"><span class="fas fa-info"></span></a></div>
+                                    <div class="d-inline-flex w-25 justify-content-center"><a href="#" data-toggle="modal" data-target="#detailsOffer" data-id="{{ postulation.jobOffer.id }}" id="showDetailOfferFromMyOffers" data-content="postulations"><span class="fas fa-info"></span></a></div>
                                 </li>
                             </ul>
                         {% endfor %}
@@ -154,7 +154,7 @@
                         <td>Clôturée</td>
                         {% endif %}
                         <td class="d-flex align-items-center justify-content-between">
-                            <a href="#" data-toggle="modal" data-target="#detailsOffer" id="showDetailOfferFromMyOffers" data-id="{{ jobOffer.id }}"><span class="fas fa-info"></span></a>
+                            <a href="#" data-toggle="modal" data-target="#detailsOffer" id="showDetailOfferFromMyOffers" data-id="{{ jobOffer.id }}" data-content="myOffer"><span class="fas fa-info"></span></a>
                             <a href="{{ path('editOffer', {'id': jobOffer.id } ) }}"><span class="fas fa-edit"></span></a></td>
                     </tr>
                 {% endfor %}

@@ -36,11 +36,11 @@
                 {% endif %}
 
                 {% for message in app.flashes('success') %}
-                    <div class="alert alert-success w-25 float-right">{{ message }}</div>
+                    <div class="alert alert-success w-50 float-right text-center">{{ message }}</div>
                 {% endfor %}
 
                 {% for message in app.flashes('warning') %}
-                    <div class="alert alert-warning w-25 float-right">{{ message }}</div>
+                    <div class="alert alert-warning w-50 float-right text-center">{{ message }}</div>
                 {% endfor %}
             {% endblock %}
         </div>

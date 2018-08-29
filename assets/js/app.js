@@ -2,7 +2,6 @@ const $ = require('jquery');
 
 require('bootstrap');
 
-
 /**
  * Lors du clic sur le bouton envoyé du formulaire qui permet de demander un nouveaut mot de passe, envoi des données
  */
@@ -167,7 +166,8 @@ $('#detailsOffer').on('show.bs.modal', function (event) {
             break;
         case 'showDetailOfferFromMyOffers':
             var dataId = $(event.relatedTarget).data('id');
-
+            console.log($('.card-title').text());
+            console.log($(event.relatedTarget).data('content'));
             $.ajax({
                 url: 'details-offre',
                 data: 'id='+dataId,
@@ -193,7 +193,7 @@ $('#detailsOffer').on('show.bs.modal', function (event) {
                         '<p><b>Lieu : </b>' + city + '</p>' +
                         '<p><b>Publiée le : </b>' + publicationDate.toLocaleDateString('fr-FR', dateOptions) + '</p>';
 
-                    if(datas.isActive && datas.isClosed === null)
+                    if(datas.isActive && datas.isClosed === null && $(event.relatedTarget).data('content') === 'myOffer')
                         buttons = '<button type="button" class="btn" data-dismiss="modal" id="closeModal">Fermer</button>' +
                             '<button type="button" class="btn btn-primary" id="closeOffer" data-id="' + datas.id + '">Clôturer l\'annonce</button>';
                     else
@@ -230,8 +230,7 @@ $('#detailsOffer').on('click', '#btnInterest', function () {
         
         success: function (response) {
             var data = $.parseJSON(response);
-            if(data.status === 'success'){}
-                $(location).attr('href', data.url);
+            $(location).attr('href', data.url);
         }
     });
 });
