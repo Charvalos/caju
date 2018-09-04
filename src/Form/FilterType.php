@@ -4,12 +4,12 @@ namespace App\Form;
 
 use App\Entity\Category;
 use App\Entity\City;
+use App\Entity\District;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -28,8 +28,18 @@ class FilterType extends AbstractType
                     return $city->getDistrict()->getName();
                 },
                 'label' => false,
-                'placeholder' => 'Toutes les localités',
                 'required' => false,
+                'attr' => array('class' => 'selectCities')
+            ))
+            ->add('district', EntityType::class, array(
+                'class' => District::class,
+                'query_builder' => function(EntityRepository $entityRepository){
+                    return $entityRepository->createQueryBuilder('listDistricts')
+                        ->orderBy('listDistricts.name');
+                },
+                'label' => false,
+                'required' => false,
+                'attr' => array('class' => 'selectDistricts')
             ))
             ->add('date', DateType::class, array(
                 'widget' => 'single_text',
@@ -42,8 +52,8 @@ class FilterType extends AbstractType
                         ->orderBy('listCategories.title', 'ASC');
                 },
                 'label' => false,
-                'placeholder' => 'Toutes les catégories',
-                'required' => false
+                'required' => false,
+                'attr' => array('class' => 'selectCategories')
             ))
             ->add('filter', ButtonType::class, array(
                 'label' => 'Filtrer',

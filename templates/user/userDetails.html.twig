@@ -48,7 +48,7 @@
             {% endif %}
             </div>
         </div>
-        {% if not alreadyResponded %}
+        {% if alreadyResponded is defined and not alreadyResponded %}
         <div class="d-flex justify-content-between">
             <input type="hidden" id="postulationValues" value="{{ postulationID }}/{{ user.id }}">
             <button class="btn btn-primary d-inline-flex" id="rejectPostulation">Refuser la candidature</button>
@@ -74,7 +74,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal" id="acceptPostulation">Non merci</button>
-                    <button type="button" class="btn btn-primary" id="downloadChequeEmploi">Télécharger</button>
+                    <button type="button" class="btn btn-primary" id="downloadChequeEmploi">Télécharger et accepter la postulation</button>
                 </div>
             </div>
         </div>

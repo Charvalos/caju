@@ -6,6 +6,7 @@
         "ext-iconv": "*",
         "easycorp/easyadmin-bundle": "^1.17",
         "ocramius/proxy-manager": "2.1.1",
+        "pugx/autocompleter-bundle": "^1.4",
         "sensio/framework-extra-bundle": "^5.2",
         "sensiolabs/security-checker": "^4.1",
         "symfony/asset": "^4.1",

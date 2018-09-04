@@ -75,7 +75,17 @@ class RegisterType extends AbstractType
                 'query_builder' => function(EntityRepository $er){
                     return $er->createQueryBuilder('listCities')
                         ->orderBy('listCities.npa', 'ASC');
-                }
+                },
+                'group_by' => function(City $city){
+                    return $city->getDistrict()->getName();
+                },
+                'attr' => array(
+                    'data-toggle' => 'popover',
+                    'data-trigger' => 'hover',
+                    'data-content' => 'La localité correspond au lieu de travail',
+                    'data-placement' => 'top',
+                    'class' => 'select'
+                )
             ))
             ->add('cgu', CheckboxType::class, array(
                 'label' => 'J\'ai lu et j\'accepte les conditions générales d\'utilisation',

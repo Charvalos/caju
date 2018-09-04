@@ -41,11 +41,11 @@ security:
                 secure: true
         admin:
             provider: chain_provider
-            pattern: ^/easy_admin
+            pattern: ^/admin
             form_login:
                 login_path: login
                 check_path: login
                 username_parameter: username
                 password_parameter: password
     access_control:
-        - { path: ^/easy_admin, roles: ROLE_ADMIN }
+        - { path: ^/admin, roles: ROLE_ADMIN }

@@ -41,12 +41,8 @@ class AddJobOfferType extends AbstractType
                     return $entityRepository->createQueryBuilder('listCategories')
                         ->orderBy('listCategories.title', 'ASC');
                 },
-                'placeholder' => 'Choisir une catégorie'
+                'attr' => array('class' => 'select')
             ))
-            /*->add('categories', CollectionType::class, array(
-                'allow_add' => true,
-                'entry_type' => CategoryType::class
-            ))*/
             ->add('city', EntityType::class, array(
                 'class' => City::class,
                 'query_builder' => function(EntityRepository $entityRepository){
@@ -56,15 +52,27 @@ class AddJobOfferType extends AbstractType
                 'group_by' => function(City $city){
                     return $city->getDistrict()->getName();
                 },
-                'placeholder' => 'Choisir une localité'
+                'attr' => array('class' => 'select')
             ))
             ->add('save', SubmitType::class, array(
                 'label' => 'Sauvegarder',
-                'attr' => array('class' => 'btn btn-secondary')
+                'attr' => array(
+                    'class' => 'btn btn-secondary',
+                    'data-toggle' => 'popover',
+                    'data-trigger' => 'hover',
+                    'data-content' => 'Sauvegardez vore annonce et publiez-là plus tard',
+                    'data-placement' => 'top'
+                )
             ))
             ->add('publish', SubmitType::class, array(
                 'label' =>'Publier',
-                'attr' => array('class' => 'btn btn-primary')
+                'attr' => array(
+                    'class' => 'btn btn-primary',
+                    'data-toggle' => 'popover',
+                    'data-trigger' => 'hover',
+                    'data-content' => 'Votre annonce sera visible dès maintenant',
+                    'data-placement' => 'top'
+                ),
             ))
             ->add('type', HiddenType::class, array(
                 'mapped' => false

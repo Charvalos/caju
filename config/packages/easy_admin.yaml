@@ -2,16 +2,18 @@ easy_admin:
     site_name: 'Administration'
     design:
         menu:
-            - { entity: 'User', tagert: '_blank', default: true }
-            - { entity: 'Category', tagert: '_blank' }
-            - { entity: 'JobOffer', tagert: '_blank' }
-            - { entity: 'City', tagert: '_blank' }
-            - { label: 'Retour vers le site',  route: 'index' , rel: 'index' }
+            - { entity: 'User', default: true }
+            - { entity: 'Category' }
+            - { entity: 'JobOffer' }
+            - { entity: 'City' }
+            - { entity: 'District' }
+            - { label: 'Statistiques', route: 'stats' }
+            - { label: 'Retour vers le site',  route: 'index' }
     formats:
         datetime: 'd F Y - H:i'
     list:
         actions:
-            - { name: 'show', icon: 'sticky-note', label: '' }
+            - { name: 'show', icon: 'info', label: '' }
             - { name: 'edit', icon: 'pencil', label: '' }
             - { name: 'delete', icon: 'times', label: '' }
     edit:
@@ -58,10 +60,17 @@ easy_admin:
             show:
                 fields:
                     - { property: 'username', label: 'Pseudo' }
+                    - { property: 'email', label: 'Adresse email' }
+                    - { property: 'firstName', label: 'Prénom' }
+                    - { property: 'lastName', label: 'Nom' }
+                    - { property: 'birthdate', label: 'Date de naissance' }
+                    - { property: 'phoneN1', label: 'Téléphone privé' }
+                    - { property: 'phoneN2', label: 'Téléphone mobile' }
+                    - { property: 'address', label: 'Adresse' }
+                    - { property: 'city', label: 'Localité' }
             disabled_actions:
                 - 'new'
                 - 'edit'
-                - 'show'
         JobOffer:
             class: App\Entity\JobOffer
             label: Offres
@@ -77,6 +86,11 @@ easy_admin:
                     - { property: 'offerType', label: 'Type' }
                     - { property: 'publicationDate', label: 'Date de publication' }
                 sort: ['publicationDate', 'DESC']
+                actions:
+                    -
+                        name: 'closeOffer'
+                        icon: 'times'
+                        label: ''
             show:
                 fields:
                     - { property: 'title', label: "Titre de l'annonce" }
@@ -89,6 +103,7 @@ easy_admin:
             disabled_actions:
                 - 'new'
                 - 'edit'
+                - 'delete'
             search:
                 fields: ['title', 'city', 'offerType' ]
         City:
@@ -112,3 +127,27 @@ easy_admin:
                     - { property: 'npa', label: 'NPA' }
                     - { property: 'name', label: 'Localité' }
                     - { property: 'district', label: 'District' }
+        District:
+            class: App\Entity\District
+            label: District
+            list:
+                title: Liste des districts
+                fields:
+                    - { property: 'name', label: 'Nom' }
+                sort: ['name', 'ASC']
+                actions:
+                    - { name: 'new', label: 'Ajouter un district' }
+            new:
+                title: 'Ajouter un district'
+                fields:
+                    - { property: 'name', label: 'Nom' }
+                    - { property: 'canton', label: 'Canton' }
+            edit:
+                title: 'Modifier le district'
+                fields:
+                    - { property: 'name', label: 'Nom' }
+                    - { property: 'canton', label: 'Canton' }
+            show:
+                fields:
+                - { property: 'name', label: 'Nom' }
+                - { property: 'canton', label: 'Canton' }

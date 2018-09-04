@@ -293,6 +293,9 @@ class UserController extends AbstractController
 
         $jobOffer = $entity->getRepository(JobOffer::class)->findBy(array(
             'user' => $user
+        ), array(
+            'isActive' => 'DESC',
+            'renewalDate' => 'ASC'
         ));
 
         if ($jobOffer) {
@@ -364,7 +367,9 @@ class UserController extends AbstractController
                 return new JsonResponse(array(
                     'postulations' => $queryPostulations->getQuery()->getArrayResult()
                 ));
-            } else {
+            }
+            else
+                {
                 //Recherche des éventuelles postulations par rapport à la première offre qui sera affichée dans la liste déroulante
                 $queryPostulations = $entity->createQueryBuilder();
                 $queryPostulations->select('postulation')
@@ -478,47 +483,73 @@ class UserController extends AbstractController
 
     /**
      * @Route("candidature", name="apply")
-     * @Security("has_role('ROLE_USER')")
      * Description : Fonction qui se charge d'ajouter une postulation à une offre
      */
     public function apply(Request $request, EntityManagerInterface $entity)
     {
         if ($request->isXmlHttpRequest())
         {
-            $jobOffer = $entity->getRepository(JobOffer::class)->findOneBy(array(
-                'id' => $request->getContent()
-            ));
-
             $user = $this->getUser();
 
-            $checkPostulation = $entity->getRepository(Postulation::class)->findOneBy(array(
-                'jobOffer' => $jobOffer,
-                'user' => $user
-            ));
-
-            if(!$checkPostulation)
+            if(!is_null($user))
             {
-                //Création d'une nouvelle postulation
-                $postulation = new Postulation();
-
-                $entity->persist($postulation);
-
-                $postulation->setUser($user);
-                $postulation->setJobOffer($jobOffer);
-                $postulation->setPostulationDate(new \DateTime());
-                $postulation->setStatus(false);
-
-                $entity->flush();
-
-                $this->addFlash('success', 'Votre postulation a été enregistré avec succès');
-
-                return new JsonResponse(array(
-                    'url' => $this->generateUrl('index')
+                $checkUserOFfer = $entity->getRepository(JobOffer::class)->findOneBy(array(
+                    'id' => $request->getContent(),
+                    'user' => $user
                 ));
+
+                //Vérification que l'utilisation ne postule pas à sa propre annonce
+                if(!$checkUserOFfer)
+                {
+                    $jobOffer = $entity->getRepository(JobOffer::class)->findOneBy(array(
+                        'id' => $request->getContent(),
+                    ));
+
+                    $checkPostulation = $entity->getRepository(Postulation::class)->findOneBy(array(
+                        'jobOffer' => $jobOffer,
+                        'user' => $user
+                    ));
+
+                    if (!$checkPostulation) {
+                        //Création d'une nouvelle postulation
+                        $postulation = new Postulation();
+
+                        $entity->persist($postulation);
+
+                        $postulation->setUser($user);
+                        $postulation->setJobOffer($jobOffer);
+                        $postulation->setPostulationDate(new \DateTime());
+                        $postulation->setStatus(false);
+
+                        $entity->flush();
+
+                        $this->addFlash('success', 'Votre postulation a été enregistré avec succès');
+
+                        return new JsonResponse(array(
+                            'url' => $this->generateUrl('index')
+                        ));
+                    }
+                    else
+                    {
+                        $this->addFlash('warning', 'Vous ne pouvez pas postuler plusieurs fois à la même annonce');
+
+                        return new JsonResponse(array(
+                            'url' => $this->generateUrl('index')
+                        ));
+                    }
+                }
+                else
+                {
+                    $this->addFlash('warning', 'Vous ne pouvez pas postuler à votre propre annonce');
+
+                    return new JsonResponse(array(
+                        'url' => $this->generateUrl('index')
+                    ));
+                }
             }
             else
             {
-                $this->addFlash('warning', 'Vous ne pouvez pas postuler plusieurs fois à la même annonce');
+                $this->addFlash('warning', 'Vous devez vous connecter pour postuler à une annonce');
 
                 return new JsonResponse(array(
                     'url' => $this->generateUrl('index')
@@ -597,8 +628,6 @@ class UserController extends AbstractController
                 'id' => $request->get('postulationID'),
                 'user' => $request->get('userID')
             ));
-
-            dump($postulation);
 
             $entity->persist($postulation);
 
@@ -802,6 +831,21 @@ class UserController extends AbstractController
 
         return $this->render('user/closeOffer.html.twig', array(
             'form' => $form->createView()
+        ));
+    }
+
+    /**
+     * @Route("/details-employeur/{username}", name="showDetailsEmployer")
+     * @Security("has_role('ROLE_USER')")
+     */
+    public function showDetailsEmployer(EntityManagerInterface $entity, $username)
+    {
+        $user = $entity->getRepository(User::class)->findOneBy(array(
+            'username' => $username
+        ));
+
+        return $this->render('user/userDetails.html.twig', array(
+           'user' => $user
         ));
     }
 }

@@ -7,5 +7,5 @@
 <b>Description : </b>{{ jobOfferDescription }}</p>
 <b>Date de postulation : </b>{{ postulationDate|localizeddate('long', 'none') }}
 <p>Vous trouverez toutes les informations nécessaires de l'employeur en cliquant sur le lien suivant :
-    <a href="{{ url('userDetail', {'username': username}) }}">Informations employeur</a>
+    <a href="{{ url('showDetailsEmployer', {'username': username}) }}">Informations employeur</a>
 </p>

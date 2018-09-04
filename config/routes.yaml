@@ -1,2 +1,25 @@
 logout:
     path: /logout
+
+index:
+    path: /
+    controller: App\Controller\AppController::index
+
+easyadmin:
+    path: /admin
+
+offers:
+    path: /annonces
+    controller: App\Controller\AppController::index
+
+infoChequeEmploi:
+    path: /cheque-emploi
+    controller: App\Controller\AppController::viewChequeEmploi
+
+conditions:
+    path: /conditions-generales-utilisation
+    controller: App\Controller\AppController::viewConditions
+
+filter:
+    path: /filtrer
+    controller: App\Controller\AppController::filterList

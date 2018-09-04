@@ -13,7 +13,6 @@ class AppController extends AbstractController
 {
     /**
      * @Route("/", name="index")
-     * @Route("annonces", name="offers")
      */
     public function index(Request $request, EntityManagerInterface $entity)
     {
@@ -52,9 +51,9 @@ class AppController extends AbstractController
     }
 
     /**
-     * @Route("cheque-emploi", name="description")
+     * @Route("cheque-emploi", name="infoChequeEmploi")
      */
-    public function viewDescription()
+    public function viewChequeEmploi()
     {
         return $this->render('utils/description.html.twig');
     }
@@ -107,9 +106,17 @@ class AppController extends AbstractController
                     ->setParameter('date', $request->get('date'));
             }
 
+            if($request->get('district') !== "")
+            {
+                $jobOffers->andWhere('offerCity.district = :idDistrict')
+                    ->setParameter('idDistrict', $request->get('district'));
+            }
+
+
             $jobOffers->join('jobOffers.offerType', 'typeOffer')
                 ->join('jobOffers.city', 'offerCity')
                 ->join('jobOffers.category', 'offerCategory')
+                ->join('offerCity.district', 'cityDistrict')
                 ->addSelect('offerCity.name AS cityName')
                 ->addSelect('offerCity.npa AS cityNPA')
                 ->addSelect('offerCategory.title as category')

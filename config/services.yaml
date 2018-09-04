@@ -6,7 +6,7 @@ parameters:
     document_directory: '%kernel.project_dir%/public/build/documents/'
     datetime_interval: 'P2M' # P2M correspond à la manière d'écrire
     days_limit: 14 # Nombre de jours à partir desquels une annonce change de statut et nécessite d'être renouvelée
-
+    email: 'info@bourse-emploi-jura.ch'
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -39,6 +39,6 @@ services:
         arguments:
             - '@translator'
 
-    App\EventListener\LoginListener:
+    App\Event\LoginListener:
         tags:
             - { name: 'kernel.event_listener', event: 'security.interactive_login' }

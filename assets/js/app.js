@@ -1,6 +1,28 @@
 const $ = require('jquery');
 
 require('bootstrap');
+require('select2');
+
+$(document).ready(function () {
+    $('.selectCities').select2({
+        theme: 'bootstrap4',
+        placeholder: 'Toute les localités'
+    });
+
+    $('.selectDistricts').select2({
+        theme: 'bootstrap4',
+        placeholder: 'Tout les districts'
+    });
+
+    $('.selectCategories').select2({
+        theme: 'bootstrap4',
+        placeholder: 'Toutes les catégories'
+    });
+
+    $('.select').select2({
+        theme: 'bootstrap4',
+    });
+});
 
 /**
  * Lors du clic sur le bouton envoyé du formulaire qui permet de demander un nouveaut mot de passe, envoi des données
@@ -11,6 +33,10 @@ $('#sendNewPassword').on('click', function () {
 
 $('#btnUploadProfileImage').on('click', function () {
     $('#uploadProfileImage').submit();
+});
+
+$(document).ready(function () {
+    $('[data-toggle="popover"]').popover();
 });
 
 /**
@@ -279,7 +305,7 @@ $('#form_offers').on('change', function () {
             }
             else
             {
-                text = '<i>Aucune demande reçue pour cette offre</i>';
+                text = '<i>Vous avez actuellement aucune postulation pour l\'offre sélectionnée</i>';
                 container.append(text);
             }
         },
@@ -342,6 +368,7 @@ $('#acceptPostulation').on('click', function(){
 
         success: function (response) {
             var data = $.parseJSON(response);
+            console.log(data);
             if(data.status === 'success')
                 $(location).attr('href', data.url)
         }
@@ -393,6 +420,7 @@ $('#filter').on('click', function () {
     var idCity = $('#city option:selected').val();
     var idCategory = $('#category option:selected').val();
     var date = $('#date').val();
+    var district = $('#district option:selected').val();
     var container = $('#offerList');
 
     $.ajax({
@@ -402,6 +430,7 @@ $('#filter').on('click', function () {
             'idCity': idCity,
             'idCategory': idCategory,
             'date': date,
+            'district' : district,
             'typeOffer': $('#listOffers').attr('name')
         },
         async: true,

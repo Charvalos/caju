@@ -26,10 +26,6 @@ class EditMyAccountType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('username', TextType::class, array(
-                'attr' => array('placeholder' => 'Pseudo'),
-                'label' => false
-            ))
             ->add('password', PasswordType::class, array(
                 'attr' => array('placeholder' => 'Nouveau mot de passe'),
                 'label' => false,

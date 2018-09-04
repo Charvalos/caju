@@ -1,12 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: projet7
- * Date: 27.07.2018
- * Time: 10:40
- */
-
-namespace App\EventListener;
+namespace App\Event;
 
 
 use App\Entity\User;

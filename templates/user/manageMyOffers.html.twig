@@ -28,7 +28,7 @@
         </div>
         <div class="col">
             <div class="card">
-                <div class="card-body">
+                <div class="card-body offerPostulations">
                     <h5 class="card-title">Offres</h5>
                     {% if selectOffer is defined %}
                     {{ form_start(selectOffer) }}
@@ -42,8 +42,8 @@
                     {{ form_end(selectOffer) }}
                     {% endif %}
 
+                    <ul class="list-group list-group-flush" id="listPostulations">
                     {% if offerPostulations is defined %}
-                        <ul class="list-group list-group-flush" id="listPostulations">
                         {% for postulation in offerPostulations %}
                                 <li class="list-group-item d-flex align-items-center">
                                     {% if postulation.user is not null %}
@@ -59,7 +59,7 @@
                                     <div class="d-inline-flex w-25 justify-content-center"><a href="{{ path('userDetail', {'username': postulation.user.username, 'jobOfferTitle': postulation.jobOffer.title}) }}"><span class="fas fa-info"></span></a></div>
                                 </li>
                         {% endfor %}
-                        </ul>
+                    </ul>
                     {% else %}
                         <p><i>Vous avez actuellement aucune postulation pour l'offre sélectionnée</i></p>
                     {% endif %}
@@ -99,10 +99,10 @@
 
     <hr>
 
-    <div class="row justify-content-center">
-        <span class="border border-dark col-2 text-center rounded mx-auto"><em>Publiée</em></span>
-        <span class="table-info col-2 text-center rounded mx-auto"><em>Clôturée</em></span>
-        <span class="table-warning col-2 text-center rounded mx-auto"><em>Non-publiée</em></span>
+    <div class="row justify-content-center" id="infoManagerMyOffer">
+        <span class="table-success col-2 text-center rounded mx-auto"><em>Publiée</em></span>
+        <span class="table-secondary col-2 text-center rounded mx-auto"><em>Clôturée</em></span>
+        <span class="tableWarning col-2 text-center rounded mx-auto"><em>Non-publiée</em></span>
         <span class="table-danger col-2 text-center rounded mx-auto"><em>Fermeture proche</em></span>
     </div>
 
@@ -124,13 +124,13 @@
             {% if jobOffers %}
                 {% for jobOffer in jobOffers %}
                     {% if jobOffer.isActive and jobOffer.closing is null and jobOffer.renewalDate.diff(jobOffer.publicationDate).days > 14 %}
-                        <tr data-id="{{ jobOffer.id }}" data-title="{{ jobOffer.title }}" data-description="{{ jobOffer.description }}" data-city="{{ jobOffer.city }}" data-category="{{ jobOffer.category }}" data-publicationDate="{{ jobOffer.publicationDate|date('d.m.Y') }}">
+                        <tr class="table-success" data-id="{{ jobOffer.id }}" data-title="{{ jobOffer.title }}" data-description="{{ jobOffer.description }}" data-city="{{ jobOffer.city }}" data-category="{{ jobOffer.category }}" data-publicationDate="{{ jobOffer.publicationDate|date('d.m.Y') }}">
                     {% elseif jobOffer.isActive and jobOffer.closing is null and jobOffer.renewalDate.diff(jobOffer.publicationDate).days <= 14 %}
                         <tr class="table-danger" data-id="{{ jobOffer.id }}" data-title="{{ jobOffer.title }}" data-description="{{ jobOffer.description }}" data-city="{{ jobOffer.city }}" data-category="{{ jobOffer.category }}" data-publicationDate="{{ jobOffer.publicationDate|date('d.m.Y') }}">
                     {% elseif not jobOffer.isActive and jobOffer.closing is null %}
-                        <tr class="table-warning" data-id="{{ jobOffer.id }}" data-title="{{ jobOffer.title }}" data-description="{{ jobOffer.description }}" data-city="{{ jobOffer.city }}" data-category="{{ jobOffer.category }}" data-publicationDate="{{ jobOffer.publicationDate|date('d.m.Y') }}">
+                        <tr class="tableWarning" data-id="{{ jobOffer.id }}" data-title="{{ jobOffer.title }}" data-description="{{ jobOffer.description }}" data-city="{{ jobOffer.city }}" data-category="{{ jobOffer.category }}" data-publicationDate="{{ jobOffer.publicationDate|date('d.m.Y') }}">
                     {% else %}
-                        <tr class="table-info" data-id="{{ jobOffer.id }}" data-title="{{ jobOffer.title }}" data-description="{{ jobOffer.description }}" data-city="{{ jobOffer.city }}" data-category="{{ jobOffer.category }}" data-publicationDate="{{ jobOffer.publicationDate|date('d.m.Y') }}">
+                        <tr class="table-secondary" data-id="{{ jobOffer.id }}" data-title="{{ jobOffer.title }}" data-description="{{ jobOffer.description }}" data-city="{{ jobOffer.city }}" data-category="{{ jobOffer.category }}" data-publicationDate="{{ jobOffer.publicationDate|date('d.m.Y') }}">
                     {% endif %}
                     {% if jobOffer.closing is null and jobOffer.isActive %}
                         <td class=""><input class="form-check-input mx-auto" type="checkbox" value="{{ jobOffer.id }}" id="checkBoxRenewal"></td>
