@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2d60cfbb-6ab4-4a57-a30b-240f322f837c" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/User.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/user/listOffers.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/user/listOffers.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/user/manageMyOffers.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/user/manageMyOffers.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -56,7 +53,7 @@
           <entry key="js" value="10" />
           <entry key="json" value="3" />
           <entry key="php" value="137" />
-          <entry key="twig" value="165" />
+          <entry key="twig" value="166" />
           <entry key="xml" value="1" />
           <entry key="yaml" value="81" />
         </counts>
@@ -70,7 +67,7 @@
           <entry key="JavaScript" value="10" />
           <entry key="PHP" value="137" />
           <entry key="PLAIN_TEXT" value="2" />
-          <entry key="Twig" value="165" />
+          <entry key="Twig" value="166" />
           <entry key="XML" value="1" />
           <entry key="YAML" value="81" />
           <entry key="htaccess" value="2" />
@@ -118,8 +115,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Controller/UserController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="8041">
+            <state relative-caret-position="17">
               <caret line="495" column="53" selection-start-line="495" selection-start-column="53" selection-end-line="495" selection-end-column="53" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/templates/base.html.twig">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="136">
+              <caret line="8" column="56" selection-start-line="8" selection-start-column="51" selection-end-line="8" selection-end-column="56" />
             </state>
           </provider>
         </entry>
@@ -160,10 +166,10 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Entity/User.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="459">
+            <state relative-caret-position="408">
               <caret line="78" column="7" selection-start-line="78" selection-start-column="7" selection-end-line="78" selection-end-column="7" />
             </state>
           </provider>
@@ -419,7 +425,7 @@
       <path value="$PROJECT_DIR$/vendor/pugx/autocompleter-bundle" />
     </include_path>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-8" />
     <option name="y" value="-8" />
     <option name="width" value="1936" />
@@ -486,6 +492,17 @@
               <item name="config" type="462c0819:PsiDirectoryNode" />
               <item name="routes" type="462c0819:PsiDirectoryNode" />
               <item name="dev" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="caju" type="b2602c69:ProjectViewProjectNode" />
+              <item name="caju" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="caju" type="b2602c69:ProjectViewProjectNode" />
+              <item name="caju" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="build" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="caju" type="b2602c69:ProjectViewProjectNode" />
@@ -716,15 +733,15 @@
       <workItem from="1535693716092" duration="21639000" />
       <workItem from="1535954466795" duration="22769000" />
       <workItem from="1536039014200" duration="20682000" />
-      <workItem from="1536125343378" duration="590000" />
+      <workItem from="1536125343378" duration="914000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="680071000" />
+    <option name="totallyTimeSpent" value="680395000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="7" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.8969631" visible="true" weight="0.123667374" />
@@ -945,13 +962,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/templates/base.html.twig">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="9" column="206" selection-start-line="9" selection-start-column="206" selection-end-line="9" selection-end-column="206" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/templates/user/addOffer.html.twig">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -1011,13 +1021,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Controller/UserController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8041">
-          <caret line="495" column="53" selection-start-line="495" selection-start-column="53" selection-end-line="495" selection-end-column="53" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/config/packages/twig.yaml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="119">
@@ -1043,16 +1046,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="476">
           <caret line="28" column="12" selection-start-line="28" selection-start-column="12" selection-end-line="28" selection-end-column="12" />
-          <folding>
-            <element signature="e#12#26#0#Twig" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/user/manageMyOffers.html.twig">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="17" column="57" selection-start-line="17" selection-start-column="57" selection-end-line="17" selection-end-column="57" />
         </state>
       </provider>
     </entry>
@@ -1072,8 +1065,29 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Entity/User.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
+        <state relative-caret-position="408">
           <caret line="78" column="7" selection-start-line="78" selection-start-column="7" selection-end-line="78" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/user/manageMyOffers.html.twig">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="17" column="57" selection-start-line="17" selection-start-column="57" selection-end-line="17" selection-end-column="57" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Controller/UserController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="495" column="53" selection-start-line="495" selection-start-column="53" selection-end-line="495" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/base.html.twig">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="8" column="56" selection-start-line="8" selection-start-column="51" selection-end-line="8" selection-end-column="56" />
         </state>
       </provider>
     </entry>
