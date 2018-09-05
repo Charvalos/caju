@@ -56,14 +56,14 @@ class User implements UserInterface, \Serializable
     private $lastName;
 
     /**
-     * @ORM\Column(type="string", length=10)
-     * @Assert\Type(type="numeric", message="Veuillez entrer un numéro de téléphone correct")
+     * @ORM\Column(type="string", length=20)
+     * @Assert\NotBlank(message="Veuillez entrer un numéro de téléphone correct")
      */
     private $phoneN1;
 
     /**
-     * @ORM\Column(type="string", nullable=true, length=10)
-     * @Assert\Type(type="numeric", message="Veuillez entrer un numéro de téléphone correct")
+     * @ORM\Column(type="string", length=20)
+     * @Assert\NotBlank(message="Veuillez entrer un numéro de téléphone correct")
      */
     private $phoneN2;
 
@@ -210,24 +210,24 @@ class User implements UserInterface, \Serializable
         return $this;
     }
 
-    public function getPhoneN1(): ?int
+    public function getPhoneN1(): ?string
     {
         return $this->phoneN1;
     }
 
-    public function setPhoneN1(int $phoneN1): self
+    public function setPhoneN1(string $phoneN1): self
     {
         $this->phoneN1 = $phoneN1;
 
         return $this;
     }
 
-    public function getPhoneN2(): ?int
+    public function getPhoneN2(): ?string
     {
         return $this->phoneN2;
     }
 
-    public function setPhoneN2(?int $phoneN2): self
+    public function setPhoneN2(?string $phoneN2): self
     {
         $this->phoneN2 = $phoneN2;
 
