@@ -70,7 +70,11 @@ class EditMyAccountType extends AbstractType
                 'query_builder' => function(EntityRepository $er){
                     return $er->createQueryBuilder('listCities')
                         ->orderBy('listCities.npa', 'ASC');
-                }
+                },
+                'group_by' => function(City $city){
+                    return $city->getDistrict()->getName();
+                },
+                'attr' => array('class' => 'selectCities')
             ))
             /*->add('pictureFile', VichImageType::class, array(
                 'data_class' => null,

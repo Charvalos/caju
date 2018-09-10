@@ -58,3 +58,52 @@
 {
     background-color: #ffc299;
 }
+
+.form-control, .card, hr, .list-group-item, .select2-container--bootstrap4 .select2-selection--single
+{
+    border-color: red;
+}
+
+.form-control:focus
+{
+    border-color: red;
+    box-shadow: 0 0 10px 5px rgba(255, 0, 0, 0.4);
+}
+
+.input-group-text
+{
+    background-color: #ff6666;
+    color: black;
+}
+
+.table thead th
+{
+    border-top-color: red;
+    border-bottom-color: red;
+}
+
+.btn-primary, .badge-info, .modal-header
+{
+    background-color: #009900;
+}
+
+.badge-pill
+{
+    padding: 4px;
+    border-radius: 10px;
+}
+
+.modal-header
+{
+    color: white;
+}
+
+#tableListOffers td
+{
+    border-top-color: red;
+}
+
+.infoState
+{
+    font-size: 13px;
+}

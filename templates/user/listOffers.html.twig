@@ -1,12 +1,14 @@
 {% extends 'base.html.twig' %}
 
 {% block content %}
-    {{ parent() }}
     <div class="row mx-auto">
-        <div class="col px-0">
+        <div class="col-lg-2 px-0">
             <button class="btn btn-primary btnSelect" name="btnSelect" id="btnViewOffersJob" data="offerJob">J'offre un emploi</button>
+        </div>
+        <div class="col-lg px-0">
             <button class="btn btn-primary btnSelect" name="btnSelect" id="btnViewOffersSearch" data="searchJob">Je cherche un emploi</button>
         </div>
+        {{ parent() }}
     </div>
 
     <div class="invisible" id="listOffers">
@@ -30,7 +32,7 @@
             </div>
             {{ form_end(filterForm) }}
         <div class="row"></div>
-        <div class="table-responsive">
+        <div class="table-responsive" id="tableListOffers">
             <table class="table mx-auto table-hover text-center">
                 <thead>
                     <tr>
