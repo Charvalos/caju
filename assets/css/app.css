@@ -2,6 +2,17 @@
 @import "~select2/dist/css/select2.css";
 @import "~select2-bootstrap4-theme/dist/select2-bootstrap4.css";
 
+footer, footer a
+{
+    background-color: #cc0000;
+    color: white;
+}
+
+footer a:hover
+{
+    color: white;
+}
+
 #listOffers
 {
     margin-top: 10px;

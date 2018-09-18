@@ -669,7 +669,7 @@ class UserController extends AbstractController
 
             $mailer->send($email);
 
-            $this->addFlash('success', 'La candidature a été accepté.');
+            $this->addFlash('success', 'La candidature a été acceptée. A vous maintenatn de prendre contact avec la personne concernée.');
 
             return new JsonResponse(array(
                 'status' => 'success',

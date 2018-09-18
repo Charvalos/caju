@@ -41,8 +41,22 @@
                 {% endfor %}
             {% endblock %}
         </div>
+        {% block footer %}
+            <footer class="footer mt-4">
+                <div class="row mx-auto">
+                    <div class="col-4 text-center pt-1 pb-1">
+                        <p class="my-auto"><em>Caritas Jura - <a href="mailto:{{ email }}">Nous contacter</a></em></p>
+                    </div>
+                    <div class="col-4 text-center pt-1 pb-1">
+                        <p class="my-auto"><em>Copyright <i class="fa fa-copyright"></i> 2018</em></p>
+                    </div>
+                    <div class="col-4 text-center pt-1 pb-1">
+                        <a href="{{ path('conditions') }}" class="my-auto"><em>Conditions générales d'utilisation</em></a>
+                    </div>
+                </div>
+            </footer>
+        {% endblock %}
     </div>
-
     {% block javascripts %}
         <script type="text/javascript" src="{{ asset('build/js/app.js') }}"></script>
     {% endblock %}
