@@ -8,9 +8,13 @@ index:
 easyadmin:
     path: /admin
 
-offers:
-    path: /annonces
-    controller: App\Controller\AppController::index
+searchJob:
+    path: /recherche-emploi
+    controller: App\Controller\AppController::listSearchJob
+
+searchOffers:
+    path: /offre-emploi
+    controller: App\Controller\AppController::listOfferJob
 
 infoChequeEmploi:
     path: /cheque-emploi

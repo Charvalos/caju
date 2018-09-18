@@ -1,22 +1,32 @@
 {% extends 'base.html.twig' %}
 
 {% block content %}
-    <p class="text-justify">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum sed odio maximus eros pharetra rutrum nec
-        ac neque. Nulla porta ligula urna, non imperdiet turpis commodo convallis. Fusce dignissim luctus dolor, sed imperdiet augue lobortis vel. Etiam lacus ante, sagittis vitae mi a, aliquam finibus elit.
-        Phasellus vel sodales tellus, quis hendrerit leo. Quisque suscipit vehicula laoreet. Vivamus libero purus, malesuada vitae lacinia id, lacinia in mauris. Nunc eleifend rutrum felis vitae consequat.
-        Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Duis sodales ultricies ligula sit amet placerat. Pellentesque viverra sapien ac tincidunt consectetur.
-        Aenean fringilla vel mauris at vulputate. Maecenas ut ex tincidunt, commodo enim nec, varius augue. Phasellus euismod sagittis orci, non dictum elit malesuada interdum.
+    {% block title %}
+        {% include 'utils/title.html.twig' %}
+    {% endblock %}
+    {% if 'cloturer' in app.request.server.get('HTTP_REFERER') %}
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    <p class="text-justify mt-3">Facile et accessible, Chèque Emploi s’occupe de gérer <b>le salaire</b> et <b>les questions administratives</b> qui concernent
+        des travaux de proximité entre particuliers : femme de ménage, employé de jardinage, garde d’enfants ou auxiliaire
+        de vie.</p>
+    <p class="text-justify">Cela facilite l’affiliation aux assurances sociales des petits revenus, qui, sans cette possibilité,
+        resteraient peut-être dans le cercle du travail au noir. Les personnes concernées acquièrent ainsi notamment un
+        droit à des <b>allocations familiales</b>, aux <b>indemnités journalières</b> en cas d’accident ou encore à des <b>prestations AVS</b> améliorées.</p>
+    <p class="text-justify">Selon la version choisie, l’employeur peut choisir de verser ou pas directement le salaire net à l’employé, alors que
+        Chèque Emploi règle les assurances sociales. Il faut compter 5% pour les charges administratives.
+        Désormais, le décompte d’heures mensuel peut être envoyé d’un <b>seul clic en ligne</b>, facilitant encore les démarches.
+        Zéro paperasse pour l’employeur et l’employé qui sont ainsi toujours plus allégés des tracas administratifs.</p>
+    <p class="text-justify">Le système de gestion administrative facilitée est mis en place dans le Jura depuis 2007 et depuis 2013 dans le Jura bernois.
+        Près de <b>800 employeurs</b> ont fait le pas de régulariser la situation de leur employé à travers le système Chèque Emploi.</p>
+
+    <p>
+        <a href="https://www.cheque-emploi-jura.ch/calculateur-salaire" target="_blank">
+            <i class="text-danger">Un calculateur de salaire en ligne vous permet de calculer instantanément le salaire et les charges effectives.</i>
+        </a>
     </p>
-    <p class="text-justify">
-        Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
-        In volutpat lacus sed justo vulputate, et consectetur enim tincidunt. Duis odio sapien, ultricies at sodales nec, vulputate vel orci. Integer consectetur sagittis diam at dignissim.
-        Vivamus sit amet risus tristique, malesuada est venenatis, finibus libero. Curabitur eu quam sagittis, condimentum lacus vel, laoreet ex.
-    </p>
-    <p class="text-justify">
-        Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Curabitur fringilla congue blandit. Vestibulum semper diam erat, nec blandit lorem sodales nec.
-        Phasellus dictum sed mauris pretium dignissim. Praesent lacinia id felis tristique ullamcorper. Quisque eu semper mi. Vestibulum imperdiet quis ligula id ullamcorper.
-        Quisque consectetur ex erat, non venenatis dui suscipit a. Praesent venenatis erat vitae tortor feugiat ultrices.
-    </p>
-    <a href="https://www.caritas-jura.ch/prestations/cheque-emploi">Chèque-Emploi</a>
+
+    <a href="https://www.caritas-jura.ch/prestations/cheque-emploi" target="_blank">Plus d'info</a>
 {% endblock %}

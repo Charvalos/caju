@@ -2,11 +2,6 @@
 @import "~select2/dist/css/select2.css";
 @import "~select2-bootstrap4-theme/dist/select2-bootstrap4.css";
 
-.content
-{
-    margin-top: 10px;
-}
-
 #listOffers
 {
     margin-top: 10px;
@@ -106,4 +101,38 @@
 .infoState
 {
     font-size: 13px;
+}
+
+.btnIndex
+{
+    width: 300px;
+    height: 100px;
+    vertical-align: middle;
+    font-size: 20px;
+}
+
+.display-4
+{
+    font-size: 35px;
+    font-weight: 800;
+}
+
+.lead
+{
+    font-size: 1.5rem;
+}
+
+.navbar
+{
+    background-color: #cc0000 !important;
+}
+
+.nav-link, .navbar-brand, .fa-power-off
+{
+    color: white !important;
+}
+
+.nav-item:hover {
+    background-color: darkgray;
+    transition: background-color .2s;
 }

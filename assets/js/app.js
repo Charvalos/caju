@@ -67,82 +67,15 @@ $('#newPassword').on('submit', function () {
 });
 
 /**
- * Affiche les "objets" nécessaires après le clic sur un bouton (liste des offres ou ajout d'une offre
+ * Affiche les "objets" nécessaires après le clic sur un bouton
  */
 $('.btnSelect').click(function () {
-    if($(this).attr('name') === 'btnSelect' )
-    {
-        var typeOffer = $(this).attr('data');
-
-        //Ajout d'un attribut caché au formulaire d'ajout d'annonce
-        if($(this).data('page') === 'addOffer')
-        {
-            //Suppression des boutons
-            $(this).parent().parent().remove();
-            //Affichage de la liste ou du formulaire
-            $('.invisible').removeClass().addClass('visible');
-            $('#type').attr('value', typeOffer);
-        }
-        else
-        {
-            $.ajax({
-                url: 'annonces',
-                data: 'typeOffer=' + typeOffer,
-                dataType: 'text',
-                async: true,
-
-                success: function (response) {
-                    var offers = $.parseJSON(response);
-                    var dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
-                    var container = $('#offerList');
-
-                    offers = offers.offers;
-
-                    //Suppression des données de la table
-                    container.empty();
-
-                    if(offers.length > 0)
-                    {
-                        for(var i = 0; i < offers.length; i++)
-                        {
-                            //Création de l'objet Date en JS afin de pouvoir utiliser les méthodes associées
-                            var date = new Date(offers[i]["0"].publicationDate['date']);
-
-                            var tr = '<tr>';
-
-                            var tdTitle = '<td>' + offers[i]["0"].title.slice(0,20) + '...</td>';
-                            var tdDescription = '<td>' + offers[i]["0"].description.slice(0,55) + '...</td>';
-                            var tdCity = '<td>' + offers[i].cityNPA + ' ' + offers[i].cityName + '</td>';
-                            var tdCategory = '<td>' + offers[i].categoryTitle + '</td>';
-                            var tdPublicationDate = '<td>' + date.toLocaleDateString('fr-FR', dateOptions) + '</td>';
-                            var tdOpenModal = '<td><a href="#" data-toggle="modal" data-target="#detailsOffer" id="showDetailOffer" data-id="' + offers[i]["0"].id + '" data-page="listOffers" data-title="' + offers[i]["0"].title + '" data-description="' + offers[i]["0"].description + '" ' +
-                                'data-city="' + offers[i].cityNPA + ' ' + offers[i].cityName + '" data-category="' + offers[i].categoryTitle + '" data-publicationDate="' + date.toLocaleDateString('fr-FR', dateOptions) + '"' +
-                                'data-type="' + offers[i].typeOffer + '""><span class="fas fa-info"></span></a></td>';
-
-                            var content = tr + tdTitle + tdDescription + tdCity + tdCategory + tdPublicationDate + tdOpenModal + '</tr>';
-
-                            container.append(content);
-                        }
-                    }
-                    else
-                    {
-                        var content = '<tr><td colspan="6"> Il y actuellement aucune offres en attente</td></tr>';
-                        container.append(content);
-                    }
-
-                    //Affichage de la liste
-                    $('.invisible').removeClass().addClass('visible');
-
-                    $('#listOffers').attr('name', typeOffer);
-                },
-                error: function () {
-                    $('#offerList').empty();
-
-                    container.append('<tr><td colspan="6"> Une erreur inconnue est suzvenue</td></tr>');
-                }
-            })
-        }
-    }
+    var typeOffer = $(this).attr('data');
+    //Suppression des boutons
+    $(this).parent().parent().remove();
+    //Affichage de la liste ou du formulaire
+    $('.invisible').removeClass().addClass('visible');
+    $('#type').attr('value', typeOffer);
 });
 
 /**

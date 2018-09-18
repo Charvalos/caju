@@ -3,11 +3,12 @@
     <head>
         <meta charset="UTF-8">
         <title>
-            Bourse Emploi - Jura
+            Boulots Réglos
         </title>
         {% block stylesheets %}
-            <link rel="stylesheet" href="{{ asset('build/css/app.css') }}" />
+            <link rel="stylesheet" href="{{ asset('build/css/app.css') }}">
             <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+            <link rel="icon" href="{{ asset('build/images/logo.png') }}" type="image/png">
         {% endblock %}
     </head>
     <body>
@@ -23,7 +24,7 @@
                 {% include 'utils/menu/menuAdmin.html.twig' %}
             {% endif %}
         {% endblock %}
-        <div class="content">
+        <div class="content mt-3">
             {% block content %}
                 {% if not is_granted('ROLE_ADMIN') %}
                     {% if app.user is not null %}
@@ -34,10 +35,6 @@
                         {% endif %}
                     {% endif %}
                 {% endif %}
-
-                {% for message in app.flashes('success') %}
-                    <div class="alert alert-success w-50 float-right text-center">{{ message }}</div>
-                {% endfor %}
 
                 {% for message in app.flashes('warning') %}
                     <div class="alert alert-warning w-50 float-right text-center">{{ message }}</div>

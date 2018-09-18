@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\City;
+use App\Entity\District;
 use App\Entity\User;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -18,6 +19,7 @@ use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Yaml\Tests\A;
 
 class RegisterType extends AbstractType
 {
@@ -73,8 +75,11 @@ class RegisterType extends AbstractType
             ->add('city', EntityType::class, array(
                 'class' => City::class,
                 'query_builder' => function(EntityRepository $er){
-                    return $er->createQueryBuilder('listCities')
-                        ->orderBy('listCities.npa', 'ASC');
+                        return $er->createQueryBuilder('listCities')
+                            ->join('listCities.district', 'district')
+                            ->addSelect('district')
+                            ->groupBy('listCities.name')
+                            ->orderBy('listCities.npa', 'ASC');
                 },
                 'group_by' => function(City $city){
                     return $city->getDistrict()->getName();

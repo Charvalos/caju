@@ -26,7 +26,7 @@ class LoginListener
         if($user instanceof User)
         {
             $user->setLastLogin(new \DateTime());
-            $this->flashMessage->add('success', 'Vous êtes maintenant connecté');
+            //$this->flashMessage->add('success', 'Vous êtes maintenant connecté');
 
             $this->em->persist($user);
             $this->em->flush();

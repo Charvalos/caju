@@ -1,17 +1,10 @@
 {% extends 'base.html.twig' %}
 
 {% block content %}
-    <div class="row mx-auto">
-        <div class="col-lg-2 px-0">
-            <button class="btn btn-primary btnSelect" name="btnSelect" id="btnViewOffersJob" data="offerJob">J'offre un emploi</button>
-        </div>
-        <div class="col-lg px-0">
-            <button class="btn btn-primary btnSelect" name="btnSelect" id="btnViewOffersSearch" data="searchJob">Je cherche un emploi</button>
-        </div>
-        {{ parent() }}
-    </div>
-
-    <div class="invisible" id="listOffers">
+    {% block title %}
+        {% include 'utils/title.html.twig' %}
+    {% endblock %}
+    <div class="visible" id="listOffers">
             {{ form_start(filterForm, {'attr': {'class': 'form-inline justify-content-between mb-2'} } ) }}
             <div class="form-group">
                 {{ form_widget(filterForm.city) }}
@@ -45,8 +38,31 @@
                     </tr>
                 </thead>
                 <tbody id="offerList">
+                {% if offers is not empty %}
+                    {% for offer in offers %}
+                        <tr>
+                            <td>{{ offer.title }}</td>
+                            <td>{{ offer.description }}</td>
+                            <td>{{ offer.city }}</td>
+                            <td>{{ offer.category }}</td>
+                            <td>{{ offer.publicationDate|localizeddate('long', 'none') }}</td>
+                            <td><a href="#" data-toggle="modal" data-target="#detailsOffer" id="showDetailOffer" data-id="{{ offer.id }}" data-page="listOffers" data-title="{{ offer.title }}" data-description="{{ offer.description }}"
+                                data-city="{{ offer.city }}" data-category="{{ offer.category }}" data-publicationDate="{{ offer.publicationDate|localizeddate('long', 'none') }}"
+                                data-type="{{ offer.offerType }}"><span class="fas fa-info"></span></a></td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr><td colspan="6"> Il y actuellement aucune offres en attente</td></tr>
+                {% endif %}
                 </tbody>
             </table>
+        </div>
+        <div class="row mx-0">
+            {% if not is_granted('ROLE_USER') %}
+                <input id="addOffer" type="button" class="btn btn-primary" value="Ajouter une annonce" onclick="window.location.href='{{ path('login') }}'" />
+            {% else %}
+                <input id="addOffer" type="button" class="btn btn-primary" value="Ajouter une annonce" onclick="window.location.href='{{ path('addOffer') }}'" />
+            {% endif %}
         </div>
     </div>
 

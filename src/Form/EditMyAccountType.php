@@ -69,6 +69,9 @@ class EditMyAccountType extends AbstractType
                 'class' => City::class,
                 'query_builder' => function(EntityRepository $er){
                     return $er->createQueryBuilder('listCities')
+                        ->join('listCities.district', 'district')
+                        ->addSelect('district')
+                        ->groupBy('listCities.name')
                         ->orderBy('listCities.npa', 'ASC');
                 },
                 'group_by' => function(City $city){

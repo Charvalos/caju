@@ -30,7 +30,7 @@ class EasyAdminSubscriber implements EventSubscriberInterface
         if($entity instanceof User)
         {
             $email = (new \Swift_Message('Suppression du compte'))
-                ->setFrom('info@bourse-emploi-jura.ch')
+                ->setFrom($this->getParameter('email'))
                 ->setTo($entity->getEmail())
                 ->setBody(
                     $this->twig->render('emails/emailAccountDeleted.html.twig', array(

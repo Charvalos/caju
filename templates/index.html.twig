@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+   {% block title %}
+       <div class="row mx-0">
+           <p class="text-justify display-4">Boulots-réglos, une plate-forme qui met en lien les personnes qui cherchent et offrent des travaux de proximité</p>
+       </div>
+       <div class="row mx-0">
+           <p class="text-justify lead">Vous cherchez ou vous offrez un petit boulot en tant que femme de ménage, auxiliaire de vie, garde d’enfant ou encore comme employé de jardinage ?
+               Faites votre choix en cliquant sur le bouton correspondant</p>
+       </div>
+   {% endblock %}
+    <div class="row mx-auto d-flex justify-content-around mt-2">
+        <div class="col-lg-3">
+            <input type="button" class="btn btn-primary btnIndex" value="J'OFFRE UN EMPLOI" onclick="window.location.href='{{ path('searchOffers') }}'" />
+        </div>
+        <div class="col-lg-3">
+            <input type="button" class="btn btn-primary btnIndex" value="JE CHERCHE UN EMPLOI" onclick="window.location.href='{{ path('searchJob') }}'" />
+        </div>
+    </div>
+    {% block chequeEmploi %}
+        <div class="row mx-0 mt-4">
+            <div class="col-lg-6">
+                <img src="{{ asset('build/images/bigYellowMan.jpg') }}" alt="Bonhomme jaune">
+            </div>
+            <div class="col-lg-6 mt-5">
+                <div class="row mx-0">
+                    <h5>CHEQUE EMPLOI</h5>
+                    <p class="text-justify">Si vous passez par Chèque Emploi, c’est la garantie de faire les choses en règle sans se compliquer la vie. Les avantages sont nombreux :</p>
+                </div>
+                <div class="row mx-0">
+                    <img src="{{ asset('build/images/chequeEmploi.jpg') }}" alt="cheque_emploi">
+                </div>
+            </div>
+        </div>
+    {% endblock %}
+{% endblock %}

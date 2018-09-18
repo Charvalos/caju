@@ -7,6 +7,10 @@
         </div>
     {% endif %}
 
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success text-center">{{ message }}</div>
+    {% endfor %}
+
     {{ form_start(loginForm) }}
     {{ form_row(loginForm.username) }}
     {{ form_row(loginForm.password) }}

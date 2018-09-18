@@ -66,8 +66,8 @@ class UserController extends AbstractController
             $slug = $user->getHash() . '&' . $user->getEmail();
 
             $email = (new \Swift_Message('Email'))
-                ->setSubject('Bourse Emploi - Caritas Jura')
-                ->setFrom("info@bourse-emploi-jura.ch ")
+                ->setSubject('Boulots-réglos - Caritas Jura')
+                ->setFrom($this->getParameter('email'))
                 ->setTo($user->getEmail())
                 ->setBody(
                     $this->renderView(
@@ -82,10 +82,10 @@ class UserController extends AbstractController
 
             $entityManager->flush();
 
-            $this->addFlash('success', 'Inscription réussie avec succès ! Veuillez activer votre compte (vérifiez vos spams)');
+            $this->addFlash('success', 'Inscription réussie avec succès ! Veuillez activer votre compte (vérifiez vos spams) avant de vous connecter');
             $mailer->send($email);
 
-            return $this->redirectToRoute('index');
+            return $this->redirectToRoute('login');
         }
 
         return $this->render('utils/registration.html.twig', array(
@@ -126,9 +126,9 @@ class UserController extends AbstractController
             $fileSystem->mkdir($profileImagesDir . $user->getUsername());
             $fileSystem->mkdir($profileDocumentsDir . $user->getUsername());
 
-            $this->addFlash('success', 'Votre compte a bien été activé.');
+            $this->addFlash('success', 'Votre compte a bien été activé. Vous pouvez maintenant vous connecter');
 
-            return $this->redirectToRoute('index');
+            return $this->redirectToRoute('login');
         } else {
             throw $this->createNotFoundException('Une erreur est survenue durant l\'activation du compte');
         }
@@ -174,8 +174,8 @@ class UserController extends AbstractController
                 $temporaryPassword = sha1(rand(1, 1000));
 
                 $email = (new \Swift_Message('Nouveau mot de passe'))
-                    ->setSubject('Bourse Emploi - Caritas Jura')
-                    ->setFrom('info@bourse-emploi-jura.ch')
+                    ->setSubject('Boulots-réglos - Caritas Jura')
+                    ->setFrom($this->getParameter('email'))
                     ->setTo($user->getEmail())
                     ->setBody(
                         $this->renderView(
@@ -274,7 +274,7 @@ class UserController extends AbstractController
 
             $this->addFlash('success', 'Votre annonce a été ajoutée avec succès');
 
-            return $this->redirect($this->generateUrl('index'));
+            return $this->redirect($this->generateUrl('manageOffers'));
         }
 
         return $this->render('user/addOffer.html.twig', array(
@@ -587,8 +587,8 @@ class UserController extends AbstractController
 
             //Création de l'email
             $email = (new \Swift_Message('Une candidature a été refusée'))
-                ->setSubject('Bourse Emploi - Caritas Jura')
-                ->setFrom('info@bourse-emploi-jura.ch')
+                ->setSubject('Boulots-réglos - Caritas Jura')
+                ->setFrom($this->getParameter('email'))
                 ->setTo($candidat->getEmail())
                 ->setBody(
                     $this->renderView(
@@ -650,8 +650,8 @@ class UserController extends AbstractController
 
             //Création de l'email
             $email = (new \Swift_Message('Une candidature a été acceptée'))
-                ->setSubject('Bourse Emploi - Caritas Jura')
-                ->setFrom('info@bourse-emploi-jura.ch')
+                ->setSubject('Boulots-réglos - Caritas Jura')
+                ->setFrom($this->getParameter('email'))
                 ->setTo($candidat->getEmail())
                 ->setBody(
                     $this->renderView(
@@ -805,8 +805,8 @@ class UserController extends AbstractController
 
             //Création de l'email
             $email = (new \Swift_Message('Une candidature a été acceptée'))
-                ->setSubject('Bourse Emploi - Caritas Jura')
-                ->setFrom('info@bourse-emploi-jura.ch')
+                ->setSubject('Boulots-réglos - Caritas Jura')
+                ->setFrom($this->getParameter('email'))
                 ->setTo($this->getUser()->getEmail())
                 ->setBody(
                     $this->renderView(
@@ -823,6 +823,13 @@ class UserController extends AbstractController
                 );
 
             $mailer->send($email);
+
+            //Redirection différente si la personne clôture une annonce parce qu'elle a engagé une personne (ou a été engagée)
+            if(strpos($closing->getClosingType()->getName(), 'engagé'))
+            {
+                $this->addFlash('success', 'Vous avez apparemment engagé une personne ou vous avez été éngagé(e). N\'oubliez pas Chèque-Emploi !');
+                return $this->redirectToRoute('infoChequeEmploi');
+            }
 
             $this->addFlash('success', 'L\'annonce a été clôturée avec succès');
 

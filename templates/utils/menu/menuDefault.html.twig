@@ -1,5 +1,5 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="https://www.caritas-jura.ch/homepage">Caritas Jura</a>
+<nav class="navbar navbar-expand-lg">
+    {% include 'utils/menu/navbarBrand.html.twig' %}
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -7,13 +7,13 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mx-auto">
             <li class="nav-item px-4">
-                <a class="nav-link" href="{{ path('offers') }}">Voir les annonces</a>
+                <a class="nav-link" href="{{ path('searchOffers') }}">Offre d'emploi</a>
             </li>
             <li class="nav-item px-4">
-                <a class="nav-link" href="{{ path('infoChequeEmploi') }}">Chéque-Emploi</a>
+                <a class="nav-link" href="{{ path('searchJob') }}">Recherche d'emploi</a>
             </li>
             <li class="nav-item px-4">
-                <a class="nav-link" href="{{ path('conditions') }}">Condition générales d'utilisation</a>
+                <a class="nav-link" href="{{ path('infoChequeEmploi') }}">Chèque-Emploi</a>
             </li>
             <li class="nav-item px-4">
                 <a class="nav-link" href="{{ path('login') }}">Se connecter</a>

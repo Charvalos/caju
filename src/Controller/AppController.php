@@ -14,39 +14,56 @@ class AppController extends AbstractController
     /**
      * @Route("/", name="index")
      */
-    public function index(Request $request, EntityManagerInterface $entity)
+    public function index()
+    {
+        return $this->render('index.html.twig');
+    }
+
+    /**
+     * @Route("/recherche-emploi", name="searchJob")
+     */
+    public function listSearchJob(EntityManagerInterface $entity)
     {
         $form = $this->createForm(FilterType::class);
 
-        if($request->isXmlHttpRequest())
-        {
-            //Récupération des offres de la catégories demandées et qui ne sont pas liées à l'utilisateur actuelle
-            $queryOffers = $entity->createQueryBuilder();
-            $queryOffers->select('offers')
-                ->from('App:JobOffer', 'offers')
-                ->join('offers.offerType', 'type')
-                ->join('offers.city', 'city')
-                ->join('offers.category', 'category')
-                ->join('offers.offerType', 'offerType')
-                ->join('offers.user', 'user')
-                ->addSelect('city.name AS cityName')
-                ->addSelect('city.npa AS cityNPA')
-                ->addSelect('category.title AS categoryTitle')
-                ->addSelect('offerType.name AS typeOffer')
-                ->where('type.name = :type')
-                ->andWhere('offers.isActive = true')
-                ->orderBy('offers.publicationDate', 'DESC')
-                ->setParameters(array(
-                    'type' => $request->query->get('typeOffer'),
-                ));
+        $querySelectAll = $entity->createQueryBuilder();
+        $querySelectAll->select('jobOffer')
+            ->from('App:JobOffer', 'jobOffer')
+            ->join('jobOffer.offerType', 'typeOffer')
+            ->where('typeOffer.name = :name')
+            ->andWhere('jobOffer.isActive = true')
+            ->andWhere('jobOffer.closing IS NULL')
+            ->setParameter('name', 'searchJob');
 
-            return new JsonResponse(array(
-                'offers' => $queryOffers->getQuery()->getArrayResult(),
-            ));
-        }
+        $listOffer = $querySelectAll->getQuery()->getResult();
 
         return $this->render('user/listOffers.html.twig', array(
-            'filterForm' => $form->createView()
+            'filterForm' => $form->createView(),
+            'offers' => $listOffer
+        ));
+    }
+
+    /**
+     * @Route("/offre-emploi", name="searchOffers")
+     */
+    public function listOfferJob(EntityManagerInterface $entity)
+    {
+        $form = $this->createForm(FilterType::class);
+
+        $querySelectAll = $entity->createQueryBuilder();
+        $querySelectAll->select('jobOffer')
+            ->from('App:JobOffer', 'jobOffer')
+            ->join('jobOffer.offerType', 'typeOffer')
+            ->where('typeOffer.name = :name')
+            ->andWhere('jobOffer.isActive = true')
+            ->andWhere('jobOffer.closing IS NULL')
+            ->setParameter('name', 'offerJob');
+
+        $listOffer = $querySelectAll->getQuery()->getResult();
+
+        return $this->render('user/listOffers.html.twig', array(
+            'filterForm' => $form->createView(),
+            'offers' => $listOffer
         ));
     }
 
