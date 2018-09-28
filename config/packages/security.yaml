@@ -11,8 +11,8 @@ security:
         in_memory:
             memory:
                 users:
-                    admin:
-                        password: $2y$13$00ps6qsY6vnUpAYD8kajv.fEgsyS67jrjDhs1qhseUk8yYP13RnU6
+                    AdminBoulotsReglos:
+                        password: $2y$13$Eom/JrcTS8QilsmGcWhzd.1s9dRwcvc4PJLTuJK0k95xVilkghbPK
                         roles: 'ROLE_ADMIN'
         user_provider:
             entity:

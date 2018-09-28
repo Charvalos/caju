@@ -13,6 +13,14 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @ORM\Table(
+ *     indexes={
+ *          @ORM\Index(name="usernameUser", columns="username"),
+ *          @ORM\Index(name="emailUser", columns="email"),
+ *          @ORM\Index(name="firstNameUser", columns="first_name"),
+ *          @ORM\Index(name="lastNameUser", columns="last_name"),
+ *     }
+ * )
  * @UniqueEntity("email", message="L'adresse email {{ value }} est déjà utilisée")
  * @UniqueEntity("username", message="Le pseudo {{ value }} est déjà utilisé")
  * @Vich\Uploadable

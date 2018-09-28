@@ -4,29 +4,36 @@
     {% block title %}
         {% include 'utils/title.html.twig' %}
     {% endblock %}
+    {% for message in app.flashes('warning') %}
+        <div class="alert alert-warning text-center">{{ message }}</div>
+    {% endfor %}
     <div class="visible" id="listOffers">
-            {{ form_start(filterForm, {'attr': {'class': 'form-inline justify-content-between mb-2'} } ) }}
-            <div class="form-group">
+        {{ form_start(filterForm, {'attr': {'id': 'filterForm'} } ) }}
+        <div class="row">
+            <div class="col-3">
                 {{ form_widget(filterForm.city) }}
+            </div>
+            <div class="col-3">
                 {{ form_widget(filterForm.district) }}
             </div>
-            <div class="form-group input-group">
-                <div class="input-group-prepend">
-                    {{ form_label(filterForm.date, 'Date', {
-                        'label_attr': {'class': 'input-group-text'}}) }}
-                </div>
-                {{ form_widget(filterForm.date) }}
-            </div>
-            <div class="form-group">
+            <div class="col">
                 {{ form_widget(filterForm.category) }}
             </div>
-            <div class="form-group">
+            <div class="col">
                 {{ form_widget(filterForm.filter) }}
             </div>
-            {{ form_end(filterForm) }}
+            <div class="col">
+            {% if not is_granted('ROLE_USER') %}
+                <input id="addOffer" type="button" class="btn btn-primary" value="Ajouter une annonce" onclick="window.location.href='{{ path('login') }}'" />
+            {% else %}
+                <input id="addOffer" type="button" class="btn btn-primary" value="Ajouter une annonce" onclick="window.location.href='{{ path('addOffer') }}'" />
+            {% endif %}
+            </div>
+        </div>
+        {{ form_end(filterForm) }}
         <div class="row"></div>
-        <div class="table-responsive" id="tableListOffers">
-            <table class="table mx-auto table-hover text-center">
+        <div>
+            <table class="table mx-auto table-hover text-center" id="tableListOffers">
                 <thead>
                     <tr>
                         <th>Titre</th>
@@ -41,8 +48,16 @@
                 {% if offers is not empty %}
                     {% for offer in offers %}
                         <tr>
-                            <td>{{ offer.title }}</td>
-                            <td>{{ offer.description }}</td>
+                            {% if offer.title|length > 20 %}
+                                <td>{{ offer.title|slice(0,20) }}...</td>
+                            {% else %}
+                                <td>{{ offer.title }}</td>
+                            {% endif %}
+                            {% if offer.description|length > 50 %}
+                                <td>{{ offer.description|slice(0,50) }}...</td>
+                            {% else %}
+                                <td>{{ offer.description }}</td>
+                            {% endif %}
                             <td>{{ offer.city }}</td>
                             <td>{{ offer.category }}</td>
                             <td>{{ offer.publicationDate|localizeddate('long', 'none') }}</td>
@@ -56,13 +71,6 @@
                 {% endif %}
                 </tbody>
             </table>
-        </div>
-        <div class="row mx-0">
-            {% if not is_granted('ROLE_USER') %}
-                <input id="addOffer" type="button" class="btn btn-primary" value="Ajouter une annonce" onclick="window.location.href='{{ path('login') }}'" />
-            {% else %}
-                <input id="addOffer" type="button" class="btn btn-primary" value="Ajouter une annonce" onclick="window.location.href='{{ path('addOffer') }}'" />
-            {% endif %}
         </div>
     </div>
 

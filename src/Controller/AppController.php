@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\OfferType;
 use App\Form\FilterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -72,7 +73,7 @@ class AppController extends AbstractController
      */
     public function viewChequeEmploi()
     {
-        return $this->render('utils/description.html.twig');
+        return $this->render('utils/chequeEmploi.html.twig');
     }
 
     /**
@@ -98,49 +99,46 @@ class AppController extends AbstractController
     {
         if($request->isXmlHttpRequest())
         {
+            if(strpos($request->headers->get('referer'), 'offre-emploi'))
+                $idOfferType = $entity->getRepository(OfferType::class)->findOneBy(array(
+                    'name' => 'offerJob'
+                ));
+            else
+                $idOfferType = $entity->getRepository(OfferType::class)->findOneBy(array(
+                    'name' => 'searchJob'
+                ));
+
             $jobOffers = $entity->createQueryBuilder();
             $jobOffers->select('jobOffers')
-                ->from('App:JobOffer', 'jobOffers');
+                ->from('App:JobOffer', 'jobOffers')
+                ->join('jobOffers.city', 'city')
+                ->join('jobOffers.category', 'category')
+                ->addSelect('city.npa AS cityNPA')
+                ->addSelect('city.name AS cityName')
+                ->addSelect('category.title AS categoryTitle');
 
-            /*
-             * Ajout des paramètres en fonction des choix du filtre
-             */
+            //Ajout des paramètres de filtrage si indiqués
             if($request->get('idCity') !== "")
-            {
-                $jobOffers->andWhere('jobOffers.city = :idCity')
-                    ->setParameter('idCity', $request->get('idCity'));
-            }
+                $jobOffers->where('jobOffers.city = :city')
+                    ->setParameter('city', $request->get('idCity'));
 
             if($request->get('idCategory') !== "")
-            {
-                $jobOffers->andWhere('jobOffers.category = :idCategory')
-                    ->setParameter('idCategory', $request->get('idCategory'));
-            }
-
-            if($request->get('date') !== "")
-            {
-                $jobOffers->andWhere('jobOffers.publicationDate >= :date')
-                    ->setParameter('date', $request->get('date'));
-            }
+                $jobOffers->andWhere('jobOffers.category = :category')
+                    ->setParameter('category', $request->get('idCategory'));
 
             if($request->get('district') !== "")
-            {
-                $jobOffers->andWhere('offerCity.district = :idDistrict')
-                    ->setParameter('idDistrict', $request->get('district'));
-            }
+                $jobOffers->andWhere('city.district = :district')
+                    ->setParameter('district', $request->get('district'));
 
+            $jobOffers->andWhere('jobOffers.offerType = :offerType')
+                ->setParameter('offerType', $idOfferType);
 
-            $jobOffers->join('jobOffers.offerType', 'typeOffer')
-                ->join('jobOffers.city', 'offerCity')
-                ->join('jobOffers.category', 'offerCategory')
-                ->join('offerCity.district', 'cityDistrict')
-                ->addSelect('offerCity.name AS cityName')
-                ->addSelect('offerCity.npa AS cityNPA')
-                ->addSelect('offerCategory.title as category')
-                ->andWhere('typeOffer.name = :typeOffer')
-                ->andWhere('jobOffers.isActive = TRUE')
-                ->setParameter('typeOffer', $request->get('typeOffer'))
-                ->orderBy('jobOffers.publicationDate', 'DESC');
+            $dateMin = $entity->createQueryBuilder();
+            $dateMin->select('jobOffers, MIN(jobOffers.publicationDate)')
+                ->from('App:JobOffer', 'jobOffers');
+
+            $jobOffers->andWhere('jobOffers.publicationDate >= :date')
+                ->setParameter('date', $dateMin->getQuery()->getResult());
 
             return new JsonResponse(array(
                 'data' => $jobOffers->getQuery()->getArrayResult()

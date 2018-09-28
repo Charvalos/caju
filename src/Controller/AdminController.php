@@ -40,9 +40,6 @@ class AdminController extends BaseAdminController
     /**
      * Description : Quand l'administrateur supprime une annonce, cela ne la supprime pas pour de bon mais cela la ferme, histoire de garder un historique
      * avant une éventuelle suppression du compte
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
      * @Security("has_role('ROLE_ADMIN')")
      */
     public function closeOfferAction()

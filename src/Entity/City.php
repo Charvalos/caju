@@ -8,6 +8,13 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CityRepository")
+ * @ORM\Table(
+ *     indexes={
+ *          @ORM\Index(name="nameCity", columns="name"),
+ *          @ORM\Index(name="npaCity", columns="npa"),
+ *          @ORM\Index(name="allCity", columns={"npa", "name"}),
+ *     }
+ * )
  */
 class City
 {

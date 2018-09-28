@@ -20,7 +20,7 @@ class NewPasswordType extends AbstractType
                 'label' => false
             ))
             ->add('oldPassword', PasswordType::class, array(
-                'attr' => array('placeholder' => 'Ancien mot de passe'),
+                'attr' => array('placeholder' => 'Mot de passe provisoire'),
                 'label' => false
             ))
             ->add('password', RepeatedType::class, array(

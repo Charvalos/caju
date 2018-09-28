@@ -9,29 +9,17 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\BirthdayType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class EditMyAccountType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('password', PasswordType::class, array(
-                'attr' => array('placeholder' => 'Nouveau mot de passe'),
-                'label' => false,
-                'required' => false,
-                'mapped' => false
-            ))
             ->add('email', EmailType::class, array(
                 'attr' => array('placeholder' => 'Email'),
                 'label' => false
@@ -47,14 +35,12 @@ class EditMyAccountType extends AbstractType
             ->add('phoneN1', TelType::class, array(
                 'attr' => array(
                     'placeholder' => 'Téléphone fixe',
-                    'maxlength' => 10
                 ),
                 'label' => false
             ))
             ->add('phoneN2', TelType::class, array(
                 'attr' => array(
                     'placeholder' => 'Téléphone mobile',
-                    'maxlength' => 10
                 ),
                 'label' => false
             ))

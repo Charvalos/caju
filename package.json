@@ -17,8 +17,9 @@
         "build": "encore production"
     },
     "dependencies": {
+        "datatables.net-bs4": "^1.10.19",
         "node-sass": "^4.9.0",
-        "npm": "^6.3.0",
+        "npm": "^6.4.1",
         "sass-loader": "^7.0.3",
         "select2-bootstrap4-theme": "^1.0.0"
     }

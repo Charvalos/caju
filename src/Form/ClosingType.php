@@ -19,6 +19,8 @@ class ClosingType extends AbstractType
                 'class' => \App\Entity\ClosingType::class,
                 'query_builder' => function(EntityRepository $er){
                     return $er->createQueryBuilder('listClosingType')
+                        ->where('listClosingType.name != :param')
+                        ->setParameter('param', 'Admin')
                         ->orderBy('listClosingType.name', 'ASC');
                 },
                 'label' => false,

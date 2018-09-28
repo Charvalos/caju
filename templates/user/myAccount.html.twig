@@ -10,7 +10,8 @@
         <div class="card w-50">
             <div class="card-body">
                 <h5 class="card-title">Changer le mot de passe</h5>
-                {{ form_row(form.password) }}
+                <a href="#" data-toggle="modal" data-target="#newPassword">Changer mon mot de passe</a>
+    {#{{ form_row(form.password) }}#}
             </div>
         </div>
         <div class="card" style="width: 45%;">
@@ -54,4 +55,6 @@
         </div>
         {{ form_end(form) }}
     </div>
+
+    {% include 'modal/newCredentials.html.twig' %}
 {% endblock %}

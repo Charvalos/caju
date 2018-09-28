@@ -8,6 +8,7 @@ use App\Entity\District;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\BirthdayType;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -25,7 +26,8 @@ class FilterType extends AbstractType
                         ->join('listCities.district', 'district')
                         ->addSelect('district')
                         ->groupBy('listCities.name')
-                        ->orderBy('listCities.npa', 'ASC');
+                        ->orderBy('listCities.district', 'ASC')
+                        ->addOrderBy('listCities.npa', 'ASC');
                 },
                 'group_by' => function(City $city){
                     return $city->getDistrict()->getName();
@@ -43,10 +45,6 @@ class FilterType extends AbstractType
                 'label' => false,
                 'required' => false,
                 'attr' => array('class' => 'selectDistricts')
-            ))
-            ->add('date', DateType::class, array(
-                'widget' => 'single_text',
-                'required' => false
             ))
             ->add('category', EntityType::class, array(
                 'class' => Category::class,

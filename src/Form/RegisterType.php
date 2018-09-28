@@ -51,15 +51,13 @@ class RegisterType extends AbstractType
             ))
             ->add('phoneN1', TelType::class, array(
                 'attr' => array(
-                    'placeholder' => 'Téléphone fixe',
-                    'maxlength' => 10
+                    'placeholder' => 'Téléphone N°1 (obligatoire)',
                 ),
                 'label' => false
             ))
             ->add('phoneN2', TelType::class, array(
                 'attr' => array(
-                    'placeholder' => 'Téléphone mobile',
-                    'maxlength' => 10,
+                    'placeholder' => 'Téléphone N°2 (facultatif)',
                     ),
                 'label' => false,
                 'empty_data' => '0000000000',

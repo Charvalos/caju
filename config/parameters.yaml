@@ -1,5 +1,6 @@
 parameters:
   secret: 58fd378866b4e5f76ff28b2f96b48810
+  mailer.url: smtp://mail.infomaniak.com:587?encryption=tls&username=info@boulots-reglos.ch&password=Kkp8KXKFUHJm
 
   #MySQL
   #database.host: pc0ke.myd.infomaniak.com

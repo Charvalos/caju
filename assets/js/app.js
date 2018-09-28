@@ -2,25 +2,70 @@ const $ = require('jquery');
 
 require('bootstrap');
 require('select2');
+require('datatables.net-bs4');
 
 $(document).ready(function () {
     $('.selectCities').select2({
         theme: 'bootstrap4',
-        placeholder: 'Toute les localités'
+        placeholder: 'Toute les localités',
+        width: '100%'
     });
 
     $('.selectDistricts').select2({
         theme: 'bootstrap4',
-        placeholder: 'Tout les districts'
+        placeholder: 'Tout les districts',
+        width: '100%'
     });
 
     $('.selectCategories').select2({
         theme: 'bootstrap4',
-        placeholder: 'Toutes les catégories'
+        placeholder: 'Toutes les catégories',
+        width: '100%'
     });
 
     $('.select').select2({
         theme: 'bootstrap4',
+    });
+
+    $('#tableListOffers').DataTable({
+        'info' : false,
+        'searching' : false,
+        'bLengthChange' : false,
+        'columnDefs' : [{
+            "targets" : [0, 1, 2, 3, 5],
+            "orderable": false
+        }],
+        'pagingType' : 'numbers',
+        'pageLength' : 10,
+        language: {
+            paginate: {
+                first:      "Premier",
+                previous:   "Pr&eacute;c&eacute;dent",
+                next:       "Suivant",
+                last:       "Dernier"
+            },
+        },
+    });
+
+    $('#tableManageMyOffers').DataTable({
+        'info' : false,
+        'searching' : false,
+        'bLengthChange' : false,
+        'columnDefs' : [{
+            "targets" : [0, 1, 2, 3 , 4, 5, 7],
+            "orderable": false
+        }],
+        'order' : [[ 6, 'desc' ]],
+        'pagingType' : 'numbers',
+        'pageLength' : 10,
+        language: {
+            paginate: {
+                first:      "Premier",
+                previous:   "Pr&eacute;c&eacute;dent",
+                next:       "Suivant",
+                last:       "Dernier"
+            },
+        },
     });
 });
 
@@ -125,8 +170,6 @@ $('#detailsOffer').on('show.bs.modal', function (event) {
             break;
         case 'showDetailOfferFromMyOffers':
             var dataId = $(event.relatedTarget).data('id');
-            console.log($('.card-title').text());
-            console.log($(event.relatedTarget).data('content'));
             $.ajax({
                 url: 'details-offre',
                 data: 'id='+dataId,
@@ -138,19 +181,24 @@ $('#detailsOffer').on('show.bs.modal', function (event) {
                     var dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
                     var buttons;
 
-                    console.log(datas);
-
                     //Récupération des données contenues dans les attributs "data-xxx"
                     var title = datas.title;
                     var description = datas.description;
                     var city = datas.city;
                     var category = datas.category;
-                    var publicationDate = new Date(datas.publicationDate['date']);
+                    var publicationDate;
+                    if(datas.isActive)
+                    {
+                        publicationDate = new Date(datas.publicationDate['date']);
+                        publicationDate = publicationDate.toLocaleDateString('fr-FR', dateOptions);
+                    }
+                    else
+                        publicationDate = 'Non publiée';
 
                     var content =  '<p><b>Description : </b>' + description + '</p>' +
                         '<p><b>Catégorie : </b>' + category + '</p>' +
                         '<p><b>Lieu : </b>' + city + '</p>' +
-                        '<p><b>Publiée le : </b>' + publicationDate.toLocaleDateString('fr-FR', dateOptions) + '</p>';
+                        '<p><b>Publiée le : </b>' + publicationDate + '</p>';
 
                     if(datas.isActive && datas.isClosed === null && $(event.relatedTarget).data('content') === 'myOffer')
                         buttons = '<button type="button" class="btn" data-dismiss="modal" id="closeModal">Fermer</button>' +
@@ -301,7 +349,6 @@ $('#acceptPostulation').on('click', function(){
 
         success: function (response) {
             var data = $.parseJSON(response);
-            console.log(data);
             if(data.status === 'success')
                 $(location).attr('href', data.url)
         }
@@ -337,13 +384,7 @@ $('#renewSelected').click(function () {
             var data = $.parseJSON(response);
             $(location).attr('href', data.url);
         },
-        
-        error: function (response) {
-            console.log(response)
-        }
     });
-
-    console.log(jobOffersId);
 });
 
 /**
@@ -372,8 +413,6 @@ $('#filter').on('click', function () {
             var data = response.data;
             var dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
 
-            console.log(data);
-
             container.empty();
 
             if(data.length > 0)
@@ -381,14 +420,14 @@ $('#filter').on('click', function () {
                 for(var i = 0; i < data.length; i++)
                 {
                     //Création de l'objet Date en JS afin de pouvoir utiliser les méthodes associées
-                    var date = new Date(data[i]["0"].publicationDate['date']);
+                    var date = new Date(data[i]["0"].publicationDate["date"]);
 
                     var tr = '<tr>';
 
                     var tdTitle = '<td>' + data[i]["0"].title.slice(0,20) + '...</td>';
-                    var tdDescription = '<td>' + data[i]["0"].description.slice(0,55) + '...</td>';
+                    var tdDescription = '<td>' + data[i]["0"].description.slice(0,50) + '...</td>';
                     var tdCity = '<td>' + data[i].cityNPA + ' ' + data[i].cityName + '</td>';
-                    var tdCategory = '<td>' + data[i].category + '</td>';
+                    var tdCategory = '<td>' + data[i].categoryTitle + '</td>';
                     var tdPublicationDate = '<td>' + date.toLocaleDateString('fr-FR', dateOptions) + '</td>';
                     var tdOpenModal = '<td><a href="#" data-toggle="modal" data-target="#detailsOffer" id="showDetailOffer" data-id="' + data[i]["0"].id + '" data-page="listOffers" data-title="' + data[i]["0"].title + '" data-description="' + data[i]["0"].description + '" ' +
                         'data-city="' + data[i].cityNPA + ' ' + data[i].cityName + '" data-category="' + data[i].categoryTitle + '" data-publicationDate="' + date.toLocaleDateString('fr-FR', dateOptions) + '"' +
@@ -412,8 +451,6 @@ $('#addCategory').on('click', function (e) {
 
     var prototype = div.data('prototype');
     var index = div.data('index');
-
-    console.log(prototype);
 
     var newForm = prototype.replace(/__name__/g, index);
 

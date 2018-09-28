@@ -3,38 +3,94 @@
 {% block content %}
     {{ parent() }}
 
-    <div class="row mx-auto">
-        <div class="col-lg-2 px-0">
-            <button class="btn btn-primary btnSelect" name="btnSelect" data="offerJob" data-page="addOffer" id="btnAddJobOffer">J'offre un emploi</button>
-        </div>
-        <div class="col-lg px-0">
-            <button class="btn btn-primary btnSelect" name="btnSelect" data="searchJob" data-page="addOffer" id="btnAddSearchJob">Je recherche un emploi</button>
-        </div>
-    </div>
-
-    {{ form_start(addOfferForm) }}
-    <div class="invisible" id="formAddOffer">
-
-    {{ form_row(addOfferForm.title)}}
-        <div class="form-group input-group">
-            <div class="input-group-prepend">
-                {{ form_label(addOfferForm.city, 'Lieu de travail', {
-                    'label_attr': {'class': 'input-group-text'}}) }}
+    {# Non-affichage des deux boutons du type de choix d'annonce si l'utilisateur arrive après avoir cliqué
+    sur le bouton "Ajouter une annonce" qui se trouve en bas de page des listes #}
+    {% if 'offre-emploi' in app.request.server.get('HTTP_REFERER') %}
+        <div class="visible" id="formAddOffer">
+            {{ form_start(addOfferForm) }}
+            {{ form_row(addOfferForm.title)}}
+            <div class="form-group input-group">
+                <div class="input-group-prepend">
+                    {{ form_label(addOfferForm.city, 'Lieu de travail', {
+                        'label_attr': {'class': 'input-group-text'}}) }}
+                </div>
+                {{ form_widget(addOfferForm.city) }}
             </div>
-            {{ form_widget(addOfferForm.city) }}
-        </div>
-        <div class="form-group input-group" id="inputCategory">
-            <div class="input-group-prepend">
-                {{ form_label(addOfferForm.category, 'Catégorie', {
-                    'label_attr': {'class': 'input-group-text'}}) }}
+            <div class="form-group input-group" id="inputCategory">
+                <div class="input-group-prepend">
+                    {{ form_label(addOfferForm.category, 'Catégorie', {
+                        'label_attr': {'class': 'input-group-text'}}) }}
+                </div>
+                {{ form_widget(addOfferForm.category) }}
             </div>
-            {{ form_widget(addOfferForm.category) }}
+            {{ form_row(addOfferForm.description) }}
+            <div class="row d-flex justify-content-between mx-0">
+                {{ form_row(addOfferForm.save) }}
+                {{ form_row(addOfferForm.publish) }}
+            </div>
+            {{ form_row(addOfferForm.type, {'value': 'offerJob'}) }}
+            {{ form_end(addOfferForm) }}
         </div>
-        {{ form_row(addOfferForm.description) }}
-        <div class="row d-flex justify-content-between mx-0">
-            {{ form_row(addOfferForm.save) }}
-            {{ form_row(addOfferForm.publish) }}
+    {% elseif 'recherche-emploi' in app.request.server.get('HTTP_REFERER') %}
+        <div class="visible" id="formAddOffer">
+            {{ form_start(addOfferForm) }}
+            {{ form_row(addOfferForm.title)}}
+            <div class="form-group input-group">
+                <div class="input-group-prepend">
+                    {{ form_label(addOfferForm.city, 'Lieu de travail', {
+                        'label_attr': {'class': 'input-group-text'}}) }}
+                </div>
+                {{ form_widget(addOfferForm.city) }}
+            </div>
+            <div class="form-group input-group" id="inputCategory">
+                <div class="input-group-prepend">
+                    {{ form_label(addOfferForm.category, 'Catégorie', {
+                        'label_attr': {'class': 'input-group-text'}}) }}
+                </div>
+                {{ form_widget(addOfferForm.category) }}
+            </div>
+            {{ form_row(addOfferForm.description) }}
+            <div class="row d-flex justify-content-between mx-0">
+                {{ form_row(addOfferForm.save) }}
+                {{ form_row(addOfferForm.publish) }}
+            </div>
+            {{ form_row(addOfferForm.type, {'value': 'searchJob'}) }}
+            {{ form_end(addOfferForm) }}
         </div>
-        {{ form_end(addOfferForm) }}
-    </div>
+    {% else %}
+        <div class="row mx-auto">
+            <div class="col-lg-2 px-0">
+                <button class="btn btn-primary btnSelect" name="btnSelect" data="offerJob" data-page="addOffer" id="btnAddJobOffer">J'offre un emploi</button>
+            </div>
+            <div class="col-lg px-0">
+                <button class="btn btn-primary btnSelect" name="btnSelect" data="searchJob" data-page="addOffer" id="btnAddSearchJob">Je recherche un emploi</button>
+            </div>
+        </div>
+
+        {{ form_start(addOfferForm) }}
+        <div class="invisible" id="formAddOffer">
+
+            {{ form_row(addOfferForm.title)}}
+            <div class="form-group input-group">
+                <div class="input-group-prepend">
+                    {{ form_label(addOfferForm.city, 'Lieu de travail', {
+                        'label_attr': {'class': 'input-group-text'}}) }}
+                </div>
+                {{ form_widget(addOfferForm.city) }}
+            </div>
+            <div class="form-group input-group" id="inputCategory">
+                <div class="input-group-prepend">
+                    {{ form_label(addOfferForm.category, 'Catégorie', {
+                        'label_attr': {'class': 'input-group-text'}}) }}
+                </div>
+                {{ form_widget(addOfferForm.category) }}
+            </div>
+            {{ form_row(addOfferForm.description) }}
+            <div class="row d-flex justify-content-between mx-0">
+                {{ form_row(addOfferForm.save) }}
+                {{ form_row(addOfferForm.publish) }}
+            </div>
+            {{ form_end(addOfferForm) }}
+        </div>
+    {% endif %}
 {% endblock %}

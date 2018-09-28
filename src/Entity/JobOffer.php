@@ -10,6 +10,12 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\JobOfferRepository")
+ * @ORM\Table(
+ *     indexes={
+ *          @ORM\Index(name="titleJobOffer", columns="title"),
+ *          @ORM\Index(name="publicationDateJobOffer", columns="publication_date"),
+ *     }
+ * )
  */
 class JobOffer
 {

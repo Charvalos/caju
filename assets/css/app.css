@@ -1,6 +1,7 @@
 @import "~bootstrap/dist/css/bootstrap.css";
 @import "~select2/dist/css/select2.css";
 @import "~select2-bootstrap4-theme/dist/select2-bootstrap4.css";
+@import "~datatables.net-bs4/css/dataTables.bootstrap4.css";
 
 footer, footer a
 {
@@ -11,6 +12,11 @@ footer, footer a
 footer a:hover
 {
     color: white;
+}
+
+.form-inline
+{
+    width: 100%;
 }
 
 #listOffers
@@ -133,7 +139,7 @@ footer a:hover
     font-size: 1.5rem;
 }
 
-.navbar
+.navbar, .page-item.active .page-link
 {
     background-color: #cc0000 !important;
 }
@@ -146,4 +152,9 @@ footer a:hover
 .nav-item:hover {
     background-color: darkgray;
     transition: background-color .2s;
+}
+
+.fa-bars
+{
+    color: white;
 }

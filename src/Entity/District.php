@@ -8,6 +8,11 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\DistrictRepository")
+ * @ORM\Table(
+ *     indexes={
+ *          @ORM\Index(name="nameDistrict", columns="name")
+ *     }
+ * )
  */
 class District
 {

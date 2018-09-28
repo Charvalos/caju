@@ -21,8 +21,17 @@
     </div>
     {#  {{ form_row(addOfferForm.documents) }} #}
     {{ form_row(editFormOffer.description) }}
-    <div class="row d-flex justify-content-between mx-0">
-        {{ form_row(editFormOffer.publish, {'label' : 'Modifier'}) }}
-    </div>
+    {% if jobOfferStatus %}
+        <div class="row d-flex justify-content-between mx-0">
+            {{ form_row(editFormOffer.publish, {'label' : 'Modifier'}) }}
+        </div>
+    {{ form_row(editFormOffer._token) }}
     {{ form_end(editFormOffer, {'render_rest': false }) }}
+    {% else %}
+        <div class="row d-flex justify-content-between mx-0">
+            {{ form_row(editFormOffer.save) }}
+            {{ form_row(editFormOffer.publish) }}
+        </div>
+        {{ form_end(editFormOffer) }}
+    {% endif %}
 {% endblock %}

@@ -211,8 +211,15 @@ class UserController extends AbstractController
     public function newPassword(Request $request, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder)
     {
         $form = $this->createForm(NewPasswordType::class);
-
         $form->handleRequest($request);
+
+        //Si l'utilisateur arrive sur cette page depuis la page de gestion de son compte, cela veut dire qu'il a demandé à changer son mot de passe
+        //Du coup, l'application le déconnecte
+        if(strpos($request->headers->get('referer'), 'mon-compte') !== false)
+        {
+            $this->get('security.token_storage')->setToken(null);
+            $request->getSession()->invalidate();
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             //Vérification que l'utilisateur est bien le bon et qu'il le mot de passe correspond à celui de l'email
@@ -221,14 +228,16 @@ class UserController extends AbstractController
                 'password' => $form->get('oldPassword')->getData()
             ));
 
-            if ($user) {
+            if ($user)
+            {
                 $user->setPassword($encoder->encodePassword($user, $form['password']->getData()));
 
                 $entityManager->persist($user);
                 $entityManager->flush();
 
                 $this->addFlash('success', 'Le mot de passe a été changé avec succès !');
-            } else
+            }
+            else
                 $form->addError(new FormError('Identifiants invalides. Vérifiez que le pseudo soit correcte et que l\'ancien mot de passe corressponde à celui qui vous été envoyé'));
         }
 
@@ -266,13 +275,17 @@ class UserController extends AbstractController
                 $jobOffer->setRenewalDate($renewalDate->add(new \DateInterval($this->getParameter('datetime_interval'))));
 
                 $jobOffer->setIsActive(true);
-            } else
+
+                $this->addFlash('success', 'Votre annonce a été ajoutée avec succès');
+            }
+            else
+            {
                 $jobOffer->setIsActive(false);
+                $this->addFlash('success', 'Votre annonce a été sauvegardée avec succès');
+            }
 
             $entity->persist($jobOffer);
             $entity->flush();
-
-            $this->addFlash('success', 'Votre annonce a été ajoutée avec succès');
 
             return $this->redirect($this->generateUrl('manageOffers'));
         }
@@ -305,9 +318,11 @@ class UserController extends AbstractController
                 ->from('App:JobOffer', 'jobOffer')
                 ->join('jobOffer.offerType', 'typeOffer')
                 ->where('typeOffer.name = :name')
+                ->andWhere('jobOffer.user = :user')
                 ->andWhere('jobOffer.isActive = true')
                 ->andWhere('jobOffer.closing IS NULL')
-                ->setParameter('name', 'searchJob');
+                ->setParameter('name', 'searchJob')
+                ->setParameter('user', $user);
 
             $searchJob = $queryCountSearchJobOffer->getQuery()->getResult();
 
@@ -316,9 +331,11 @@ class UserController extends AbstractController
                 ->from('App:JobOffer', 'jobOffer')
                 ->join('jobOffer.offerType', 'typeOffer')
                 ->where('typeOffer.name = :name')
+                ->andWhere('jobOffer.user = :user')
                 ->andWhere('jobOffer.isActive = true')
                 ->andWhere('jobOffer.closing IS NULL')
-                ->setParameter('name', 'offerJob');
+                ->setParameter('name', 'offerJob')
+                ->setParameter('user', $user);
 
             $offerJob = $queryCountOfferJob->getQuery()->getResult();
 
@@ -456,27 +473,24 @@ class UserController extends AbstractController
      * @Security("has_role('ROLE_USER')")
      * Description : Permet de modifier les informations de son compte
      */
-    public function updateAccount(Request $request, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder)
+    public function updateAccount(Request $request, EntityManagerInterface $entityManager)
     {
         //Récupération de l'utilisateur
         $user = $this->getUser();
 
         $form = $this->createForm(EditMyAccountType::class, $user);
+        $newCredentialForm = $this->createForm(NewCredentialType::class);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($user);
-
-            //Si l'utilisateur à indiqué un nouveau mot de passe, encodage du mot de passe et affiliation à l'entié User
-            if (!empty($form->get('password')->getData()))
-                $user->setPassword($encoder->encodePassword($user, $form->get('password')->getData()));
-
+        if ($form->isSubmitted() && $form->isValid())
+        {
             $entityManager->flush();
             $this->addFlash('success', 'Informations modifiées avec succès');
         }
 
         return $this->render('user/myAccount.html.twig', array(
             'form' => $form->createView(),
+            'newCredentialForm' => $newCredentialForm->createView(),
             'image' => $user->getUsername() . '/' . $user->getPicture()
         ));
     }
@@ -491,12 +505,18 @@ class UserController extends AbstractController
         {
             $user = $this->getUser();
 
+            if(strpos($request->headers->get('referer'), 'offre-emploi'))
+                $url = $this->generateUrl('searchJob');
+            else
+                $url = $this->generateUrl('searchOffers');
+
             if(!is_null($user))
             {
                 $checkUserOFfer = $entity->getRepository(JobOffer::class)->findOneBy(array(
                     'id' => $request->getContent(),
                     'user' => $user
                 ));
+
 
                 //Vérification que l'utilisation ne postule pas à sa propre annonce
                 if(!$checkUserOFfer)
@@ -526,7 +546,7 @@ class UserController extends AbstractController
                         $this->addFlash('success', 'Votre postulation a été enregistré avec succès');
 
                         return new JsonResponse(array(
-                            'url' => $this->generateUrl('index')
+                            'url' => $url
                         ));
                     }
                     else
@@ -534,7 +554,7 @@ class UserController extends AbstractController
                         $this->addFlash('warning', 'Vous ne pouvez pas postuler plusieurs fois à la même annonce');
 
                         return new JsonResponse(array(
-                            'url' => $this->generateUrl('index')
+                            'url' => $url
                         ));
                     }
                 }
@@ -543,7 +563,7 @@ class UserController extends AbstractController
                     $this->addFlash('warning', 'Vous ne pouvez pas postuler à votre propre annonce');
 
                     return new JsonResponse(array(
-                        'url' => $this->generateUrl('index')
+                        'url' => $url
                     ));
                 }
             }
@@ -552,7 +572,7 @@ class UserController extends AbstractController
                 $this->addFlash('warning', 'Vous devez vous connecter pour postuler à une annonce');
 
                 return new JsonResponse(array(
-                    'url' => $this->generateUrl('index')
+                    'url' => $url
                 ));
             }
         }
@@ -669,7 +689,7 @@ class UserController extends AbstractController
 
             $mailer->send($email);
 
-            $this->addFlash('success', 'La candidature a été acceptée. A vous maintenatn de prendre contact avec la personne concernée.');
+            $this->addFlash('success', 'La candidature a été acceptée. A vous maintenant de prendre contact avec la personne concernée et n\'oubliez pas Chéque-Emploi.');
 
             return new JsonResponse(array(
                 'status' => 'success',
@@ -759,7 +779,13 @@ class UserController extends AbstractController
 
         if($form->isSubmitted() && $form->isValid())
         {
-            $entity->persist($jobOffer);
+            if($form->get('publish')->isClicked())
+            {
+                $jobOffer->setIsActive(true);
+                $jobOffer->setPublicationDate(new \DateTime());
+                $renewalDate = new \DateTime();
+                $jobOffer->setRenewalDate($renewalDate->add(new \DateInterval($this->getParameter('datetime_interval'))));
+            }
 
             $entity->flush();
 
@@ -769,7 +795,8 @@ class UserController extends AbstractController
         }
 
         return $this->render('user/editlOffer.html.twig', array(
-            'editFormOffer' => $form->createView()
+            'editFormOffer' => $form->createView(),
+            'jobOfferStatus' => $jobOffer->getIsActive()
         ));
     }
 
