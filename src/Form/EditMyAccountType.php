@@ -50,7 +50,7 @@ class EditMyAccountType extends AbstractType
                 'label' => false
             ))
             ->add('birthdate', BirthdayType::class, array(
-                'widget' => 'single_text'
+                'widget' => 'choice'
             ))
             ->add('city', EntityType::class, array(
                 'class' => City::class,

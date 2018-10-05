@@ -68,7 +68,12 @@ class RegisterType extends AbstractType
                 'label' => false
             ))
             ->add('birthdate', BirthdayType::class, array(
-                'widget' => 'single_text',
+                'widget' => 'choice',
+                'placeholder' => array(
+                    'year' => 'Année',
+                    'month' => 'Mois',
+                    'day' => 'Jour'
+                )
             ))
             ->add('city', EntityType::class, array(
                 'class' => City::class,

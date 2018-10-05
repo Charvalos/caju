@@ -105,10 +105,10 @@ class User implements UserInterface, \Serializable
      *     minWidth="128",
      *     maxHeight="128",
      *     maxWidth="128",
-     *     minHeightMessage="L'image doit faire 128x128 pixels",
-     *     minWidthMessage="L'image doit faire 128x128 pixels",
-     *     maxHeightMessage="L'image doit faire 128x128 pixels",
-     *     maxWidthMessage="L'image doit faire 128x128 pixels"
+     *     minHeightMessage="L'image doit faire 128x128 pixels (Ex : Image de profil Facebook)",
+     *     minWidthMessage="L'image doit faire 128x128 pixels (Ex : Image de profil Facebook)",
+     *     maxHeightMessage="L'image doit faire 128x128 pixels (Ex : Image de profil Facebook)",
+     *     maxWidthMessage="L'image doit faire 128x128 pixels (Ex : Image de profil Facebook)"
      * )
      * @var File
      */

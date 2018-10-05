@@ -164,3 +164,13 @@ footer a:hover
     content: "Choisir";
     background-color: #ff6666;
 }
+
+.citySelect
+{
+    width: 86.6% !important;
+}
+
+#register_birthdate, #edit_my_account_birthdate
+{
+    width: 50%;
+}
