@@ -577,7 +577,7 @@ class UserController extends AbstractController
     /**
      * @Route("supprimer-document/{id}", name="deleteDocument")
      * @Security("has_role('ROLE_USER')")
-     * Description : S'occupe de renouveler les offres d'emplois sélectionnées dans la gestion de ses propres offres
+     * Description : S'occupe de supprimer un document
      */
     public function deleteDocument(EntityManagerInterface $entity, $id, Filesystem $filesystem)
     {
@@ -597,6 +597,27 @@ class UserController extends AbstractController
         return $this->redirectToRoute('myAccount');
     }
 
+    /**
+     * @Route("supprimer-image/{name}", name="deleteProfileImage")
+     * @Security("has_role('ROLE_USER')")
+     */
+    public function deleteProfileImage(EntityManagerInterface $entityManager, Filesystem $filesystem)
+    {
+        $user = $this->getUser();
+
+        //Suppression du document "physique"
+        $file = $this->getParameter('project_dir') . '/' . $this->getParameter('path_upload_images') . '/' . $user->getPicture();
+        $filesystem->remove($file);
+
+        $user->setPicture(null);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('myAccount');
+    }
+
+    /**
+     * Description : S'occupe d'aller chercher tous les documents liés à l'utilisateur
+     */
     private function getAllDocument($user)
     {
         $documents = $this->getDoctrine()->getRepository(Document::class)->findBy(array(

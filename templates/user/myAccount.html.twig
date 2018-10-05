@@ -50,6 +50,7 @@
                         <p class="font-italic">Aucune photo de profil définie</p>
                     {% else %}
                         <img class="card-img-top" src="{{ vich_uploader_asset(app.user, 'pictureFile') }}" alt="Photo de profil">
+                        <a href="{{ url('deleteProfileImage', {'name': app.user.picture}) }}" class="btn btn-danger" style="font-size: 12px;">Supprimer</a>
                     {% endif %}
                     {{ form_start(form) }}
                     {{ form_row(form.pictureFile) }}
