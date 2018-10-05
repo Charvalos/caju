@@ -71,7 +71,7 @@ footer a:hover
     background-color: #ffc299;
 }
 
-.form-control, .card, hr, .list-group-item, .select2-container--bootstrap4 .select2-selection--single
+.form-control, .card, hr, .list-group-item, .select2-container--bootstrap4 .select2-selection--single, .custom-file-input
 {
     border-color: red;
 }
@@ -157,4 +157,10 @@ footer a:hover
 .fa-bars
 {
     color: white;
+}
+
+.custom-file-input ~ .custom-file-label::after
+{
+    content: "Choisir";
+    background-color: #ff6666;
 }

@@ -5,56 +5,79 @@
         <div class="alert alert-success">{{ message }}</div>
     {% endfor %}
 
-    {{ form_start(form) }}
-    <div class="d-flex justify-content-between">
-        <div class="card w-50">
-            <div class="card-body">
-                <h5 class="card-title">Changer le mot de passe</h5>
-                <a href="#" data-toggle="modal" data-target="#newPassword">Changer mon mot de passe</a>
-    {#{{ form_row(form.password) }}#}
-            </div>
-        </div>
-        <div class="card" style="width: 45%;">
-            <div class="card-body">
-                <h5 class="card-title">Mes documents</h5>
-                <p><i>Cette fonctionnalitée n'est actuellement pas disponible.</i></p>
-            </div>
-        </div>
-    </div>
-    <div class="mx-auto w-50">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Informations personnelles</h5>
-                {#{% if app.user.picture is null %}
-                    <p class="font-italic">Aucune photo de profil définie</p>
-                {% else %}
-                <img class="card-img-top" src="{{ asset('build/profile_images/'~image) }}" alt="Photo de profil">
-                {% endif %}
-                {{ form_row(form.pictureFile) }}#}
-                {{ form_row(form.lastName) }}
-                {{ form_row(form.firstName) }}
-                <div class="form-group input-group">
-                    <div class="input-group-prepend">
-                        {{ form_label(form.birthdate, 'Date de naissance', {
-                            'label_attr': {'class': 'input-group-text'}}) }}
-                    </div>
-                    {{ form_widget(form.birthdate) }}
+    <div class="row">
+        <div class="col-5">
+            <div class="card" style="height: 12%;">
+                <div class="card-body">
+                    <h5 class="card-title">Changer le mot de passe</h5>
+                    <a href="#" data-toggle="modal" data-target="#newPassword">Changer mon mot de passe</a>
                 </div>
-                {{ form_row(form.email) }}
-                {{ form_row(form.phoneN1) }}
-                {{ form_row(form.phoneN2) }}
-                {{ form_row(form.address) }}
-                <div class="form-group input-group">
-                    <div class="input-group-prepend">
-                        {{ form_label(form.city, 'Localité', {
-                            'label_attr': {'class': 'input-group-text'}}) }}
-                    </div>
-                    {{ form_widget(form.city) }}
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Mes documents <span class="fas fa-info-circle" data-toggle="popover" data-trigger="hover"
+                                                                data-content="En rendant visible vos documents, ils seront accesibles dès qu'une postulations aura été acceptée." data-placement="top"
+                                                                style="font-size: 15px"></span></h5>
+                    {% if documents is not empty %}
+                        <table class="table">
+                            {% for document in documents %}
+                                <tr>
+                                    <td><p class="mt-2"><a href="{{ url('download', {'userId': app.user.id, 'documentId': document.id}) }}">{{ document.originalName }}</a></p></td>
+                                    {% if document.isPublic %}
+                                        <td><a href="{{ url('changeStatus', {'id': document.id} ) }}" class="btn btn-success" style="font-size: 12px;">Public</a></td>
+                                    {% else %}
+                                        <td><a href="{{ url('changeStatus', {'id': document.id} ) }}" class="btn btn-warning" style="color: white; font-size: 12px;">Non public</a></td>
+                                    {% endif %}
+                                    <td><a href="{{ url('deleteDocument', {'id': document.id} ) }}" class="btn btn-danger" style="font-size: 12px;">Supprimer</a></td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    {% else %}
+                        <p><i>Aucun documents</i></p>
+                    {% endif %}
+                    <hr>
+                    {{ form_start(documentForm) }}
+                    {{ form_widget(documentForm) }}
+                    {{ form_end(documentForm) }}
                 </div>
             </div>
         </div>
-        {{ form_end(form) }}
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Informations personnelles</h5>
+                    {% if app.user.picture is null %}
+                        <p class="font-italic">Aucune photo de profil définie</p>
+                    {% else %}
+                        <img class="card-img-top" src="{{ vich_uploader_asset(app.user, 'pictureFile') }}" alt="Photo de profil">
+                    {% endif %}
+                    {{ form_start(form) }}
+                    {{ form_row(form.pictureFile) }}
+                    {{ form_row(form.lastName) }}
+                    {{ form_row(form.firstName) }}
+                    <div class="form-group input-group">
+                        <div class="input-group-prepend">
+                            {{ form_label(form.birthdate, 'Date de naissance', {
+                                'label_attr': {'class': 'input-group-text'}}) }}
+                        </div>
+                        {{ form_widget(form.birthdate) }}
+                    </div>
+                    {{ form_row(form.email) }}
+                    {{ form_row(form.phoneN1) }}
+                    {{ form_row(form.phoneN2) }}
+                    {{ form_row(form.address) }}
+                    <div class="form-group input-group">
+                        <div class="input-group-prepend">
+                            {{ form_label(form.city, 'Localité', {
+                                'label_attr': {'class': 'input-group-text'}}) }}
+                        </div>
+                        {{ form_widget(form.city) }}
+                    </div>
+                </div>
+            </div>
+            {{ form_rest(form) }}
+            {{ form_end(form) }}
+        </div>
     </div>
-
     {% include 'modal/newCredentials.html.twig' %}
 {% endblock %}

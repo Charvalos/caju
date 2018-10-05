@@ -2,12 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\Document;
 use App\Entity\JobOffer;
 use App\Entity\OfferType;
 use App\Entity\Postulation;
 use App\Entity\User;
 use App\Form\AddJobOfferType;
 use App\Form\ClosingType;
+use App\Form\DocumentType;
 use App\Form\EditMyAccountType;
 use App\Form\LoginType;
 use App\Form\NewCredentialType;
@@ -15,12 +17,19 @@ use App\Form\NewPasswordType;
 use App\Form\RegisterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr;
+use phpDocumentor\Reflection\Types\Array_;
+use PhpParser\Comment\Doc;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
@@ -53,7 +62,8 @@ class UserController extends AbstractController
             $user->setPassword($password)
                 ->setIsActive(false)
                 ->setRegistrationDate(new \DateTime())
-                ->setRoles('ROLE_USER');
+                ->setRoles('ROLE_USER')
+                ->setUpdateAt();
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
@@ -118,13 +128,6 @@ class UserController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
             $entityManager->flush();
-
-            //Création des répertoirs propres à l'utilisateur
-            $fileSystem = new Filesystem();
-            $profileImagesDir = $this->getParameter('kernel.project_dir') . '/public/profile_images/';
-            $profileDocumentsDir = $this->getParameter('kernel.project_dir') . '/public/documents/';
-            $fileSystem->mkdir($profileImagesDir . $user->getUsername());
-            $fileSystem->mkdir($profileDocumentsDir . $user->getUsername());
 
             $this->addFlash('success', 'Votre compte a bien été activé. Vous pouvez maintenant vous connecter');
 
@@ -369,7 +372,8 @@ class UserController extends AbstractController
                 ))
                 ->getForm();
 
-            if ($request->isXmlHttpRequest()) {
+            if ($request->isXmlHttpRequest())
+            {
                 //Recherche des éventuelles postulations par rapport à l'offre sélectionnée
                 $queryPostulations = $entity->createQueryBuilder();
                 $queryPostulations->select('postulation')
@@ -386,13 +390,15 @@ class UserController extends AbstractController
                 ));
             }
             else
-                {
+            {
                 //Recherche des éventuelles postulations par rapport à la première offre qui sera affichée dans la liste déroulante
+                $firstJobOffer = $user->getJobOffers()->first();
+
                 $queryPostulations = $entity->createQueryBuilder();
                 $queryPostulations->select('postulation')
                     ->from('App:Postulation', 'postulation')
                     ->where('postulation.jobOffer = :jobOffer')
-                    ->setParameter('jobOffer', $jobOffer[0]->getId());
+                    ->setParameter('jobOffer', $firstJobOffer->getId());
             }
 
             $postulations = $queryPostulations->getQuery()->getResult();
@@ -438,6 +444,11 @@ class UserController extends AbstractController
             'username' => $username
         ));
 
+        $userDocument = $entity->getRepository(Document::class)->findBy(array(
+            'user' => $user,
+            'isPublic' => true
+        ));
+
         //Récupération de la postulation liée à l'utilisateur
         $queryPostulation = $entity->createQueryBuilder();
         $queryPostulation->select('postulation')
@@ -458,14 +469,68 @@ class UserController extends AbstractController
             return $this->render('user/userDetails.html.twig', array(
                 'user' => $user,
                 'postulationID' => $postulation->getId(),
-                'alreadyResponded' => true
+                'alreadyResponded' => true,
+                'userDocument' => $userDocument
             ));
         else
             return $this->render('user/userDetails.html.twig', array(
                 'user' => $user,
                 'postulationID' => $postulation->getId(),
-                'alreadyResponded' => false
+                'alreadyResponded' => false,
+                'userDocument' => $userDocument
             ));
+    }
+
+    /**
+     * @Route("telecharger/{userId}/{documentId}", name="download")
+     * @Method("GET")
+     * @Security("has_role('ROLE_USER')")
+     * Description : S'occupe de gérer le téléchargement des documents
+     */
+    public function download(EntityManagerInterface $entityManager, $userId, $documentId)
+    {
+        $document = $entityManager->getRepository(Document::class)->findOneBy(array(
+            'id' => $documentId
+        ));
+
+        $basePath = $this->getParameter('project_dir'). $this->getParameter('path_upload_documents');
+        $filePath = $basePath . '/' . $userId . '/' .  $document->getName();
+
+        //Vérification que le fichier existe bien
+        $fs = new Filesystem();
+
+        if(!$fs->exists($filePath))
+            throw $this->createNotFoundException('Fichier introuvable');
+
+        $response = new BinaryFileResponse($filePath);
+        $response::trustXSendfileTypeHeader();
+        $response->setContentDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            $document->getName()
+        );
+
+        return $response;
+    }
+
+    /**
+     * @Route("changer-statut/{id}", name="changeStatus")
+     * @Method("GET")
+     * @Security("has_role('ROLE_USER')")
+     */
+    public function changeStatusDocument(EntityManagerInterface $entityManager, $id)
+    {
+        $document = $entityManager->getRepository(Document::class)->findOneBy(array(
+            'id' => $id
+        ));
+
+        if($document->getIsPublic())
+            $document->setIsPublic(false);
+        else
+            $document->setIsPublic(true);
+
+        $entityManager->flush();
+
+        return $this->redirectToRoute('myAccount');
     }
 
     /**
@@ -477,10 +542,13 @@ class UserController extends AbstractController
     {
         //Récupération de l'utilisateur
         $user = $this->getUser();
+        $document = new Document();
 
         $form = $this->createForm(EditMyAccountType::class, $user);
         $newCredentialForm = $this->createForm(NewCredentialType::class);
+        $documentForm = $this->createForm(DocumentType::class, $document);
         $form->handleRequest($request);
+        $documentForm->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid())
         {
@@ -488,11 +556,54 @@ class UserController extends AbstractController
             $this->addFlash('success', 'Informations modifiées avec succès');
         }
 
+        if($documentForm->isSubmitted() && $documentForm->isValid())
+        {
+            $document->setUser($user);
+            $document->setMimeType($document->getFile()->getMimeType());
+            $entityManager->persist($document);
+            $entityManager->flush();
+            $this->addFlash('success', 'Document ajouté avec succès');
+        }
+
         return $this->render('user/myAccount.html.twig', array(
             'form' => $form->createView(),
             'newCredentialForm' => $newCredentialForm->createView(),
-            'image' => $user->getUsername() . '/' . $user->getPicture()
+            'image' => $user->getUsername() . '/' . $user->getPicture(),
+            'documentForm' => $documentForm->createView(),
+            'documents' => $this->getAllDocument($user)
         ));
+    }
+
+    /**
+     * @Route("supprimer-document/{id}", name="deleteDocument")
+     * @Security("has_role('ROLE_USER')")
+     * Description : S'occupe de renouveler les offres d'emplois sélectionnées dans la gestion de ses propres offres
+     */
+    public function deleteDocument(EntityManagerInterface $entity, $id, Filesystem $filesystem)
+    {
+        $document = $entity->getRepository(Document::class)->findOneBy(array(
+            'id' => $id
+        ));
+        $user = $this->getUser();
+
+        //Suppression du document "physique"
+        $file = $this->getParameter('project_dir') . '/' . $this->getParameter('path_upload_documents') . '/' . $user->getId() . '/' . $document->getName();
+        $filesystem->remove($file);
+
+        //Suppression dans la BDD
+        $entity->remove($document);
+        $entity->flush();
+
+        return $this->redirectToRoute('myAccount');
+    }
+
+    private function getAllDocument($user)
+    {
+        $documents = $this->getDoctrine()->getRepository(Document::class)->findBy(array(
+            'user' => $user
+        ));
+
+        return $documents;
     }
 
     /**

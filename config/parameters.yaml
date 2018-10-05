@@ -3,15 +3,15 @@ parameters:
   mailer.url: smtp://mail.infomaniak.com:587?encryption=tls&username=info@boulots-reglos.ch&password=Kkp8KXKFUHJm
 
   #MySQL
-  #database.host: pc0ke.myd.infomaniak.com
-  #database.port: 3306
-  #database.name: pc0ke_caju_boulots_reglos
-  #database.user: pc0ke_admin
-  #database.password: BourseEmploi2018
+  database.host: pc0ke.myd.infomaniak.com
+  database.port: 3306
+  database.name: pc0ke_caju_boulots_reglos
+  database.user: pc0ke_admin
+  database.password: BourseEmploi2018
 
   #MySQL
-  database.host: 127.0.0.1
-  database.port: 3306
-  database.name: caju_bourse_emploi
-  database.user: root
-  database.password: ''
+  #database.host: 127.0.0.1
+  #database.port: 3306
+  #database.name: caju_bourse_emploi
+  #database.user: root
+  #database.password: ''

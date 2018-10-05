@@ -19,8 +19,6 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  */
 class JobOffer
 {
-   //private const $duration
-
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -90,11 +88,6 @@ class JobOffer
      * @ORM\JoinColumn(nullable=true)
      */
     private $closing;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Document", mappedBy="jobOffer")
-     */
-    private $documents;
 
     public function __construct()
     {

@@ -138,6 +138,7 @@ class AppController extends AbstractController
                 ->from('App:JobOffer', 'jobOffers');
 
             $jobOffers->andWhere('jobOffers.publicationDate >= :date')
+                ->andWhere('jobOffers.isActive = true')
                 ->setParameter('date', $dateMin->getQuery()->getResult());
 
             return new JsonResponse(array(

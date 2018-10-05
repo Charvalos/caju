@@ -3,11 +3,14 @@
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\DocumentRepository")
+ * @Vich\Uploadable()
  */
 class Document
 {
@@ -24,9 +27,27 @@ class Document
     private $name;
 
     /**
-     * @ORM\Column(type="string", length=4)
+     * @Vich\UploadableField(mapping="user_document", fileNameProperty="name", originalName="originalName")
+     * @Assert\File(
+     *     mimeTypes={"application/pdf"},
+     *     mimeTypesMessage="Seul les documents au format PDF sont autorisés"
+     * )
+     * @Assert\NotBlank(
+     *     message="Veuillez sélectionner un fichier"
+     * )
+     * @var File
      */
-    private $extension;
+    private $file;
+
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $mimeType;
+
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $originalName;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="documents")
@@ -34,14 +55,16 @@ class Document
     private $user;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Postulation", inversedBy="documents")
+     * @ORM\Column(type="boolean")
      */
-    private $Postulation;
+    private $isPublic;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\JobOffer", inversedBy="documents")
+     * @ORM\Column(type="datetime")
+     *
+     * @var \DateTime
      */
-    private $jobOffer;
+    private $updateAt;
 
     public function __construct()
     {
@@ -66,14 +89,39 @@ class Document
         return $this;
     }
 
-    public function getExtension(): ?string
+    public function getOriginalName(): ?string
     {
-        return $this->extension;
+        return $this->originalName;
     }
 
-    public function setExtension(string $extension): self
+    public function setOriginalName(string $name): self
     {
-        $this->extension = $extension;
+        $this->originalName = $name;
+
+        return $this;
+    }
+
+    public function getFile(): ?File
+    {
+        return $this->file;
+    }
+
+    public function setFile(?File $file = null): void
+    {
+        $this->file = $file;
+
+        if(null !== $file)
+            $this->updateAt = new \DateTimeImmutable();
+    }
+
+    public function getMimeType(): ?string
+    {
+        return $this->mimeType;
+    }
+
+    public function setMimeType(string $mimeType): self
+    {
+        $this->mimeType = $mimeType;
 
         return $this;
     }
@@ -90,55 +138,15 @@ class Document
         return $this;
     }
 
-    /**
-     * @return Collection|Postulation[]
-     */
-    public function getPostulation(): Collection
+    public function setIsPublic(bool $allow): self
     {
-        return $this->Postulation;
-    }
-
-    public function addPostulation(Postulation $postulation): self
-    {
-        if (!$this->Postulation->contains($postulation)) {
-            $this->Postulation[] = $postulation;
-        }
+        $this->isPublic = $allow;
 
         return $this;
     }
 
-    public function removePostulation(Postulation $postulation): self
+    public function getIsPublic(): ?bool
     {
-        if ($this->Postulation->contains($postulation)) {
-            $this->Postulation->removeElement($postulation);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|JobOffer[]
-     */
-    public function getJobOffer(): Collection
-    {
-        return $this->jobOffer;
-    }
-
-    public function addJobOffer(JobOffer $jobOffer): self
-    {
-        if (!$this->jobOffer->contains($jobOffer)) {
-            $this->jobOffer[] = $jobOffer;
-        }
-
-        return $this;
-    }
-
-    public function removeJobOffer(JobOffer $jobOffer): self
-    {
-        if ($this->jobOffer->contains($jobOffer)) {
-            $this->jobOffer->removeElement($jobOffer);
-        }
-
-        return $this;
+        return $this->isPublic;
     }
 }

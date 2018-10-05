@@ -45,11 +45,6 @@ class Postulation
      */
     private $jobOffer;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Document", mappedBy="Postulation")
-     */
-    private $documents;
-
     public function __construct()
     {
         $this->documents = new ArrayCollection();

@@ -5,7 +5,11 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Détails de l'utilisateur <i>{{ user.username }}</i></h5>
-                <img class="card-img-top" src="{#{{ asset('build/profile_images/'~image) }}#}" alt="Photo de profil">
+                {% if user.picture is not null %}
+                    <img class="card-img-top" src="{{ vich_uploader_asset(user, 'pictureFile') }}" alt="Photo de profil">
+                {% else %}
+                    <p><i>Aucune photo de profil définie</i></p>
+                {% endif %}
                 <div class="d-flex justify-content-between">
                     <div class="d-inline-flex">Nom :</div>
                     <div class="d-inline-flex">{{ user.lastName }}</div>
@@ -39,10 +43,10 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Documents</h5>
-            {% if documents is defined %}
-                <p>CV.pdf</p>
-                <p>lettre_de_motivation.pdf</p>
-                <button class="btn btn-primary">Télécharger les documents</button><br><br>
+            {% if userDocument is not empty %}
+                {% for document in userDocument %}
+                    <p>{{ document.originalName }} - <a href="{{ url('download', {'userId': user.id, 'documentId': document.id}) }}">Télécharger</a></p>
+                {% endfor %}
             {% else %}
                 <p><i>L'utilisateur n'a actuellement document</i></p>
             {% endif %}

@@ -2,11 +2,12 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: 'fr'
-    #profile_image_directory: '%kernel.project_dir%/public/build/profile_images/'
-    document_directory: '%kernel.project_dir%/public/build/documents/'
+    project_dir: '%kernel.project_dir%'
     datetime_interval: 'P2M' # P2M correspond à la manière d'écrire
     days_limit: 14 # Nombre de jours à partir desquels une annonce change de statut et nécessite d'être renouvelée
     email: 'info@boulots-reglos.ch'
+    path_upload_images: '/public/profile_images'
+    path_upload_documents: '/var/uploads/documents'
 imports:
     - { resource: 'parameters.yaml' }
 services:

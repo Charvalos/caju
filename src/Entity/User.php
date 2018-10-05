@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -23,7 +24,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * )
  * @UniqueEntity("email", message="L'adresse email {{ value }} est déjà utilisée")
  * @UniqueEntity("username", message="Le pseudo {{ value }} est déjà utilisé")
- * @Vich\Uploadable
+ * @Vich\Uploadable()
  */
 class User implements UserInterface, \Serializable
 {
@@ -94,13 +95,21 @@ class User implements UserInterface, \Serializable
 
     /**
      * @ORM\Column(type="string", nullable=true)
-
      */
     private $picture;
 
     /**
-     * @Vich\UploadableField(mapping="image_profile", fileNameProperty="picture")
-     *
+     * @Vich\UploadableField(mapping="profile_image", fileNameProperty="picture")
+     * @Assert\Image(
+     *     minHeight="128",
+     *     minWidth="128",
+     *     maxHeight="128",
+     *     maxWidth="128",
+     *     minHeightMessage="L'image doit faire 128x128 pixels",
+     *     minWidthMessage="L'image doit faire 128x128 pixels",
+     *     maxHeightMessage="L'image doit faire 128x128 pixels",
+     *     maxWidthMessage="L'image doit faire 128x128 pixels"
+     * )
      * @var File
      */
     private $pictureFile;
@@ -145,6 +154,13 @@ class User implements UserInterface, \Serializable
      * @ORM\OneToMany(targetEntity="App\Entity\Document", mappedBy="user", cascade={"remove"})
      */
     private $documents;
+
+    /**
+     * @ORM\Column(type="datetime")
+     *
+     * @var \DateTime
+     */
+    private $updateAt;
 
     public function __construct()
     {
@@ -288,6 +304,22 @@ class User implements UserInterface, \Serializable
         $this->picture = $picture;
 
         return $this;
+    }
+
+    /**
+     * @param File|UploadedFile $picture
+     */
+    public function setPictureFile(?File $picture = null): void
+    {
+        $this->pictureFile = $picture;
+
+        if(null !== $picture)
+            $this->updateAt = new \DateTimeImmutable();
+    }
+
+    public function getPictureFile(): ?File
+    {
+        return $this->pictureFile;
     }
 
     public function getHash(): ?string
@@ -479,19 +511,8 @@ class User implements UserInterface, \Serializable
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getPictureFile()
+    public function setUpdateAt()
     {
-        return $this->pictureFile;
-    }
-
-    /**
-     * @param mixed $pictureFile
-     */
-    public function setPictureFile($pictureFile): void
-    {
-        $this->pictureFile = $pictureFile;
+        $this->updateAt = new \DateTimeImmutable();
     }
 }

@@ -14,6 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class EditMyAccountType extends AbstractType
 {
@@ -65,13 +66,17 @@ class EditMyAccountType extends AbstractType
                 },
                 'attr' => array('class' => 'selectCities')
             ))
-            /*->add('pictureFile', VichImageType::class, array(
-                'data_class' => null,
+            ->add('pictureFile', VichImageType::class, array(
                 'required' => false,
-                'attr' => array('placeholder' => 'Télécharger une image de profil (120x120)'),
+                'download_link' => false,
+                'allow_delete' => false,
+                'download_uri' => false,
+                'image_uri' => false,
                 'label' => false,
-                'mapped' => false
-            ))*/
+                'attr' => array(
+                    'placeholder' => 'Téléchager une image de profil'
+                )
+            ))
             ->add('update', SubmitType::class, array(
                 'attr' => array('class' => 'btn btn-primary'),
                 'label' => 'Sauvegarder'

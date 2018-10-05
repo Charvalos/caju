@@ -7,13 +7,13 @@ require('datatables.net-bs4');
 $(document).ready(function () {
     $('.selectCities').select2({
         theme: 'bootstrap4',
-        placeholder: 'Toute les localités',
+        placeholder: 'Toutes les localités',
         width: '100%'
     });
 
     $('.selectDistricts').select2({
         theme: 'bootstrap4',
-        placeholder: 'Tout les districts',
+        placeholder: 'Tous les districts',
         width: '100%'
     });
 
@@ -74,10 +74,6 @@ $(document).ready(function () {
  */
 $('#sendNewPassword').on('click', function () {
     $('#newPassword').submit();
-});
-
-$('#btnUploadProfileImage').on('click', function () {
-    $('#uploadProfileImage').submit();
 });
 
 $(document).ready(function () {
@@ -386,6 +382,27 @@ $('#renewSelected').click(function () {
         },
     });
 });
+
+$('#deleteSelected').click(function () {
+    var documentsId = new Array();
+
+    //Ajout des valeurs (en l'occurence, les ID des offres) des cases à cocher cochées
+    $.each($('input:checked'), function (key, value) {
+        documentsId.push($(value).val());
+    });
+
+    $.ajax({
+        url: 'supprimer-document',
+        data: 'data=' + documentsId,
+        dataType: 'text',
+        async: true,
+
+        success: function (response) {
+            var data = $.parseJSON(response);
+            $(location).attr('href', data.url);
+        },
+    });
+})
 
 /**
  * Permet de filtrer l'affichage des offres
