@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="2d60cfbb-6ab4-4a57-a30b-240f322f837c" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/templates/user/listOffers.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/user/listOffers.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/user/myAccount.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/user/myAccount.html.twig" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -94,7 +95,7 @@
           <entry key="js" value="17891" />
           <entry key="json" value="50" />
           <entry key="php" value="49686" />
-          <entry key="twig" value="21810" />
+          <entry key="twig" value="22085" />
           <entry key="yaml" value="6750" />
         </counts>
       </usages-collector>
@@ -107,7 +108,7 @@
           <entry key="JavaScript" value="17872" />
           <entry key="PHP" value="49686" />
           <entry key="PLAIN_TEXT" value="6" />
-          <entry key="Twig" value="21810" />
+          <entry key="Twig" value="22085" />
           <entry key="YAML" value="6750" />
           <entry key="htaccess" value="403" />
         </counts>
@@ -169,10 +170,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/templates/user/myAccount.html.twig">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="153">
-              <caret line="9" column="47" selection-start-line="9" selection-start-column="47" selection-end-line="9" selection-end-column="47" />
+            <state relative-caret-position="323">
+              <caret line="19" column="71" selection-start-line="19" selection-start-column="71" selection-end-line="19" selection-end-column="71" />
               <folding>
-                <element signature="e#1010#1033#0#HTML" expanded="true" />
+                <element signature="e#259#279#0#HTML" expanded="true" />
+                <element signature="e#1098#1121#0#HTML" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -220,8 +222,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/templates/user/listOffers.html.twig">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="595">
-              <caret line="35" column="100" selection-start-line="35" selection-start-column="100" selection-end-line="35" selection-end-column="100" />
+            <state relative-caret-position="442">
+              <caret line="26" column="148" selection-start-line="26" selection-start-column="148" selection-end-line="26" selection-end-column="148" />
+              <folding>
+                <element signature="e#904#928#0#HTML" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -318,13 +323,13 @@
         <option value="$PROJECT_DIR$/config/parameters.yaml" />
         <option value="$PROJECT_DIR$/config/packages/vich_uploader.yaml" />
         <option value="$PROJECT_DIR$/src/Controller/UserController.php" />
-        <option value="$PROJECT_DIR$/templates/user/myAccount.html.twig" />
         <option value="$PROJECT_DIR$/templates/user/addOffer.html.twig" />
         <option value="$PROJECT_DIR$/src/Entity/User.php" />
         <option value="$PROJECT_DIR$/templates/index.html.twig" />
         <option value="$PROJECT_DIR$/src/Form/EditMyAccountType.php" />
         <option value="$PROJECT_DIR$/assets/css/app.css" />
         <option value="$PROJECT_DIR$/src/Form/RegisterType.php" />
+        <option value="$PROJECT_DIR$/templates/user/myAccount.html.twig" />
         <option value="$PROJECT_DIR$/templates/user/listOffers.html.twig" />
       </list>
     </option>
@@ -751,12 +756,12 @@
       <workItem from="1538458881804" duration="17380000" />
       <workItem from="1538544755807" duration="16061000" />
       <workItem from="1538631260378" duration="22728000" />
-      <workItem from="1538717329554" duration="8888000" />
+      <workItem from="1538717329554" duration="10604000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="954719000" />
+    <option name="totallyTimeSpent" value="956435000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -1045,16 +1050,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/templates/user/myAccount.html.twig">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="9" column="47" selection-start-line="9" selection-start-column="47" selection-end-line="9" selection-end-column="47" />
-          <folding>
-            <element signature="e#1010#1033#0#HTML" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Form/DocumentType.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="391">
@@ -1106,6 +1101,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/templates/user/myAccount.html.twig">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="19" column="71" selection-start-line="19" selection-start-column="71" selection-end-line="19" selection-end-column="71" />
+          <folding>
+            <element signature="e#259#279#0#HTML" expanded="true" />
+            <element signature="e#1098#1121#0#HTML" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/Form/RegisterType.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="714">
@@ -1115,8 +1121,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/templates/user/listOffers.html.twig">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="595">
-          <caret line="35" column="100" selection-start-line="35" selection-start-column="100" selection-end-line="35" selection-end-column="100" />
+        <state relative-caret-position="442">
+          <caret line="26" column="148" selection-start-line="26" selection-start-column="148" selection-end-line="26" selection-end-column="148" />
+          <folding>
+            <element signature="e#904#928#0#HTML" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

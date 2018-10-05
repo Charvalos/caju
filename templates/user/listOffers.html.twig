@@ -16,29 +16,17 @@
             <div class="col-3">
                 {{ form_widget(filterForm.district) }}
             </div>
-            <div class="col">
+            <div class="col-2">
                 {{ form_widget(filterForm.category) }}
             </div>
-            <div class="col">
+            <div class="col-2">
                 {{ form_widget(filterForm.filter) }}
             </div>
-            <div class="col">
-            {% if not is_granted('ROLE_USER') %}
-                {% if 'offre-emploi' in app.request.server.get('HTTP_REFERER') %}
-                    <input id="addOffer" type="button" class="btn btn-primary" value="Nouvelle recherche d'emploi" onclick="window.location.href='{{ path('login') }}'" />
-                {% else %}
-                    <input id="addOffer" type="button" class="btn btn-primary" value="Nouvelle offre d'emploi" onclick="window.location.href='{{ path('login') }}'" />
-                {% endif %}
-            {% else %}
-                {% if 'offre-emploi' in app.request.server.get('HTTP_REFERER') %}
-                    <input id="addOffer" type="button" class="btn btn-primary" value="Nouvelle recherche d'emploi" onclick="window.location.href='{{ path('addOffer') }}'" />
-                {% else %}
-                    <input id="addOffer" type="button" class="btn btn-primary" value="Nouvelle offre d'emploi" onclick="window.location.href='{{ path('addOffer') }}'" />
-                {% endif %}
-            {% endif %}
+            {{ form_end(filterForm) }}
+            <div class="col-2" style="padding-left: 6%">
+                <input type="button" value="Réinitialiser" class="btn btn-primary" onclick="window.location.href = window.location.href + '?refresh'">
             </div>
         </div>
-        {{ form_end(filterForm) }}
         <div class="row"></div>
         <div>
             <table class="table mx-auto table-hover text-center" id="tableListOffers">
@@ -79,6 +67,19 @@
                 {% endif %}
                 </tbody>
             </table>
+            {% if not is_granted('ROLE_USER') %}
+                {% if 'offre-emploi' in app.request.server.get('HTTP_REFERER') %}
+                    <input id="addOffer" type="button" class="btn btn-primary" value="Nouvelle recherche d'emploi" onclick="window.location.href='{{ path('login') }}'" />
+                {% else %}
+                    <input id="addOffer" type="button" class="btn btn-primary" value="Nouvelle offre d'emploi" onclick="window.location.href='{{ path('login') }}'" />
+                {% endif %}
+            {% else %}
+                {% if 'offre-emploi' in app.request.server.get('HTTP_REFERER') %}
+                    <input id="addOffer" type="button" class="btn btn-primary" value="Nouvelle recherche d'emploi" onclick="window.location.href='{{ path('addOffer') }}'" />
+                {% else %}
+                    <input id="addOffer" type="button" class="btn btn-primary" value="Nouvelle offre d'emploi" onclick="window.location.href='{{ path('addOffer') }}'" />
+                {% endif %}
+            {% endif %}
         </div>
     </div>
 
